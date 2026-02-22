@@ -1,0 +1,9 @@
+s 1 0.5 0.5
+r z -18
+t -np.sin(np.deg2rad(18))*0.5 0 0
+01.ply
+
+s 1 0.5 0.5
+r z 18
+t np.sin(np.deg2rad(18))*0.5 0 0
+02.ply

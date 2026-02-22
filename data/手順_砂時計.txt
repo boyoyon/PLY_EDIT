@@ -1,0 +1,4 @@
+s 1 1 0.3      # z方向に0.3倍
+r z 45         # z軸周りに45°回転
+rr 36 x 10     # x軸周りに10°回転を36回
+hourglass.ply  # hourglass.ply としてセーブ
