@@ -1,6 +1,8 @@
 import sys
 import numpy as np
 
+NR_DIVS = 100
+
 def save_ply(ply_path, vertices, faces):
 
     with open(ply_path, mode='w') as f:
@@ -48,22 +50,20 @@ def save_ply(ply_path, vertices, faces):
         for face in faces:
             f.write(face)
 
-def createRingBW(NR_DIVS, size, width):
+def createRingBW(nr_divs, size, width):
 
     x0 = 0.0
     y0 = size
     z0 = 0.0
     
-    verticesRing = []
-    facesRing = []
+    vertices = []
+    faces = []
 
-    angleStep = np.pi * 2 / NR_DIVS
+    angleStep = np.pi * 2 / nr_divs
 
-    x = x0
-    y = y0
-    z = z0
+    points = []
 
-    for i in range(NR_DIVS + 1):
+    for i in range(nr_divs):
 
         angle = angleStep * i
 
@@ -71,30 +71,60 @@ def createRingBW(NR_DIVS, size, width):
         y = np.cos(angle) * y0 - np.sin(angle) * z0
         z = np.sin(angle) * y0 + np.cos(angle) * z0
 
-        line = '%f %f %f 0 0 0\n' % (x - width / 2, y, z)
-        verticesRing.append(line)
-
-        line = '%f %f %f 0 0 0\n' % (x + width / 2, y, z)
-        verticesRing.append(line)
-
-        if i > 0:
-            n = i * 2
-            line = '3 %d %d %d\n' % (n - 1, n - 2, n + 1)
-            facesRing.append(line)
-
-            line = '3 %d %d %d\n' % (n - 2, n, n + 1)
-            facesRing.append(line)
-
-            if i % 2 == 1:
-            
-                line = '3 %d %d %d\n' % (n - 2, n - 1, n + 1)
-                facesRing.append(line)
-
-                line = '3 %d %d %d\n' % (n, n - 2, n + 1)
-                facesRing.append(line)
+        points.append((x,y,z))
+   
+    points = np.array(points)
  
+    num = NR_DIVS // (nr_divs * 2)
 
-    return verticesRing, facesRing
+    if num < 1:
+        num = 1
+
+    for i in range(nr_divs):
+
+        start = points[i]
+        end = points[(i+1) % nr_divs]
+
+        for j in range(num):
+
+            alpha = j / num
+            p0 = start * alpha + end * (1 - alpha)
+        
+            beta = (j+1) / num
+            p1 = start * beta + end * (1 - beta)
+
+            p2 = p0 * 0.5 + p1 * 0.5
+
+            line = '%f %f %f 0 0 0\n' % (p0[0] - width / 2, p0[1], p0[2])
+            vertices.append(line)
+
+            line = '%f %f %f 0 0 0\n' % (p0[0] + width / 2, p0[1], p0[2])
+            vertices.append(line)
+
+            line = '%f %f %f 0 0 0\n' % (p2[0] - width / 2, p2[1], p2[2])
+            vertices.append(line)
+
+            line = '%f %f %f 0 0 0\n' % (p2[0] + width / 2, p2[1], p2[2])
+            vertices.append(line)
+
+            line = '%f %f %f 0 0 0\n' % (p1[0] - width / 2, p1[1], p1[2])
+            vertices.append(line)
+
+            line = '%f %f %f 0 0 0\n' % (p1[0] + width / 2, p1[1], p1[2])
+            vertices.append(line)
+
+            n = (i * num + j) * 6 
+
+            line = '4 %d %d %d %d\n' % (n+0,  n+1, n+3, n+2)
+            faces.append(line)
+
+            line = '4 %d %d %d %d\n' % (n+2,  n+3, n+5, n+4)
+            faces.append(line)
+
+            line = '4 %d %d %d %d\n' % (n+2,  n+3, n+1, n+0)
+            faces.append(line)
+
+    return vertices, faces
 
 def main():
 
@@ -119,7 +149,7 @@ def main():
     if argc > 3:
         width = float(argv[3])
 
-    vertices, faces = createRingBW(100, 1, 0.01)
+    vertices, faces = createRingBW(nr_vertices, size, width)
 
     dst_path = 'ringBW_%d.ply' % nr_vertices
     save_ply(dst_path, vertices, faces)
