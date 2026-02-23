@@ -192,7 +192,7 @@ def main():
                         scale = getScalingMatrix(s)
 
                         if fGrouping:
-                            Maccum = Maccm @ scale
+                            Maccum = Maccum @ scale
                         else:
                             mesh.transform(scale)
 
