@@ -105,7 +105,6 @@ while True:
                 
             ctrl.set_front([0.5, 0.5, 0.5])
 
-
             fAxis = not fAxis
 
         elif cmds[0] == 'c':
@@ -164,6 +163,7 @@ while True:
              
                 meshes.pop(curr)
                 curr = len(meshes) - 1
+                names.pop(curr)
                 ctrl.set_front([0.5, 0.5, 0.5])
             
             else:
@@ -358,7 +358,7 @@ while True:
             if len(meshes) > 1:
                 
                 for i in range(1,len(meshes)):
-                    if i == 0:
+                    if i == 1:
                         accum = copy.deepcopy(meshes[i])
                     else:
                         accum += meshes[i]
