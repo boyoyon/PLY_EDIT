@@ -10,11 +10,16 @@ def input_thread():
         if line:
             input_queue.put(line)
 
-def refresh(vis, meshes):
+def refresh(vis, meshes, fAxis):
                     
     vis.clear_geometries()
 
-    for i in range(len(meshes)):
+    start = 0
+
+    if not fAxis:
+        start = 1
+
+    for i in range(start, len(meshes)):
         vis.add_geometry(meshes[i])           
 
 def show_menu():
@@ -227,7 +232,7 @@ while True:
                     accum.paint_uniform_color([0.9,0.9,0.9])
                     meshes_gray[curr] = copy.deepcopy(accum)
 
-                    refresh(vis, meshes)
+                    refresh(vis, meshes, fAxis)
                     ctrl.set_front([0.5, 0.5, 0.5])
 
 
@@ -289,7 +294,7 @@ while True:
                     accum.paint_uniform_color([0.9,0.9,0.9])
                     meshes_gray[curr] = copy.deepcopy(accum)
 
-                    refresh(vis, meshed)
+                    refresh(vis, meshed, fAxis)
                     ctrl.set_front([0.5, 0.5, 0.5])
 
 
@@ -350,7 +355,7 @@ while True:
                     accum.paint_uniform_color([0.9,0.9,0.9])
                     meshes_gray[curr] = copy.deepcopy(accum)
 
-                    refresh(vis, meshes)
+                    refresh(vis, meshes, fAxis)
                     ctrl.set_front([0.5, 0.5, 0.5])
  
         elif cmds[0] == 'save':
