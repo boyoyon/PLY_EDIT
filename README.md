@@ -123,7 +123,42 @@
 　　7/8キー、Shift+7/Shift+8キーで回転量、平行移動量を増減。<br>
 　　Ctrlキーで回転量, 平行移動量を大きくする。<br>
 　　ESCキーを押下するとプログラム終了。マージされた結果が merged.ply に出力される。<br>
-<img src="images/manual_edit.gif">
+<img src="images/manual_edit.gif"><br>
+<br>
+<strong>　回転・スケーリング・平行移動 [インタラクティブ版]</strong><br>
+<br>
+　　使い勝手が悪すぎたので, インタラクティブ版を作ってみた<br>
+　　(一部機能のみ･･･, コマンドが若干異なる ^^;)<br>
+<br>
+　　[0] 起動：python src\PLY_interactive.py<br>
+　　　　(まだ)座標軸にラベルを付けていないが, x軸(青), y軸(赤), z軸(緑)<br>
+<img src="images/00.png"><br>
+　　コンソール画面からコマンドを入力する。<br>
+　　[1] PLYファイルロード：　load data\ring_100.ply<br>
+<img src="images/01.png"><br>
+　　[2] 回転コマンド：r 0 10 0 36<br>
+　　　　y軸周りに10°回転を36回繰り返す。<br>
+<img src="images/02.png"><br>
+　　[3] 座標軸を消す：axis<br>
+　　　　axisを入力するたびに, 座標軸を消す→表示するをトグルする。<br>
+<img src="images/03.png"><br>
+　　[4] PLYをセーブする：save ball.ply<br>
+<br>
+　　[5] メッシュを削除する：del<br>
+<img src="images/00.png"><br>
+　　[6] PLYファイルロード：　load data\ring_100.ply<br>
+<img src="images/01.png"><br>
+　　[7] 回転コマンド：r 0 0 30<br>
+　　　　　z軸周りに30°回転<br>
+<img src="images/04.png"><br>
+　　[7] 平行移動コマンド：t -0.5 0 0<br>
+　　　　　x軸方向に -0.5移動<br>
+<img src="images/05.png"><br>
+　　[8] 回転コマンド：r 0 20 0 18<br>
+　　　　　y軸周りに20°回転を18回繰り返す、<br>
+<img src="images/06.png"><br>
+　　[9] 終了：quit<br>
+　　　　　Open3D の Visualizer画面を選んでESCキー押下でも終了する。
 </p>
 
 <h3>PLY表示</h3>
