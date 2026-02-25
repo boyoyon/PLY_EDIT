@@ -32,12 +32,40 @@ def show_menu():
     print('set scale matirx:    : s <scale_x> <scale_y> <scale_z>')
     print('set translate matrix : t <offset_x> <offset_y> <offset_z>')
     print('paint with color     : c <r(0-255)> <g(0-255) <b(0-255)>')
+    print('undo                 : u')
     print('on/off selected mesh : selected')
     print('on/off axis          : a[xis]')
     print('save ply             : save <ply filename>')
     print('terminate program    : q[uit]') 
     print()
 
+def getFloat3(str0, str1, str2):
+
+    fResult = True
+    values = []
+
+    try:
+        values.append(float(eval(str0)))
+    except NameError:
+        print('NameError: %s' % str0)
+        fResult = False
+    else:
+
+        try:
+            values.append(float(eval(str1)))
+        except NameError:
+            print('NameError: %s' % str1)
+            fResult = False
+        else:
+    
+            try:
+                values.append(float(eval(str2)))
+            except NameError:
+                print('NameError: %s' % str2)
+                fResult = False
+
+    return fResult, values
+                        
 argv = sys.argv
 argc = len(argv)
 
@@ -52,6 +80,9 @@ names.append('')
 fSelectedOnly = False
 fAxis = True
 
+undo_mesh = []
+undo_idx = []
+
 input_queue = queue.Queue()
 
 threading.Thread(target=input_thread, daemon=True).start()
@@ -60,14 +91,14 @@ threading.Thread(target=input_thread, daemon=True).start()
 vis = o3d.visualization.Visualizer()
 vis.create_window(window_name='PLY Edit interactivelly', width=800, height=600)
 
-axis = o3d.io.read_triangle_mesh(os.path.join(os.path.dirname(__file__), 'axis.ply'))
+axis = o3d.io.read_triangle_mesh(os.path.join(os.path.dirname(__file__), 'axisXYZ.ply'))
 meshes.append(axis)
 meshes_gray.append(axis)
 
 vis.add_geometry(axis)
 
 ctrl = vis.get_view_control()
-ctrl.set_front([0.5, 0.5, 0.5])
+ctrl.set_front([0.5, 0.25, 0.5])
 
 show_menu()
 
@@ -90,7 +121,7 @@ while True:
                 mesh = o3d.io.read_triangle_mesh(cmds[1])           
  
                 vis.add_geometry(mesh)
-                ctrl.set_front([0.5, 0.5, 0.5])
+                ctrl.set_front([0.5, 0.25, 0.5])
 
                 meshes.append(mesh)
                 names.append(cmds[1])
@@ -120,6 +151,10 @@ while True:
                 red = int(cmds[1]) / 255
                 green = int(cmds[2]) / 255
                 blue = int(cmds[3]) / 255
+
+                undo_idx.append(curr)
+                undo_mesh.append(copy.deepcopy(meshes[curr]))
+
                 meshes[curr].paint_uniform_color([red, green, blue])
                 vis.update_geometry(meshes[curr])
 
@@ -144,7 +179,7 @@ while True:
                     else:
                         vis.add_geometry(meshes_gray[i])
 
-            ctrl.set_front([0.5, 0.5, 0.5])
+            ctrl.set_front([0.5, 0.25, 0.5])
 
             fSelectedOnly = not fSelectedOnly
 
@@ -154,12 +189,11 @@ while True:
                 idx = names.index(cmds[1])
             except ValueError:
                 print('select from ', names)
-                idx = curr
+
             except IndexError:
                 print('select from ', names)
-                idx = curr
-
-            curr = idx
+            else:
+                curr = idx
 
         elif cmds[0][0] == 'd':
 
@@ -169,195 +203,252 @@ while True:
                 meshes.pop(curr)
                 curr = len(meshes) - 1
                 names.pop(curr)
-                ctrl.set_front([0.5, 0.5, 0.5])
+
+                try:
+                    idx = undo_idx.index(curr)
+                except ValueError:
+                    pass
+                else:
+                    undo_idx.pop(idx)
+                    undo_mesh.pop(idx)
+
+                ctrl.set_front([0.5, 0.25, 0.5])
             
             else:
                 print('unable to delete')
 
         elif cmds[0] == 'r':
 
-            if len(cmds) < 2:
+            if len(cmds) < 4:
                 print('specify angle_x(degree) angle_y(degree) angle_z(degree) [<count(>=2)>]')
+                print('current Rmatrix:', R)
 
             else:
-                deg_y = 0
-                deg_z = 0
-            
-                if len(cmds) > 1:
-                    try:
-                        deg_x = float(eval(cmds[1]))
-                    except NameError:
-                        print('NameError: angle_x(%s)' % cmds[1])
-                        continue
-            
-                if len(cmds) > 2:
-                    try:
-                        deg_y = float(eval(cmds[2]))
-                    except NameError:
-                        print('NameError: angle_y(%s)' % cmds[2])
-                        continue
 
-                if len(cmds) > 3:
-                    try:
-                        deg_z = float(eval(cmds[3]))
-                    except NameError:
-                        print('NameError: angle_z(%s)' % cmds[3])
-                        continue
+                fResult, values = getFloat3(cmds[1], cmds[2], cmds[3])
 
-                rad_x = np.deg2rad(deg_x)
-                rad_y = np.deg2rad(deg_y)
-                rad_z = np.deg2rad(deg_z)
+                if fResult:
 
-                R = o3d.geometry.get_rotation_matrix_from_xyz((rad_x, rad_y, rad_z))
+                    rad_x = np.deg2rad(values[0])
+                    rad_y = np.deg2rad(values[1])
+                    rad_z = np.deg2rad(values[2])
 
-                count = 0
+                    R = o3d.geometry.get_rotation_matrix_from_xyz((rad_x, rad_y, rad_z))
+                    count = 0
 
-                if len(cmds) > 4:
-                    count = int(cmds[4])
+                    if len(cmds) > 4:
+                        count = int(cmds[4])
 
-                if count < 2:
-                    meshes[curr].rotate(R, center=(0,0,0))
-                    vis.update_geometry(meshes[curr])
+                    undo_idx.append(curr)
+                    undo_mesh.append(copy.deepcopy(meshes[curr]))
 
-                else:
-                    for i in range(count):
+                    if count < 2:
                         meshes[curr].rotate(R, center=(0,0,0))
+                        vis.update_geometry(meshes[curr])
+
+                    else:
+                        for i in range(count):
+                            meshes[curr].rotate(R, center=(0,0,0))
                         
-                        if i == 0:
-                            accum = copy.deepcopy(meshes[curr])
-                        else:
-                            accum += copy.deepcopy(meshes[curr])
+                            if i == 0:
+                                accum = copy.deepcopy(meshes[curr])
+                            else:
+                                accum += copy.deepcopy(meshes[curr])
                     
-                    meshes[curr] = copy.deepcopy(accum)
-                    accum.paint_uniform_color([0.9,0.9,0.9])
-                    meshes_gray[curr] = copy.deepcopy(accum)
+                        meshes[curr] = copy.deepcopy(accum)
+                        accum.paint_uniform_color([0.9,0.9,0.9])
+                        meshes_gray[curr] = copy.deepcopy(accum)
 
-                    refresh(vis, meshes, fAxis)
-                    ctrl.set_front([0.5, 0.5, 0.5])
-
-
+                        refresh(vis, meshes, fAxis)
+                        ctrl.set_front([0.5, 0.25, 0.5])
  
         elif cmds[0] == 's':
 
-            if len(cmds) < 2:
+            if len(cmds) < 4:
                 print('specify scalee_x scale_y scale_z [<count(>=2)>]')
+                print('current Smatrix: ', S)
 
             else:
-                sy = 1
-                sz = 1
-            
-                if len(cmds) > 1:
-                    try:
-                        sx = float(eval(cmds[1]))
-                    except NameError:
-                        print('NameError: sx(%s)' % cmds[1])
-                        continue
-                        
-                if len(cmds) > 2:
-                    try:
-                        sy = float(eval(cmds[2]))
-                    except NameError:
-                        print('NameError: sy(%s)' % cmds[2])
-                        continue
 
-                if len(cmds) > 3:
-                    try:
-                        sz = float(eval(cmds[3]))
-                    except NameError:
-                        print('NameError: sz(%s)' % cmds[3])
-                        continue
+                fResult, values = getFloat3(cmds[1], cmds[2], cmds[3])
 
-                S = np.array([[sx,  0,  0, 0],
-                              [ 0, sy,  0, 0],
-                              [ 0,  0, sz, 0],
-                              [ 0,  0,  0, 1]])
+                if fResult:
 
-                count = 0
+                    S = np.array([[values[0],  0,          0,         0],
+                                  [ 0,         values[1],  0,         0],
+                                  [ 0,         0,          values[2], 0],
+                                  [ 0,         0,          0,         1]])
 
-                if len(cmds) > 4:
-                    count = int(cmds[4])
-
-                if count < 2:
-                    meshes[curr].transform(S)
-                    vis.update_geometry(meshes[curr])
-
-                else:
-                    for i in range(count):
+                    count = 0
+    
+                    if len(cmds) > 4:
+                        count = int(cmds[4])
+    
+                    undo_idx.append(curr)
+                    undo_mesh.append(copy.deepcopy(meshes[curr]))
+    
+                    if count < 2:
                         meshes[curr].transform(S)
+                        vis.update_geometry(meshes[curr])
+    
+                    else:
+                        for i in range(count):
+                            meshes[curr].transform(S)
+                            
+                            if i == 0:
+                                accum = copy.deepcopy(meshes[curr])
+                            else:
+                                accum += copy.deepcopy(meshes[curr])
                         
-                        if i == 0:
-                            accum = copy.deepcopy(meshes[curr])
-                        else:
-                            accum += copy.deepcopy(meshes[curr])
-                    
-                    meshes[curr] = copy.deepcopy(accum)
-                    accum.paint_uniform_color([0.9,0.9,0.9])
-                    meshes_gray[curr] = copy.deepcopy(accum)
-
-                    refresh(vis, meshed, fAxis)
-                    ctrl.set_front([0.5, 0.5, 0.5])
-
+                        meshes[curr] = copy.deepcopy(accum)
+                        accum.paint_uniform_color([0.9,0.9,0.9])
+                        meshes_gray[curr] = copy.deepcopy(accum)
+    
+                        refresh(vis, meshed, fAxis)
+                        ctrl.set_front([0.5, 0.25, 0.5])
 
         elif cmds[0] == 't':
 
-            if len(cmds) < 2:
+            if len(cmds) < 4:
                 print('specify offset_x offset_y offset_z [<count(>=2)>]')
+                print('current Tmatrix: ', T)
 
             else:
-                ty = 0
-                tz = 0
-            
-                if len(cmds) > 1:
-                    try:
-                        tx = float(eval(cmds[1]))
-                    except NameError:
-                        print('NameError: tx(%s)' % cmds[1])
-                        continue
-            
-                if len(cmds) > 2:
-                    try:
-                        ty = float(eval(cmds[2]))
-                    except NameError:
-                        print('NameError: ty(%s)' % cmds[2])
-                        continue
 
-                if len(cmds) > 3:
-                    try:
-                        tz = float(eval(cmds[3]))
-                    except NameError:
-                        print('NameError: tzx(%s)' % cmds[3])
-                        continue
+                fResult, values = getFloat3(cmds[1], cmds[2], cmds[3])
 
-                T = np.array([[ 1,  0,  0, tx],
-                              [ 0,  1,  0, ty],
-                              [ 0,  0,  1, tz],
-                              [ 0,  0,  0, 1]])
+                if fResult:
 
-                count = 0
-
-                if len(cmds) > 4:
-                    count = int(cmds[4])
-
-                if count < 2:
-                    meshes[curr].transform(T)
-                    vis.update_geometry(meshes[curr])
-
-                else:
-                    for i in range(count):
+                    T = np.array([[ 1,  0,  0, values[0]],
+                                  [ 0,  1,  0, values[1]],
+                                  [ 0,  0,  1, values[2]],
+                                  [ 0,  0,  0, 1]])
+    
+    
+                    count = 0
+    
+                    if len(cmds) > 4:
+                        count = int(cmds[4])
+    
+                    undo_idx.append(curr)
+                    undo_mesh.append(copy.deepcopy(meshes[curr]))
+    
+                    if count < 2:
                         meshes[curr].transform(T)
+                        vis.update_geometry(meshes[curr])
+    
+                    else:
+                        for i in range(count):
+                            meshes[curr].transform(T)
+                            
+                            if i == 0:
+                                accum = copy.deepcopy(meshes[curr])
+                            else:
+                                accum += copy.deepcopy(meshes[curr])
                         
-                        if i == 0:
-                            accum = copy.deepcopy(meshes[curr])
-                        else:
-                            accum += copy.deepcopy(meshes[curr])
-                    
-                    meshes[curr] = copy.deepcopy(accum)
-                    accum.paint_uniform_color([0.9,0.9,0.9])
-                    meshes_gray[curr] = copy.deepcopy(accum)
+                        meshes[curr] = copy.deepcopy(accum)
+                        accum.paint_uniform_color([0.9,0.9,0.9])
+                        meshes_gray[curr] = copy.deepcopy(accum)
+    
+                        refresh(vis, meshes, fAxis)
+                        ctrl.set_front([0.5, 0.25, 0.5])
 
-                    refresh(vis, meshes, fAxis)
-                    ctrl.set_front([0.5, 0.5, 0.5])
+        elif cmds[0] == 'g':
+
+            if len(cmds) < 5:
+                print('specify group operation (ex. t xx xx xx r xx xx xx) [<count(>=2)>]')
+
+            else:
+                G = np.eye(4)
+
+                idx = 1
+                fResult = True
+
+                while len(cmds) - idx > 3:
+
+                    fResult, values = getFloat3(cmds[idx+1], cmds[idx+2], cmds[idx+3])
+
+                    if not fResult:
+                        break;
+
+                    if cmds[idx] == 'r' or cmds[idx] == 'R':
+
+                        rad_x = np.deg2rad(values[0])
+                        rad_y = np.deg2rad(values[1])
+                        rad_z = np.deg2rad(values[2])
+
+                        r = o3d.geometry.get_rotation_matrix_from_xyz((rad_x, rad_y, rad_z))
+                        
+                        R = np.eye(4)
+                        R[:3,:3] = r
+
+                        G = G @ R
+
+                    elif cmds[idx] == 's' or cmds[idx] == 'S':
+
+                        S = np.array([[values[0],  0,          0,         0],
+                                      [ 0,         values[1],  0,         0],
+                                      [ 0,         0,          values[2], 0],
+                                      [ 0,         0,          0,         1]])
+
+                        G = G @ S
+
+                    elif cmds[idx] == 't' or cmds[idx] == 'T':
  
+                        T = np.array([[ 1,  0,  0, values[0]],
+                                      [ 0,  1,  0, values[1]],
+                                      [ 0,  0,  1, values[2]],
+                                      [ 0,  0,  0, 1]])
+    
+                        G = G @ T
+
+                    idx += 4
+
+                if fResult:
+    
+                    count = 0
+    
+                    if len(cmds) - idx > 0:
+                        count = int(cmds[idx])
+    
+                    undo_idx.append(curr)
+                    undo_mesh.append(copy.deepcopy(meshes[curr]))
+    
+                    if count < 2:
+                        meshes[curr].transform(G)
+                        vis.update_geometry(meshes[curr])
+    
+                    else:
+                        for i in range(count):
+                            meshes[curr].transform(G)
+                            
+                            if i == 0:
+                                accum = copy.deepcopy(meshes[curr])
+                            else:
+                                accum += copy.deepcopy(meshes[curr])
+                        
+                        meshes[curr] = copy.deepcopy(accum)
+                        accum.paint_uniform_color([0.9,0.9,0.9])
+                        meshes_gray[curr] = copy.deepcopy(accum)
+    
+                        refresh(vis, meshes, fAxis)
+                        ctrl.set_front([0.5, 0.25, 0.5])
+
+        elif cmds[0][0] == 'u':
+
+            if len(undo_mesh) > 0:
+
+                idx = undo_idx.pop()
+                mesh = undo_mesh.pop()
+                meshes[idx] = copy.deepcopy(mesh)
+ 
+                vis.update_geometry(meshes[idx])
+                refresh(vis, meshes, fAxis)
+                ctrl.set_front([0.5, 0.5, 0.5])
+
+            else:
+                print('undo buffer is empty')
+
         elif cmds[0] == 'save':
 
             if len(meshes) > 1:
