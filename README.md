@@ -57,7 +57,7 @@
 　　(手順_りんご.txt)<br>
 　　　s 1 1 0.5    # z 方向に 0.5倍 (scaling)<br>
 　　　t 0 0 0.6    # z 方向に 0.6移動 (translation)<br>
-　　　rr 36 y 10   # y軸に周りに10°回転 (rotation) を 36回<br>
+　　　rr 18 y 10   # y軸に周りに10°回転 (rotation) を 18回<br>
 　　　apple.ply    # apple.plyとしてセーブ<br>
 <br>
 　　　※ 手順ファイルの # 以降は無視されます。<br>
@@ -135,7 +135,7 @@
 　　[1] PLYファイルロード：　load data\ring_100.ply<br>
 <img src="images/01.png"><br>
 　　[2] 回転コマンド：r 0 10 0 18<br>
-　　　　y軸周りに10°回転を36回繰り返す。<br>
+　　　　y軸周りに10°回転を18回繰り返す。<br>
 <img src="images/02.png"><br>
 　　[3] 座標軸を消す：axis<br>
 　　　　axisを入力するたびに, 座標軸を消す→表示するをトグルする。<br>
