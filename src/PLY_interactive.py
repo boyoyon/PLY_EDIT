@@ -304,7 +304,7 @@ while True:
                         accum.paint_uniform_color([0.9,0.9,0.9])
                         meshes_gray[curr] = copy.deepcopy(accum)
     
-                        refresh(vis, meshed, fAxis)
+                        refresh(vis, meshes, fAxis)
                         ctrl.set_front([0.5, 0.25, 0.5])
 
         elif cmds[0] == 't':
