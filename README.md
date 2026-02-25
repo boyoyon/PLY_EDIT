@@ -128,15 +128,13 @@
 <strong>　回転・スケーリング・平行移動 [インタラクティブ版]</strong><br>
 <br>
 　　使い勝手が悪すぎたので, インタラクティブ版を作ってみた<br>
-　　(一部機能のみ･･･, コマンドが若干異なる ^^;)<br>
 <br>
 　　[0] 起動：python src\PLY_interactive.py<br>
-　　　　(まだ)座標軸にラベルを付けていないが, x軸(青), y軸(赤), z軸(緑)<br>
 <img src="images/00.png"><br>
 　　コンソール画面からコマンドを入力する。<br>
 　　[1] PLYファイルロード：　load data\ring_100.ply<br>
 <img src="images/01.png"><br>
-　　[2] 回転コマンド：r 0 10 0 36<br>
+　　[2] 回転コマンド：r 0 10 0 18<br>
 　　　　y軸周りに10°回転を36回繰り返す。<br>
 <img src="images/02.png"><br>
 　　[3] 座標軸を消す：axis<br>
@@ -148,15 +146,16 @@
 <img src="images/00.png"><br>
 　　[6] PLYファイルロード：　load data\ring_100.ply<br>
 <img src="images/01.png"><br>
-　　[7] 回転コマンド：r 0 0 30<br>
-　　　　　z軸周りに30°回転<br>
-<img src="images/04.png"><br>
-　　[7] 平行移動コマンド：t -0.5 0 0<br>
-　　　　　x軸方向に -0.5移動<br>
+　　[7] 回転/スケーリング/平行移動コマンド：g s 1 0.9 0.9 t 0 -0.5 0 r 20 0 0 t 0.1 0.5 0 30<br>
+　　　　　グループコマンド<br>
+　　　　　　① y-z平面で0.9倍にスケーリング<br>
+　　　　　　② y方向に-0.5平行移動<br>
+　　　　　　③ x軸周りに20°回転<br>
+　　　　　　④ y方向に+0.5 x方向に+0.1<br>
+　　　　　①～④を30回繰り返す。<br>
 <img src="images/05.png"><br>
-　　[8] 回転コマンド：r 0 20 0 18<br>
-　　　　　y軸周りに20°回転を18回繰り返す、<br>
-<img src="images/06.png"><br>
+　　[8] Undo：u<br>
+<img src="images/01.png"><br>
 　　[9] 終了：quit<br>
 　　　　　Open3D の Visualizer画面を選んでESCキー押下でも終了する。
 </p>
