@@ -187,6 +187,60 @@
 　　回転しつづける<br>
 　　1～9キー,↑キー, ↓キーは効かない。
 </p>
+<h3>PLY interactive つづき</h3>
+<p>
+　デバッグできていないのに、機能追加･･･<br>
+<br>
+　<strong>多角形メッシュ生成</strong><br>
+　　polygon (辺の数) [(サイズ) (高さ)]<br>
+　　POLYGON (辺の数) [(サイズ) (高さ)]<br>
+<br>
+　(例) polygon 5<br>
+　　　 サイズ(外接円の半径)のデフォルトは 1<br>
+　　　 高さを指定しないと 0 (平板)<br>
+<img src="images/10.png"><br>
+　(例) polygon 5 1 0.2<br>
+　　　高さを指定すると柱になる(厚みがでる)<br>
+<img src="images/11.png"><br>
+　　　Open3D の Visualizer画面をクリックして wキーを押下するとワイヤーフレームを表示してくれる。<br>
+　　　(座標軸や文字もワイヤーフレーム表示になってしまうが･･･)<br>
+<img src="images/12.png"><br>
+　　(例) select<br>
+　　　　　select from  ['', 'polygon5_side', 'polygon5_top', 'polygon5_bottom']<br>
+<br>
+　　　　小文字版のコマンド(polygon)の場合、天板、底面、側面が別々のメッシュになっている。<br>
+　　　　個別に操作できるが、メッシュ選択やマージ機能がちゃんとできていないので不便。削除する場合の d コマンドを3回実行する必要あり。<br>
+<br>
+　　(例) select polygon5_side<br>
+　　　　 r 30 0 0<br>
+<img src="images/13.png"><br>
 
+　　大文字版のコマンド(POLYGON)だと全体が1個のメッシュになる。<br>
+　　(例) POLYGON 5 1 0.2<br>
+　　　　 r 30 0 0<br>
+<img src="images/14.png"><br>　
+
+　　高さにマイナスを指定すると側面だけになる。<br>
+　　(例) polygon 5 1 -0.2<br>
+<img src="images/15.png"><br>　
+　　(例)正12面体を作る。<br>
+　　　　一辺をz軸に揃える： t -np.cos(np.deg2rad(36)) 0 0<br>
+<img src="images/16.png"><br>　
+　　　　z軸に沿って折り曲げる(五角形を起こす)：r 0 0 -63.5<br>
+<img src="images/17.png"><br>　
+　　　　回転したときに底辺が五角形になるように平行移動する：t -np.cos(np.deg2rad(36)) 0 0<br>
+<img src="images/18.png"><br>　
+　　　　y軸周りに72°回転を5回繰り返す：r 0 72 0 5<br>
+<img src="images/19.png"><br>
+　　　　正12面体の半分を一旦セーブ：save dodecahedron_half.ply<br>
+<br>
+　　　　裏返しにする：r 0 0 180<br>
+<img src="images/20.png"><br>　
+　　　　下半分をロードする前に持ち上げる：t 0 np.sin(np.deg2rad(36))*np.sin(np.deg2rad(63.5))*5 0<br>
+<img src="images/21.png"><br>　
+　　　　下半分をロードする：l dodecahedron_half.ply<br>
+<br>
+<img src="images/22.png"><br>　
+</p>
 </body>
 </html>
