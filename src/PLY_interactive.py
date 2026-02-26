@@ -3,6 +3,7 @@ import numpy as np
 import threading
 import queue
 import copy, os, sys
+from polygon import polygon
 
 def input_thread():
     while True:
@@ -433,6 +434,45 @@ while True:
     
                         refresh(vis, meshes, fAxis)
                         ctrl.set_front([0.5, 0.25, 0.5])
+
+        elif cmds[0] == 'polygon':
+
+            _meshes, _names = polygon(cmds, False) # lowercase --> separate mode
+
+            if len(_meshes) > 0:
+
+                for i in range(len(_meshes)):
+
+                    vis.add_geometry(_meshes[i])
+
+                    meshes.append(_meshes[i])
+                    names.append(_names[i])
+                    mesh_gray = copy.deepcopy(_meshes[i])
+                    mesh_gray.paint_uniform_color([0.9,0.9,0.9])
+                    meshes_gray.append(mesh_gray)
+
+                curr = len(meshes) - 1
+                mesh_gray = copy.deepcopy(mesh)
+                ctrl.set_front([0.5, 0.25, 0.5])
+                vis.update_geometry(mesh)
+
+        elif cmds[0] == 'POLYGON':
+
+            _meshes, _names = polygon(cmds, True) # uppercase --> integrate mode
+
+            if len(_meshes) > 0:
+
+                vis.add_geometry(_meshes[0])
+                meshes.append(_meshes[0])
+                names.append(_names[0])
+                mesh_gray = copy.deepcopy(_meshes[0])
+                mesh_gray.paint_uniform_color([0.9,0.9,0.9])
+                meshes_gray.append(mesh_gray)
+
+                curr = len(meshes) - 1
+                mesh_gray = copy.deepcopy(mesh)
+                ctrl.set_front([0.5, 0.25, 0.5])
+                vis.update_geometry(mesh)
 
         elif cmds[0][0] == 'u':
 
