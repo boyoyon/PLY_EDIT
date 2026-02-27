@@ -1,0 +1,17 @@
+d all                           # メッシュを全部消す
+polygon 5 1 -0.01               # 側面のみの五角形を生成する
+t -np.cos(np.deg2rad(36)) 0 0   # 一辺をz軸に合わせる
+r 0 0 -63.5                     # z軸に沿って五角形を起こす
+t -np.cos(np.deg2rad(36)) 0 0   # 回転した時に底面が五角形になるように移動する
+r 0 72 0 5                      # y軸周りに72°回転を5回繰り返す
+polygon 5 1 -0.01               # 底面用の五角形を生成する
+r 0 36 0                        # 底面のずれを直す
+save tmp.ply                    # 半分できたとことで一旦セーブ
+d all                           # 一旦全部消す
+l tmp.ply                       # 半分をロード
+r 0 0 180                       # z軸周りに反転
+t 0 np.sin(np.deg2rad(36))*np.sin(np.deg2rad(63.5))*5 0 # 上に移動
+l tmp.ply                       # 半分をもう一回ロード
+t 0 0.01 0                      # ちょっと位置合わせ
+merge                           # 上と下をマージする(セーブするとマージされるが)
+save dodecahedron_wireframe.ply # 正十二面体をセーブ
