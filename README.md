@@ -241,7 +241,24 @@
 <img src="images/21.png"><br>　
 　　　　下半分をロードする：l dodecahedron_half.ply<br>
 <br>
-<img src="images/22.png"><br>　
+<img src="images/22.png"><br>
+　<strong>スクリプト実行</strong><br>
+　コマンド列を記述したテキストファイルを読み込んでい実行する。<br>
+　CLI版とコマンドを変えてしまったので、CLI版の手順.txtはそのままでは使えない...<br>
+<br>
+　l ***.txt (エンターキー押下)<br>
+　(エンターキー押下)　← <br>
+<br>
+　(例) l data/dodecahedron.txt<br>
+<br>
+　(実行結果)<br>
+<img src="images/23.png"><br>
+
+　<strong>d all</strong><br>
+　一括で全メッシュを削除する。<br>
+<br>
+　<strong>merge</strong><br>
+　表示されている全メッシュを一個のメッシュにマージする。<br>
 </p>
 </body>
 </html>
