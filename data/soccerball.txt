@@ -1,0 +1,16 @@
+d all
+polygon 6 1 -0.01
+t -np.cos(np.deg2rad(30)) 0 0
+r 0 0 -142.5
+polygon 6 1 -0.01
+t -np.cos(np.deg2rad(30)) 0 0
+r 0 0 79
+merge
+t -np.sin(np.deg2rad(30))*3/np.tan(np.deg2rad(36)) 0 0
+r 0 72 0 5
+save tmp.ply
+r 180 0 0
+r 0 36 0
+t 0 -2.55 0
+l tmp.ply
+save soccerball.ply
