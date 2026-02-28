@@ -1,0 +1,7 @@
+d all 
+polygon 3 1 -0.01
+t -np.cos(np.deg2rad(60)) 0 0
+r 0 0 -109.5
+t -np.cos(np.deg2rad(60)) 0 0
+r 0 120 0 3
+

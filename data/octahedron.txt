@@ -1,0 +1,9 @@
+d all
+polygon 3 1 -0.01
+t -np.cos(np.deg2rad(60)) 0 0
+r 0 0 -125.3
+t -np.sqrt(3)/2 0 0
+r 0 90 0 3
+r 0 0 180 2
+merge
+save octahedron.ply
