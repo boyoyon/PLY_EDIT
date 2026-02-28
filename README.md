@@ -269,7 +269,7 @@
 </p>
 <p>
 <strong>　螺旋の作成</strong><br>
-　polygon　(辺の数)　(サイズ) (高さ) (螺旋の高さ：一周毎の高さ)<br>
+　polygon　(辺の数) (サイズ) (高さ) (螺旋の高さ：一周毎の高さ) (回転数)<br>
 　(例)  polygon 100 0.5 0.1 0.6 4<br>
 <img src="images/24.png"><br>
 　l data/pole.txt を実行して作成した pole.ply の表示結果<br>
