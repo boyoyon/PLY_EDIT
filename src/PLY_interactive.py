@@ -100,7 +100,12 @@ def main():
     undo_mesh = []
     undo_name = []
     undo_idx = []
-    
+   
+    SurfaceOuter = [128,128,255]
+    SurfaceInner = [200,200,255]
+    LateralOuter = [128,128,255]
+    LateralInner = [200,200,255]
+ 
     input_queue = queue.Queue()
     
     threading.Thread(target=input_thread, daemon=True).start()
@@ -207,6 +212,42 @@ def main():
  
                     meshes[curr].paint_uniform_color([red, green, blue])
                     vis.update_geometry(meshes[curr])
+    
+            elif cmds[0] == 'SurfaceOuter':
+    
+                if len(cmds) != 4:
+                    print('specify red(0-255) green(0-255) blue(0-255)')
+                else:
+                    SurfaceOuter = [int(cmds[1]),int(cmds[2]), int(cmds[3])]
+    
+                print('Current Setting:', SurfaceOuter)
+    
+            elif cmds[0] == 'SurfaceInner':
+    
+                if len(cmds) != 4:
+                    print('specify red(0-255) green(0-255) blue(0-255)')
+                else:
+                    SurfaceInner = [int(cmds[1]),int(cmds[2]), int(cmds[3])]
+    
+                print('Current Setting:', SurfaceInner)
+    
+            elif cmds[0] == 'LateralOuter':
+    
+                if len(cmds) != 4:
+                    print('specify red(0-255) green(0-255) blue(0-255)')
+                else:
+                    LateralOuter = [int(cmds[1]),int(cmds[2]), int(cmds[3])]
+    
+                print('Current Setting:', LateralOuter)
+    
+            elif cmds[0] == 'LateralInner':
+    
+                if len(cmds) != 4:
+                    print('specify red(0-255) green(0-255) blue(0-255)')
+                else:
+                    LateralInner = [int(cmds[1]),int(cmds[2]), int(cmds[3])]
+    
+                print('Current Setting:', LateralInner)
     
             elif cmds[0] == 'selected':
     
@@ -521,7 +562,7 @@ def main():
     
             elif cmds[0] == 'polygon':
     
-                _meshes, _names = polygon(cmds, False) # lowercase --> separate mode
+                _meshes, _names = polygon(cmds, False, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner) # lowercase --> separate mode
     
                 if len(_meshes) > 0:
     
@@ -542,7 +583,7 @@ def main():
     
             elif cmds[0] == 'POLYGON':
     
-                _meshes, _names = polygon(cmds, True) # uppercase --> integrate mode
+                _meshes, _names = polygon(cmds, True, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner) # uppercase --> integrate mode
     
                 if len(_meshes) > 0:
     
@@ -592,7 +633,7 @@ def main():
                     print('save %s' % cmds[1])
                 else:
                     print('no meshes to be saved')
-    
+   
             elif cmds[0] == 'quit':
                 break
     

@@ -29,7 +29,7 @@ def usage(cmds):
 # api
 #
 
-def polygon(cmds, fIntegrate):
+def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,200,255), LateralOuter = (128, 128, 255) , LateralInner = (200,200,255)):
 
     meshes = []
     names = []
@@ -60,16 +60,23 @@ def polygon(cmds, fIntegrate):
                 width = float(eval(cmds[3]))
             except NameError:
                 usage(cmds)
+       
+        delta = 0.0
+
+        if len(cmds) > 4:
+            try:
+                delta = float(eval(cmds[4]))
+            except NameError:
+                usage(cmds)
+
+        count = 1
         
-        front = (128, 128, 255)
-        back = (200,200,255)
-
-        sideFront = (128,128,196)
-        sideBack = (200,200,255)
-
+        if len(cmds) > 5:
+            count = int(cmds[5])
+ 
         if fIntegrate:
 
-            _meshes = _polygon(nr_divs, size, width, front, back, sideFront, sideBack)
+            _meshes = _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
 
             for i in range(len(_meshes)):
                 
@@ -83,7 +90,7 @@ def polygon(cmds, fIntegrate):
 
         else:
 
-            meshes = _polygon(nr_divs, size, width, front, back, sideFront, sideBack)
+            meshes = _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
     
             names = []
     
@@ -105,12 +112,12 @@ def polygon(cmds, fIntegrate):
 # implementation
 #
 
-def _polygon(nr_divs, size, width, front, back, sideFront, sideBack):
+def _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner):
 
-    fgc = np.array(front)
-    bgc = np.array(back)
-    sfc = np.array(sideFront)
-    sbc = np.array(sideBack)
+    fgc = np.array(SurfaceOuter)
+    bgc = np.array(SurfaceInner)
+    sfc = np.array(LateralOuter)
+    sbc = np.array(LateralInner)
 
     fgc = fgc.astype(np.float64) / 255.0
     bgc = bgc.astype(np.float64) / 255.0
@@ -133,37 +140,37 @@ def _polygon(nr_divs, size, width, front, back, sideFront, sideBack):
 
     # create polygon vertices
 
-    vertTop = np.zeros((nr_divs, 3), np.float64)
+    num1 = nr_divs * count + 1
 
-    colTopFront = np.tile(fgc, (nr_divs, 1))
-    colTopBack = np.tile(bgc, (nr_divs, 1))
+    vertTop = np.zeros((num1, 3), np.float64)
+    vertSide = np.zeros((num1 * 2, 3), np.float64)
 
-    for i in range(nr_divs):
+    for i in range(nr_divs * count + 1):
         
         angle = stepAngle * i + startAngle
         x, z = rot2D(x0, z0, angle)
-        vertTop[i]=[x,y0+width/2,z]
+        vertTop[i] = [x,y0 + delta * i / nr_divs + width/2, z]
+        
+        vertSide[i*2]   = [x,y0 + delta * i / nr_divs + width/2, z]
+        vertSide[i*2+1] = [x,y0 + delta * i / nr_divs - width/2, z]
 
     # create Side Mesh
 
     if width > 0:
 
-        vertSide = np.zeros((nr_divs * 2, 3), np.float64)
-        faceSideFront = np.zeros((nr_divs * 2, 3), np.int32)
-        faceSideBack = np.zeros((nr_divs * 2, 3), np.int32)
+        num2 = nr_divs * count * 2
+
+        faceSideFront = np.zeros((num2, 3), np.int32)
+        faceSideBack = np.zeros((num2, 3), np.int32)
     
-        colSideFront = np.tile(fgc, (nr_divs * 2, 1))
-        colSideBack = np.tile(bgc, (nr_divs * 2, 1))
-    
-        for i in range(len(vertTop)):
-    
-            vertSide[i*2] = vertTop[i]
-            vertSide[i*2+1] = vertTop[i]
-            vertSide[i*2+1][1] *= -1
+        colSideFront = np.tile(sfc, (num1 * 2, 1))
+        colSideBack = np.tile(sbc, (num1 * 2, 1))
+   
+        for i in range(nr_divs * count):
     
             j = i*2
             k = j + 1
-            l = ((i+1) % nr_divs) * 2
+            l = (i+1) * 2
             m = l + 1
     
             faceSideFront[i*2] = (j, l, k)
@@ -188,13 +195,13 @@ def _polygon(nr_divs, size, width, front, back, sideFront, sideBack):
     
     # create top surface
 
-    if not fSideOnly: 
+    if not fSideOnly and delta == 0: 
 
         faceTopFront = np.zeros((nr_divs - 2, 3), np.int32)
         faceTopBack = np.zeros((nr_divs - 2, 3), np.int32)
     
-        colTopFront = np.tile(fgc, (nr_divs, 1))
-        colTopBack = np.tile(bgc, (nr_divs, 1))
+        colTopFront = np.tile(fgc, (num1, 1))
+        colTopBack = np.tile(bgc, (num1, 1))
 
         for i in range(2, nr_divs):
     
@@ -219,13 +226,14 @@ def _polygon(nr_divs, size, width, front, back, sideFront, sideBack):
     
             # create bottom surface
             meshBottom = copy.deepcopy(meshTop)
+   
+            T = np.array([[1, 0, 0, 0],
+                          [0, 1, 0, -width],
+                          [0, 0, 1, 0],
+                          [0, 0, 0, 1]], np.float64) 
     
-            flipY = np.eye(4)
-            flipY[1][1] = -1
+            meshBottom.transform(T)
     
-            meshBottom.transform(flipY)
-    
-            # vertex はflip するが面は裏返しにならないので裏返す
             triangles = np.array(meshBottom.triangles)
             meshBottom.triangles = o3d.utility.Vector3iVector(triangles[:,[0,2,1]])
     
