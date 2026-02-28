@@ -381,7 +381,7 @@ def main():
                         else:
                             accum = copy.deepcopy(meshes[curr])
 
-                            for i in range(count):
+                            for i in range(count - 1):
                                 meshes[curr].rotate(R, center=(0,0,0))
                                 accum += copy.deepcopy(meshes[curr])
                         
@@ -545,13 +545,11 @@ def main():
                             vis.update_geometry(meshes[curr])
         
                         else:
-                            for i in range(count):
+                            accum = copy.deepcopy(meshes[curr])
+                            
+                            for i in range(count - 1):
                                 meshes[curr].transform(G)
-                                
-                                if i == 0:
-                                    accum = copy.deepcopy(meshes[curr])
-                                else:
-                                    accum += copy.deepcopy(meshes[curr])
+                                accum += copy.deepcopy(meshes[curr])
                             
                             meshes[curr] = copy.deepcopy(accum)
                             accum.paint_uniform_color([0.9,0.9,0.9])
