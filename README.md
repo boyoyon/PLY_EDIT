@@ -260,5 +260,20 @@
 　<strong>merge</strong><br>
 　表示されている全メッシュを一個のメッシュにマージする。<br>
 </p>
+<p>
+<strong>　天板、底面、側面の色指定</strong><br>
+　天板・底面の表：SurfaceOuter xxx(0-255) xxx(0-255) xxx(0-255)<br>
+　天板・底面の裏：SurfaceInner xxx(0-255) xxx(0-255) xxx(0-255)<br>
+　側面の表　　　：LateralOuter xxx(0-255) xxx(0-255) xxx(0-255)<br>
+　側面の裏　　　：LateralInner xxx(0-255) xxx(0-255) xxx(0-255)<br>
+</p>
+<p>
+<strong>　螺旋の作成</strong><br>
+　polygon　(辺の数)　(サイズ) (高さ) (螺旋の高さ：一周毎の高さ)<br>
+　(例)  polygon 100 0.5 0.1 0.6 4<br>
+<img src="images/24.png"><br>
+　l data/pole.txt を実行して作成した pole.ply の表示結果<br>
+<img src="images/pole.gif"><br>
+</p>
 </body>
 </html>
