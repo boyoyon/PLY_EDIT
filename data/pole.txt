@@ -1,0 +1,13 @@
+d all
+LateralOuter 255 0 0
+LateralInner 255 230 230
+polygon 100 0.5 0.1 0.6 4
+save spiral_red.ply
+d all
+LateralOuter 0 0 255
+LateralInner 230 230 255
+polygon 100 0.5 0.1 0.6 4
+r 0 180 0
+save spiral_blue.ply
+l spiral_red.ply
+save pole.ply
