@@ -578,7 +578,7 @@ def main():
                     vis.add_geometry(_meshes[0])
                     meshes.append(_meshes[0])
 
-                    name0 = _name[0]
+                    name0 = _names[0]
                     name = '%s' % name0
                     no = 2
                     while name in names:
