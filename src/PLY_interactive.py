@@ -89,7 +89,6 @@ def main():
     print('%s rotates, scales and translates PLY' % argv[0])
     
     meshes = []
-    meshes_gray = []
     names = []
     mesh = None
     curr = 0
@@ -116,7 +115,6 @@ def main():
     
     axis = o3d.io.read_triangle_mesh(os.path.join(os.path.dirname(__file__), 'axisXYZ.ply'))
     meshes.append(axis)
-    meshes_gray.append(axis)
     
     vis.add_geometry(axis)
     
@@ -164,14 +162,11 @@ def main():
                         name = '%s' % name0
                         no = 2
                         while name in names:
-                            name = '%s_%d' % (name0, no)
+                            name = '%s(%d)' % (name0, no)
                             no += 1
                         names.append(name)
 
                         curr = len(meshes) - 1
-                        mesh_gray = copy.deepcopy(mesh)
-                        mesh_gray.paint_uniform_color([0.9,0.9,0.9])
-                        meshes_gray.append(mesh_gray)
         
                         vis.update_geometry(mesh)
     
@@ -193,7 +188,7 @@ def main():
                 else:
                     vis.add_geometry(axis)
                     
-                ctrl.set_front([0.5, 0.5, 0.5])
+                ctrl.set_front([0.5, 0.25, 0.5])
     
                 fAxis = not fAxis
     
@@ -253,6 +248,10 @@ def main():
     
                 print(names[curr])
     
+                fSelectedOnly = not fSelectedOnly
+                if fSelectedOnly and len(meshes) > 2:
+                    print('not selected meshes are hidden') 
+   
                 vis.clear_geometries()
               
                 start = 0
@@ -260,19 +259,15 @@ def main():
                     start = 1
      
                 for i in range(start, len(meshes)):
-                
-                    if i == curr:
+               
+                    if i == 0 or i == curr:
                         vis.add_geometry(meshes[i])
-                            
+    
                     else:
-                        if fSelectedOnly:
+                        if not fSelectedOnly:
                             vis.add_geometry(meshes[i])
-                        else:
-                            vis.add_geometry(meshes_gray[i])
-    
+
                 ctrl.set_front([0.5, 0.25, 0.5])
-    
-                fSelectedOnly = not fSelectedOnly
     
             elif cmds[0] == 'select':
     
@@ -314,7 +309,7 @@ def main():
                 ctrl.set_front([0.5, 0.25, 0.5])
     
             elif cmds[0][0] == 'd':
-    
+                
                 if len(meshes) > 1:
 
                     if len(cmds) > 1 and cmds[1] == 'all':
@@ -345,10 +340,10 @@ def main():
                         curr = len(meshes) - 1
     
                     ctrl.set_front([0.5, 0.25, 0.5])
-                
+                    
                 else:
                     print('unable to delete')
-    
+                   
             elif cmds[0] == 'r':
     
                 if len(cmds) < 4:
@@ -386,8 +381,6 @@ def main():
                                 accum += copy.deepcopy(meshes[curr])
                         
                             meshes[curr] = copy.deepcopy(accum)
-                            accum.paint_uniform_color([0.9,0.9,0.9])
-                            meshes_gray[curr] = copy.deepcopy(accum)
     
                             refresh(vis, meshes, fAxis)
                             ctrl.set_front([0.5, 0.25, 0.5])
@@ -428,8 +421,6 @@ def main():
                                 accum += copy.deepcopy(meshes[curr])
                             
                             meshes[curr] = copy.deepcopy(accum)
-                            accum.paint_uniform_color([0.9,0.9,0.9])
-                            meshes_gray[curr] = copy.deepcopy(accum)
         
                             refresh(vis, meshes, fAxis)
                             ctrl.set_front([0.5, 0.25, 0.5])
@@ -472,8 +463,6 @@ def main():
                                 accum += copy.deepcopy(meshes[curr])
                             
                             meshes[curr] = copy.deepcopy(accum)
-                            accum.paint_uniform_color([0.9,0.9,0.9])
-                            meshes_gray[curr] = copy.deepcopy(accum)
         
                             refresh(vis, meshes, fAxis)
                             ctrl.set_front([0.5, 0.25, 0.5])
@@ -552,8 +541,6 @@ def main():
                                 accum += copy.deepcopy(meshes[curr])
                             
                             meshes[curr] = copy.deepcopy(accum)
-                            accum.paint_uniform_color([0.9,0.9,0.9])
-                            meshes_gray[curr] = copy.deepcopy(accum)
         
                             refresh(vis, meshes, fAxis)
                             ctrl.set_front([0.5, 0.25, 0.5])
@@ -569,13 +556,16 @@ def main():
                         vis.add_geometry(_meshes[i])
     
                         meshes.append(_meshes[i])
-                        names.append(_names[i])
-                        mesh_gray = copy.deepcopy(_meshes[i])
-                        mesh_gray.paint_uniform_color([0.9,0.9,0.9])
-                        meshes_gray.append(mesh_gray)
-    
+
+                        name0 = _names[i]
+                        name = '%s' % name0
+                        no = 2
+                        while name in names:
+                            name = '%s(%d)' % (name0, no)
+                            no += 1
+                        names.append(name)
+
                     curr = len(meshes) - 1
-                    mesh_gray = copy.deepcopy(mesh)
                     ctrl.set_front([0.5, 0.25, 0.5])
                     vis.update_geometry(mesh)
     
@@ -587,13 +577,16 @@ def main():
     
                     vis.add_geometry(_meshes[0])
                     meshes.append(_meshes[0])
-                    names.append(_names[0])
-                    mesh_gray = copy.deepcopy(_meshes[0])
-                    mesh_gray.paint_uniform_color([0.9,0.9,0.9])
-                    meshes_gray.append(mesh_gray)
+
+                    name0 = _name[0]
+                    name = '%s' % name0
+                    no = 2
+                    while name in names:
+                        name = '%s(%d)' % (name0, no)
+                        no += 1
+                    names.append(name)
     
                     curr = len(meshes) - 1
-                    mesh_gray = copy.deepcopy(mesh)
                     ctrl.set_front([0.5, 0.25, 0.5])
                     vis.update_geometry(mesh)
     
@@ -602,14 +595,19 @@ def main():
                 if len(undo_mesh) > 0:
     
                     idx = undo_idx.pop()
-                    name = undo_name.pop()
+                    
                     mesh = undo_mesh.pop()
+                    meshes.append(mesh)
 
-                    if idx < len(meshes):
-                        meshes[idx] = copy.deepcopy(mesh)
-                    else:
-                        meshes.append(mesh)
-                        names.append(name)     
+                    name0 = undo_name.pop()
+                    name = '%s' % name0
+                    no = 2
+                    while name in names:
+                        name = '%s(%d)' % (name0, no)
+                        no += 1
+                    names.append(name)
+
+                    curr = len(meshes) - 1    
 
                     vis.update_geometry(meshes[idx])
                     refresh(vis, meshes, fAxis)
