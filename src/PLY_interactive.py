@@ -3,7 +3,7 @@ import numpy as np
 import threading
 import queue
 import copy, io, os, subprocess, sys
-from polygon import polygon
+from polygon import polygon, polyline
 from sphere import sphere
 
 LINES = []
@@ -109,6 +109,8 @@ def main():
     SurfaceInner = [200,200,255]
     LateralOuter = [128,128,255]
     LateralInner = [200,200,255]
+
+    Points = []
  
     input_queue = queue.Queue()
     
@@ -185,7 +187,12 @@ def main():
                         LINES.clear() 
                         for line in lines:
                             LINES.append(line)
-    
+   
+                    elif ext == '.npy':
+
+                        Points = []
+                        Points = np.load(cmds[1]).tolist()
+ 
             elif cmds[0] == 'axis':
     
                 if fAxis:
@@ -606,6 +613,48 @@ def main():
                     ctrl.set_front([0.5, 0.25, 0.5])
                     vis.update_geometry(mesh)
 
+            elif cmds[0] == 'polyline': # not closing
+
+                _meshes, _names = polyline(cmds, Points, False, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+
+                if len(_meshes) > 0:
+
+                    vis.add_geometry(_meshes[0])
+                    meshes.append(_meshes[0])
+
+                    name0 = _names[0]
+                    name = '%s' % name0
+                    no = 2
+                    while name in names:
+                        name = '%s(%d)' % (name0, no)
+                        no += 1
+                    names.append(name)
+                   
+                    curr = len(meshes) - 1
+                    ctrl.set_front([0.5, 0.25, 0.5])
+                    vis.update_geometry(mesh)
+
+            elif cmds[0] == 'POLYLINE': # closing
+
+                _meshes, _names = polyline(cmds, Points, True, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+
+                if len(_meshes) > 0:
+
+                    vis.add_geometry(_meshes[0])
+                    meshes.append(_meshes[0])
+
+                    name0 = _names[0]
+                    name = '%s' % name0
+                    no = 2
+                    while name in names:
+                        name = '%s(%d)' % (name0, no)
+                        no += 1
+                    names.append(name)
+                   
+                    curr = len(meshes) - 1
+                    ctrl.set_front([0.5, 0.25, 0.5])
+                    vis.update_geometry(mesh)
+
             elif cmds[0] == 'sphere':
 
                 _meshes, _names = sphere(cmds, LateralOuter, LateralInner)
@@ -725,6 +774,42 @@ def main():
 
                 else:
                     print('no meshes')
+            
+            elif cmds[0] == 'p':
+
+                if len(cmds) < 2:
+                    print('p: display current Points[]')
+                    print('p clear: clear Points[]')
+                    print('p xxxx xxxx xxxx: append the point to Points[]')
+                    print('l xxxx.npy: load points into Points[]')
+                    print('Points[]=',Points)
+                else:
+                    if cmds[1] == 'clear':
+                        Points.clear()
+                        print('Points[] is cleared')
+
+                    elif len(cmds)== 4:
+
+                        try:
+                            x = float(eval(cmds[1]))
+                        except NameError:
+                            print('error',cmds[1])
+                            continue
+
+                        try:
+                            y = float(eval(cmds[2]))
+                        except NameError:
+                            print('error',cmds[2])
+                            continue
+
+                        try:
+                            z = float(eval(cmds[3]))
+                        except NameError:
+                            print('error', cmds[3])
+                            continue
+
+                        Points.append((x, y, z))
+                        print('Points[]=', Points)
  
             elif cmds[0] == 'quit':
                 break

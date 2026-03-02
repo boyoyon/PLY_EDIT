@@ -20,11 +20,38 @@ def getInt3(str1, str2, str3):
 
     return (int1, int2, int3)
 
-def usage(cmds):
+def get_rotation_to_vector(target):
+
+    source = np.array([1, 0, 0], np.float64)
+
+    target = target / np.linalg.norm(target)
+
+    axis = np.cross(source, target)
+    axis_norm = np.linalg.norm(axis)
+
+    if axis_norm < 1e-10:
+        if np.dot(source, target):
+            return np.eye(3)
+        else:
+            return -np.eye(3)
+    
+    axis = axis / axis_norm
+    cos_theta = np.dot(source, target)
+    theta = np.arccos(np.clip(cos_theta, -1.0, 1.0))
+
+    return o3d.geometry.get_rotation_matrix_from_axis_angle(axis * theta)
+
+def usagePolygon(cmds):
     print('polygon <nr_of_edges(>=3)> [<size> <width>]')
-    print('negative width causes extruded polygon without side faces')
+    print('negative width causes extruded polygon without top/bottom surfaces')
     for i in range(len(cmds)):
         print('%s ' % cmds[i], end="")
+
+def usagePolyline(cmds):
+    print('polyline <nr_of_edges(>=3)> <size>')
+    for i in range(len(cmds)):
+        print('%s ' % cmds[i], end="")
+
 #
 # api
 #
@@ -35,13 +62,13 @@ def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,
     names = []
 
     if len(cmds) < 2:
-        usage(cmds)
+        usagePolygon(cmds)
         return meshes, names
 
     else:
         nr_divs = int(cmds[1])
         if nr_divs < 3:
-            usage(cmds)
+            usagePolygon(cmds)
             return meshes, names
 
         size = 1.0
@@ -50,7 +77,7 @@ def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,
             try:
                 size = float(eval(cmds[2]))
             except NameError:
-                usage(cmds)
+                usagePolygon(cmds)
                 return meshes, names
 
         width = 0
@@ -59,7 +86,7 @@ def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,
             try:
                 width = float(eval(cmds[3]))
             except NameError:
-                usage(cmds)
+                usagePolygon(cmds)
        
         delta = 0.0
 
@@ -67,7 +94,7 @@ def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,
             try:
                 delta = float(eval(cmds[4]))
             except NameError:
-                usage(cmds)
+                usagePolygon(cmds)
 
         count = 1
         
@@ -105,6 +132,53 @@ def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,
     
             if len(meshes) > 2:
                 names.append('polygon%d_bottom' % nr_divs)
+
+    return meshes, names
+
+def polyline(cmds, Points, fClose, SurfaceOuter = (128,128,255), SurfaceInner = (200,200,255), LateralOuter = (128, 128, 255) , LateralInner = (200,200,255)):
+
+    meshes = []
+    names = []
+
+    clonePoints = copy.deepcopy(Points)
+
+    if fClose:
+        clonePoints.append(clonePoints[0])
+
+    if len(cmds) < 2:
+        usagePolyline(cmds)
+        return meshes, names
+
+    else:
+        nr_divs = int(cmds[1])
+        if nr_divs < 3:
+            usagePolyline(cmds)
+            return meshes, names
+
+        size = 1.0
+
+        if len(cmds) > 2:
+            try:
+                size = float(eval(cmds[2]))
+            except NameError:
+                usagePolyline(cmds)
+                return meshes, names
+
+        if len(Points) < 1:
+            usagePolyline(cmds)
+            return meshes, names
+
+        _meshes = _polyiline(size, nr_divs, clonePoints, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+
+        for i in range(len(_meshes)):
+                
+            if i == 0:
+                accum = copy.deepcopy(_meshes[i])
+            else:
+                accum += copy.deepcopy(_meshes[i])
+
+        meshes.append(accum)
+        names.append('POLYLINE%d' % nr_divs)
 
     return meshes, names
 
@@ -238,5 +312,55 @@ def _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, Lat
             meshBottom.triangles = o3d.utility.Vector3iVector(triangles[:,[0,2,1]])
     
             meshes.append(meshBottom)
+
+    return meshes
+
+
+def _polyiline(size, nr_divs, points, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner):
+
+    meshes = []
+
+    # y軸向き
+    pipe0 = _polygon(nr_divs, size, 1, 0, 1, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)[0]
+
+    # x軸向きになるように回転
+    R = o3d.geometry.get_rotation_matrix_from_xyz((0, 0, np.pi/2)) 
+    pipe0.rotate(R, center=(0,0,0))
+
+    for i in range(1, len(points)):
+        A = np.array(points[i-1])
+        B = np.array(points[i])
+        M = (A + B) * 0.5  
+        
+        l = np.linalg.norm(B - A)
+    
+        S = np.array([[l, 0, 0, 0],
+                      [0, 1, 0, 0],
+                      [0, 0, 1, 0],
+                      [0, 0, 0, 1]],np.float64)
+   
+        pipe = copy.deepcopy(pipe0)
+ 
+        pipe.transform(S) 
+    
+        R = get_rotation_to_vector(B - A)
+
+        print(R)
+
+        pipe.rotate(R, center=(0,0,0))
+    
+        T = np.array([[1, 0, 0, M[0]],
+                      [0, 1, 0, M[1]],
+                      [0, 0, 1, M[2]],
+                      [0, 0, 0, 1]], np.float64)
+    
+        pipe.transform(T)
+
+        if i == 1:
+            accum = copy.deepcopy(pipe)
+        else:
+            accum += copy.deepcopy(pipe)
+
+    meshes.append(accum)
 
     return meshes
