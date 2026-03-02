@@ -353,7 +353,9 @@ def main():
     
                 if len(cmds) < 4:
                     print('specify angle_x(degree) angle_y(degree) angle_z(degree) [<count(>=2)>]')
-    
+                elif len(meshes) < 2:
+                    print('no mesh')
+                      
                 else:
     
                     fResult, values = getFloat3(cmds[1], cmds[2], cmds[3])
@@ -394,6 +396,9 @@ def main():
     
                 if len(cmds) < 4:
                     print('specify scalee_x scale_y scale_z [<count(>=2)>]')
+                
+                elif len(meshes) < 2:
+                    print('no mesh')
     
                 else:
     
@@ -434,6 +439,9 @@ def main():
     
                 if len(cmds) < 4:
                     print('specify offset_x offset_y offset_z [<count(>=2)>]')
+                
+                elif len(meshes) < 2:
+                    print('no mesh')
     
                 else:
     
@@ -476,7 +484,10 @@ def main():
     
                 if len(cmds) < 5:
                     print('specify group operation (ex. t xx xx xx r xx xx xx) [<count(>=2)>]')
-    
+   
+                elif len(meshes) < 2:
+                    print('no mesh')
+ 
                 else:
                     G = np.eye(4)
     
@@ -621,7 +632,10 @@ def main():
                 if len(undo_mesh) > 0:
     
                     idx = undo_idx.pop()
-                    
+                    vis.remove_geometry(meshes[idx])
+                    meshes.pop(idx)
+                    names.pop(idx)
+ 
                     mesh = undo_mesh.pop()
                     meshes.append(mesh)
 
@@ -673,6 +687,11 @@ def main():
             elif cmds[0] == 'centering':
 
                 if len(meshes) > 1:
+
+                    undo_idx.append(curr)
+                    undo_mesh.append(copy.deepcopy(meshes[curr]))
+                    undo_name.append(names[curr])
+
                     center = meshes[curr].get_center()
                     meshes[curr].translate(-center)
 
