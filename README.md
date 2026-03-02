@@ -299,6 +299,7 @@
 　　sphere (サイズ) [(分割数(25)) (緯度の開始角度(0)) (緯度の終了角度(180)) (経度の開始角度(0)) (経度の終了角度(360))]<br>
 　　(例) sphere 1 25 30 150 15 300<br>
  <img src="images/sphere.svg"><br>
+ <img src="images/nr_divs.svg"><br>
 </p>
 </body>
 </html>
