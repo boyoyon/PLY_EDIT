@@ -300,6 +300,38 @@
 　　(例) sphere 1 25 30 150 15 300<br>
  <img src="images/sphere.svg"><br>
  <img src="images/nr_divs.svg"><br>
+<br>
+<strong>　点列 (Points[]) への点の追加削除</strong><br>
+　　後で折れ線(polyline)や押し出し(extrude)で使うための点列に点を追加、削除する。<br>
+　　p　: Points[]を表示<br>
+　　p clear　：Points[]を殻にする<br>
+　　p (x座標) (y座標) (z座標)　：Points[]に点(x,y,z)を追加する<br>
+　　l ***.npy　：Points[]をクリアして***.npyを読み込む<br>
+<br>
+<strong>　折れ線接続</strong><br>
+　　点列 (Points[]) の点をパイプでつなぐ。<br>
+　　polyline (パイプの画数) (パイプの直径) <br>
+　　(例)<br>
+　　　l f.txt　･･･　F字の頂点情報を読み込む<br>
+　　　polyline 5 0.02　･･･　終点と始点はつながない<br>
+　　　t 0.2 0.2 0　･･･ 終点, 始点が見えないので平行移動して座標軸から離す<br>
+　　　d　･･･　削除<br>
+　　　POLYLINE 5 0.02　･･･　終点と始点をつなぐ<br>
+　　　t 0.2 0.2 0　･･･ 終点, 始点が見えないので平行移動して座標軸から離す<br>
+<img src="images/polyline1.svg"><br>
+　　ジョイント処理していないので、パイプの繋ぎめには(まだ)穴が開いている。<br>
+<img src="images/polyline2.png"><br>
+<br>
+　　(例)<br>
+　　　カオスの軌道情報を読み込んで折れ線接続する。<br>
+　　　l data\chaos_trajectory.npy　･･･　カオスの軌道情報を読み込む<br>
+　　　polyline 5 0.02<br>
+　　　s 0.05 0.05 0.05　･･･　大きすぎるので縮小する<br>
+　　　axis<br>
+　　　axis　・・・表示倍率を合わせるため座標軸を消して再表示する<br>
+<img src="images/polyline3.png"><br>
+<img src="images/polyline4.png"><br>
+　　　
 </p>
 </body>
 </html>
