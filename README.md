@@ -274,6 +274,31 @@
 <img src="images/24.png"><br>
 　l data/pole.txt を実行して作成した pole.ply の表示結果<br>
 <img src="images/pole.gif"><br>
+<strong>　情報表示</strong><br>
+　　i<br>
+　メッシュのx軸, y軸, z軸の幅, min, maxを表示する。<br>
+　(例)<br>
+　　x　4.799944　-2.399972　-　2.399972<br>
+　　y　4.666745　-2.333372　-　2.333372<br>
+　　z　4.874035　-2.437017　-　2.437017<br>
+<br>
+<strong>　センタリング</strong><br>
+　　centering<br>
+　　選択されているメッシュの重心が原点に位置するように平行移動する。<br>
+　　(全メッシュをセンタリングしたい場合は merge → centering )<br>
+　　(例)<br>
+<img src="images/centering.svg"><br>
+<br>
+<strong>　法線の計算/削除</strong><br>
+　normals<br>
+　法線の計算/削除をトグルする。<br>
+　Open3D Visualizer画面で Lキー(Lighting)を押下すると、Lighting on/off をドグルする。<br>
+<img src="images/normals.svg"><br>
+<br>
+<strong>　球の生成</strong><br>
+　　sphere (サイズ) [(分割数(25)) (緯度の開始角度(0)) (緯度の終了角度(180)) (経度の開始角度(0)) (経度の終了角度(360))]<br>
+　　(例) sphere 1 25 30 150 15 300<br>
+ <img src="images/sphere.svg"><br>
 </p>
 </body>
 </html>
