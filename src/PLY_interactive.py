@@ -4,6 +4,7 @@ import threading
 import queue
 import copy, io, os, subprocess, sys
 from polygon import polygon
+from sphere import sphere
 
 LINES = []
 input_queue = None
@@ -39,17 +40,21 @@ def show_menu():
 
     print('コマンドを入力してください')
     print('show menu            : m[enu]')
-    print('load ply             : l[oad] <ply>')
-    print('delete selected ply  : d[el]')
+    print('load ply             : l <.ply>')
+    print('load script          : l <.txt>')
+    print('create polygon       : polygon <no. of edges> <size> <height>')
+    print('delete selected ply  : d')
     print('set rotate matrix:   : r <angle_x(degree) <angle_y(degree)> <angle_z(degree)>')
     print('set scale matirx:    : s <scale_x> <scale_y> <scale_z>')
     print('set translate matrix : t <offset_x> <offset_y> <offset_z>')
     print('paint with color     : c <r(0-255)> <g(0-255) <b(0-255)>')
     print('undo                 : u')
     print('on/off selected mesh : selected')
-    print('on/off axis          : a[xis]')
+    print('on/off axis          : axis')
+    print('calc/clear normals   : normals')
+    print('centerling mesh      : centering')
     print('save ply             : save <ply filename>')
-    print('terminate program    : q[uit]') 
+    print('terminate program    : quit') 
     print()
 
 def getFloat3(str0, str1, str2):
@@ -124,7 +129,7 @@ def main():
     show_menu()
     
     LINES = []
-    
+
     while True:
     
         try:
@@ -589,6 +594,27 @@ def main():
                     curr = len(meshes) - 1
                     ctrl.set_front([0.5, 0.25, 0.5])
                     vis.update_geometry(mesh)
+
+            elif cmds[0] == 'sphere':
+
+                _meshes, _names = sphere(cmds, LateralOuter, LateralInner)
+
+                if len(_meshes) > 0:
+
+                    vis.add_geometry(_meshes[0])
+                    meshes.append(_meshes[0])
+
+                    name0 = _names[0]
+                    name = '%s' % name0
+                    no = 2
+                    while name in names:
+                        name = '%s(%d)' % (name0, no)
+                        no += 1
+                    names.append(name)
+                    
+                    curr = len(meshes) - 1
+                    ctrl.set_front([0.5, 0.25, 0.5])
+                    vis.update_geometry(mesh)
     
             elif cmds[0][0] == 'u':
     
@@ -629,7 +655,58 @@ def main():
                     print('save %s' % cmds[1])
                 else:
                     print('no meshes to be saved')
-   
+  
+            elif cmds[0] == 'normals':
+
+                if len(meshes) > 1:
+
+                    if meshes[curr].has_vertex_normals():
+                        print('clear normals')
+                        meshes[curr].vertex_normals = o3d.utility.Vector3dVector([])
+                    else:
+                        print('calculate normals')
+                        meshes[curr].compute_vertex_normals()
+
+                else:
+                    print('no meshes to be calculated normals')
+
+            elif cmds[0] == 'centering':
+
+                if len(meshes) > 1:
+                    center = meshes[curr].get_center()
+                    meshes[curr].translate(-center)
+
+                    vis.update_geometry(meshes[curr])
+
+                else:
+                    print('no meshes to be centering')
+
+            elif cmds[0] == 'i':
+
+                if len(meshes) > 1:
+                    vertices = np.array(meshes[curr].vertices)
+                    xmin = np.min(vertices[:,0])
+                    xmax = np.max(vertices[:,0])
+                    xwidth = xmax - xmin
+
+                    print('axis, width, tmin - tmax')
+                    print('x\t%f\t%f\t-\t%f' % (xwidth, xmin, xmax))
+
+                    ymin = np.min(vertices[:,1])
+                    ymax = np.max(vertices[:,1])
+                    ywidth = ymax - ymin
+
+                    print('y\t%f\t%f\t-\t%f' % (ywidth, ymin, ymax))
+
+                    zmin = np.min(vertices[:,2])
+                    zmax = np.max(vertices[:,2])
+                    zwidth = zmax - zmin
+
+                    print('z\t%f\t%f\t-\t%f' % (zwidth, zmin, zmax))
+
+                else:
+                    print('no meshes')
+ 
             elif cmds[0] == 'quit':
                 break
     
