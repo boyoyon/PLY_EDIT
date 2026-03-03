@@ -142,14 +142,12 @@ def polyline(cmds, Points, fClose, SurfaceOuter = (128,128,255), SurfaceInner = 
 
     clonePoints = copy.deepcopy(Points)
 
-    if fClose:
-        clonePoints.append(clonePoints[0])
-
     if len(cmds) < 2:
         usagePolyline(cmds)
         return meshes, names
 
     else:
+
         nr_divs = int(cmds[1])
         if nr_divs < 3:
             usagePolyline(cmds)
@@ -167,6 +165,9 @@ def polyline(cmds, Points, fClose, SurfaceOuter = (128,128,255), SurfaceInner = 
         if len(Points) < 1:
             usagePolyline(cmds)
             return meshes, names
+
+        if fClose:
+            clonePoints.append(clonePoints[0])
 
         _meshes = _polyiline(size, nr_divs, clonePoints, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
 
