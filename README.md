@@ -331,7 +331,20 @@
 　　　axis　・・・表示倍率を合わせるため座標軸を消して再表示する<br>
 <img src="images/polyline3.png"><br>
 <img src="images/polyline4.png"><br>
-　　　
+<br>
+<strong>　メッシュの配置</strong><br>
+　　Points[]の点にメッシュを配置する。<br>
+　　distribute<br>
+　　(例)<br>
+　　　折れ線接続のジョイントとして球を配置する。<br>
+　　　shpere 0.02　･･･　ジョイントとなる球を生成。座標軸に隠れて見えない<br>
+　　　save sphere002.ply　･･･　一旦セーブ<br>
+　　　l data\F.txt　･･･　「F」の頂点座標をロード<br>
+　　　POLYLINE 25 0.02　･･･　「F」の折れ線作成<br>
+　　　distribute sphere002.ply　･･･　頂点に球を配置<br>
+　　　merge　･･･　折れ線とジョイントをマージ<br>
+　　　t 0.2 0.2 0　･･･　座標軸から離す<br>
+<img src="images/distribute.png"><br>
 </p>
 </body>
 
