@@ -46,11 +46,13 @@ def usagePolygon(cmds):
     print('negative width causes extruded polygon without top/bottom surfaces')
     for i in range(len(cmds)):
         print('%s ' % cmds[i], end="")
+    print()
 
 def usagePolyline(cmds):
     print('polyline <nr_of_edges(>=3)> <size>')
     for i in range(len(cmds)):
         print('%s ' % cmds[i], end="")
+    print()
 
 #
 # api
@@ -345,8 +347,6 @@ def _polyiline(size, nr_divs, points, SurfaceOuter, SurfaceInner, LateralOuter, 
         pipe.transform(S) 
     
         R = get_rotation_to_vector(B - A)
-
-        print(R)
 
         pipe.rotate(R, center=(0,0,0))
     

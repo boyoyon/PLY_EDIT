@@ -83,7 +83,15 @@ def getFloat3(str0, str1, str2):
                 fResult = False
 
     return fResult, values
-         
+
+def update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh):
+
+    if len(meshes) > 1: # meshes[0]: axisXYZ
+    
+        undo_idx.append(curr)
+        undo_mesh.append(copy.deepcopy(meshes[curr]))
+        undo_name.append(names[curr])
+
 def main():
 
     global input_queue, LINES
@@ -147,7 +155,7 @@ def main():
     
                 show_menu()
     
-            elif cmds[0][0] == 'l':
+            elif cmds[0] == 'l':
     
                 if len(cmds) < 2:
                     print('file is not specified. skip...')
@@ -205,7 +213,11 @@ def main():
                 fAxis = not fAxis
     
             elif cmds[0] == 'c':
-    
+  
+                if len(meshes) < 2:
+                    print('no meshes to be processed')
+                    continue
+ 
                 if len(cmds) != 4:
                     print('specify red(0-255) green(0-255) blue(0-255)')
                 else:
@@ -213,9 +225,7 @@ def main():
                     green = int(cmds[2]) / 255
                     blue = int(cmds[3]) / 255
     
-                    undo_idx.append(curr)
-                    undo_mesh.append(copy.deepcopy(meshes[curr]))
-                    undo_name.append(names[curr])
+                    update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
  
                     meshes[curr].paint_uniform_color([red, green, blue])
                     vis.update_geometry(meshes[curr])
@@ -320,7 +330,7 @@ def main():
  
                 ctrl.set_front([0.5, 0.25, 0.5])
     
-            elif cmds[0][0] == 'd':
+            elif cmds[0] == 'd':
                 
                 if len(meshes) > 1:
 
@@ -343,12 +353,9 @@ def main():
 
                         vis.remove_geometry(meshes[curr])
    
-                        undo_idx.append(curr)
-                        undo_mesh.append(copy.deepcopy(meshes[curr]))
-                        undo_name.append(names[curr])
+                        update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
                         meshes.pop(curr)
                         names.pop(curr)
-
                         curr = len(meshes) - 1
     
                     ctrl.set_front([0.5, 0.25, 0.5])
@@ -379,9 +386,7 @@ def main():
                         if len(cmds) > 4:
                             count = int(cmds[4])
     
-                        undo_idx.append(curr)
-                        undo_mesh.append(copy.deepcopy(meshes[curr]))
-                        undo_name.append(names[curr])
+                        update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
     
                         if count < 2:
                             meshes[curr].rotate(R, center=(0,0,0))
@@ -423,9 +428,7 @@ def main():
                         if len(cmds) > 4:
                             count = int(cmds[4])
         
-                        undo_idx.append(curr)
-                        undo_mesh.append(copy.deepcopy(meshes[curr]))
-                        undo_name.append(names[curr])
+                        update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
         
                         if count < 2:
                             meshes[curr].transform(S)
@@ -467,9 +470,7 @@ def main():
                         if len(cmds) > 4:
                             count = int(cmds[4])
         
-                        undo_idx.append(curr)
-                        undo_mesh.append(copy.deepcopy(meshes[curr]))
-                        undo_name.append(names[curr])
+                        update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
  
                         if count < 2:
                             meshes[curr].transform(T)
@@ -548,9 +549,7 @@ def main():
                         if len(cmds) - idx > 0:
                             count = int(cmds[idx])
         
-                        undo_idx.append(curr)
-                        undo_mesh.append(copy.deepcopy(meshes[curr]))
-                        undo_name.append(names[curr])
+                        update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
  
                         if count < 2:
                             meshes[curr].transform(G)
@@ -574,6 +573,8 @@ def main():
     
                 if len(_meshes) > 0:
     
+                    update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+
                     for i in range(len(_meshes)):
     
                         vis.add_geometry(_meshes[i])
@@ -598,6 +599,8 @@ def main():
     
                 if len(_meshes) > 0:
     
+                    update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+                    
                     vis.add_geometry(_meshes[0])
                     meshes.append(_meshes[0])
 
@@ -613,32 +616,17 @@ def main():
                     ctrl.set_front([0.5, 0.25, 0.5])
                     vis.update_geometry(mesh)
 
-            elif cmds[0] == 'polyline': # not closing
+            elif cmds[0] == 'polyline' or cmds[0] == 'POLYLINE': 
 
-                _meshes, _names = polyline(cmds, Points, False, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+                if cmds[0] == 'polyline': # open path
+                    _meshes, _names = polyline(cmds, Points, False, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
 
-                if len(_meshes) > 0:
-
-                    vis.add_geometry(_meshes[0])
-                    meshes.append(_meshes[0])
-
-                    name0 = _names[0]
-                    name = '%s' % name0
-                    no = 2
-                    while name in names:
-                        name = '%s(%d)' % (name0, no)
-                        no += 1
-                    names.append(name)
-                   
-                    curr = len(meshes) - 1
-                    ctrl.set_front([0.5, 0.25, 0.5])
-                    vis.update_geometry(mesh)
-
-            elif cmds[0] == 'POLYLINE': # closing
-
-                _meshes, _names = polyline(cmds, Points, True, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+                else: # closed path
+                    _meshes, _names = polyline(cmds, Points, True, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
 
                 if len(_meshes) > 0:
+
+                    update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
 
                     vis.add_geometry(_meshes[0])
                     meshes.append(_meshes[0])
@@ -661,6 +649,8 @@ def main():
 
                 if len(_meshes) > 0:
 
+                    update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+                    
                     vis.add_geometry(_meshes[0])
                     meshes.append(_meshes[0])
 
@@ -676,14 +666,15 @@ def main():
                     ctrl.set_front([0.5, 0.25, 0.5])
                     vis.update_geometry(mesh)
     
-            elif cmds[0][0] == 'u':
+            elif cmds[0] == 'u':
     
                 if len(undo_mesh) > 0:
     
                     idx = undo_idx.pop()
-                    vis.remove_geometry(meshes[idx])
-                    meshes.pop(idx)
-                    names.pop(idx)
+                    if idx < len(meshes):
+                        vis.remove_geometry(meshes[idx])
+                        meshes.pop(idx)
+                        names.pop(idx)
  
                     mesh = undo_mesh.pop()
                     meshes.append(mesh)
@@ -700,7 +691,7 @@ def main():
 
                     vis.update_geometry(meshes[idx])
                     refresh(vis, meshes, fAxis)
-                    ctrl.set_front([0.5, 0.5, 0.5])
+                    ctrl.set_front([0.5, 0.25, 0.5])
     
                 else:
                     print('undo buffer is empty')
@@ -737,9 +728,7 @@ def main():
 
                 if len(meshes) > 1:
 
-                    undo_idx.append(curr)
-                    undo_mesh.append(copy.deepcopy(meshes[curr]))
-                    undo_name.append(names[curr])
+                    update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
 
                     center = meshes[curr].get_center()
                     meshes[curr].translate(-center)
@@ -810,7 +799,54 @@ def main():
 
                         Points.append((x, y, z))
                         print('Points[]=', Points)
+
+            elif cmds[0] == 'distribute':
+
+                if len(Points) < 1:
+                    print('Points[] is empty')
+
+                elif len(cmds) > 1:
+
+                    filename, ext = os.path.splitext(cmds[1])
+
+                    if ext == '.ply':
+
+                        mesh = o3d.io.read_triangle_mesh(cmds[1])           
+
+                        for i, p in enumerate(Points):
+                            _mesh = copy.deepcopy(mesh)
+    
+                            T = np.array([[1, 0, 0, p[0]],
+                                          [0, 1, 0, p[1]],
+                                          [0, 0, 1, p[2]],
+                                          [0, 0, 0, 1]], np.float64)
+    
+                            _mesh.transform(T)
+                            
+                            if i == 0:
+                                accum = copy.deepcopy(_mesh)
+                            else:
+                                accum += copy.deepcopy(_mesh)
+  
+                    update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
  
+                    meshes.append(accum)
+                    
+                    no = 2
+                    name = '%s' % filename
+                    while name in names:
+                        name = '%s(%d)' % (filename, no)
+                        no += 1
+    
+                    names.append(name)
+                    curr = len(meshes) - 1
+                    vis.add_geometry(meshes[curr])
+                    ctrl.set_front([0.5, 0.25, 0.5])
+
+                else:
+                    print('distribute <ply>')
+                    print('distribute ply to the places specidied by Points[]') 
+
             elif cmds[0] == 'quit':
                 break
     
