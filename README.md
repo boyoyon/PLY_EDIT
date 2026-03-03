@@ -345,6 +345,22 @@
 　　　merge　･･･　折れ線とジョイントをマージ<br>
 　　　t 0.2 0.2 0　･･･　座標軸から離す<br>
 <img src="images/distribute.png"><br>
+<br>
+<strong>　画像から輪郭抽出(別プログラム)</strong><br>
+　　2値画像に近い画像から輪郭を抽出する。<br>
+　　python src/img2contour.py (画像ファイル) [(許容誤差)]<br>
+<img src="images/img2contour.svg"><br>    
+　　(例)<br>
+　　(コマンドプロンプトで以下を実行)<br>
+　　　python src/img2contour.py data/x.png<br>
+<br>
+　　(以降は PLY_interactive のコンソールで実行)<br>
+　　　sphere 0.01　･･･　ジョイント用の球を生成<br>
+　　　save sphere001.ply　･･･　一旦セーブ<br>
+　　　l x_contour.npy　･･･　輪郭データをロード<br>
+　　　POLYLINE 25 0.01　･･･　輪郭を折れ線でつなぐ<br>
+　　　distribute sphere001.ply　･･･　ジョイントを配置<br>
+<img src="images/img2contour.png"><br>  
 </p>
 </body>
 
