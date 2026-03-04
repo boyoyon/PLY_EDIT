@@ -9,6 +9,19 @@ from sphere import sphere
 LINES = []
 input_queue = None
 
+meshes = []
+curr = 0
+
+KEY_LEFT  = 263
+KEY_RIGHT = 262
+KEY_UP    = 265
+KEY_DOWN  = 264
+
+angle_step = np.pi / 180
+translation_step = 0.005
+scale_up = 1.1
+scale_down = 0.9
+
 def input_thread():
 
     while True:
@@ -36,25 +49,296 @@ def refresh(vis, meshes, fAxis):
     for i in range(start, len(meshes)):
         vis.add_geometry(meshes[i])           
 
+def key_callback_d(vis, action, mod):
+    pass # supress depth capture
+
+def key_callback_p(vis, action, mod):
+    pass # supress screen capture
+
+def key_callback_updown_angle_step(vis, action, mods):
+
+    global angle_step, translation_step
+
+    shift_pressed = (mods & 0x1) != 0
+    ctrl_pressed = (mods & 0x2) != 0
+
+    if shift_pressed:
+
+        if ctrl_pressed:
+            
+            angle_step *= 1.5
+
+        else:
+
+            angle_step *= 1.1
+    else:
+
+        if ctrl_pressed:
+            
+            angle_step *= 0.5
+
+        else:
+
+            angle_step *= 0.9
+
+    return True
+
+def key_callback_updown_translation_step(vis, action, mods):
+
+    global angle_step, translation_step
+
+    shift_pressed = (mods & 0x1) != 0
+    ctrl_pressed = (mods & 0x2) != 0
+
+    #if action == 1: # on pressing
+
+    if shift_pressed:
+
+        if ctrl_pressed:
+            
+            translation_step *= 1.5
+
+        else:
+
+            translation_step *= 1.1
+    else:
+
+        if ctrl_pressed:
+            
+            translation_step *= 0.5
+
+        else:
+
+            translation_step *= 0.9
+
+    return True
+
+def key_callback_1(vis, action, mods):
+
+    if curr > 0:
+
+        shift_pressed = (mods & 0x1) != 0
+        ctrl_pressed = (mods & 0x2) != 0
+    
+        if shift_pressed:
+            angle = -angle_step
+        else:
+            angle = angle_step
+    
+        if ctrl_pressed:
+            angle *= 10
+    
+        rotation = np.array([[np.cos(angle), 0, np.sin(angle), 0],
+            [0, 1, 0, 0],
+            [-np.sin(angle), 0, np.cos(angle), 0],
+            [0, 0, 0, 1]])
+    
+        transform = rotation #@ transform
+        meshes[curr].transform(transform)
+
+    return True
+
+def key_callback_2(vis, action, mods):
+
+    if curr > 0:
+
+        shift_pressed = (mods & 0x1) != 0
+        ctrl_pressed = (mods & 0x2) != 0
+    
+        #if action == 1: # on pressing
+    
+        if shift_pressed:
+            angle = -angle_step
+        else:
+            angle = angle_step
+    
+        if ctrl_pressed:
+            angle *= 10
+    
+        rotation = np.array([[1, 0, 0, 0],
+            [0, np.cos(angle), -np.sin(angle), 0],
+            [0, np.sin(angle), np.cos(angle), 0],
+            [0, 0, 0, 1]])
+    
+        transform = rotation #@ transform
+        meshes[curr].transform(transform)
+
+    return True
+
+def key_callback_3(vis, action, mods):
+
+    if curr > 0:
+
+        shift_pressed = (mods & 0x1) != 0
+        ctrl_pressed = (mods & 0x2) != 0
+    
+        #if action == 1: # on pressing
+    
+        if shift_pressed:
+            angle = -angle_step
+        else:
+            angle = angle_step
+    
+        if ctrl_pressed:
+            angle *= 10
+    
+        rotation = np.array([[np.cos(angle), -np.sin(angle), 0, 0],
+            [np.sin(angle), np.cos(angle), 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]])
+    
+        transform = rotation #@ transform
+        meshes[curr].transform(transform)
+
+    return True
+
+def key_callback_4(vis, action, mods):
+
+    if curr > 0:
+
+        shift_pressed = (mods & 0x1) != 0
+        ctrl_pressed = (mods & 0x2) != 0
+    
+        #if action == 1: # on pressing
+    
+        if shift_pressed:
+            offset = -translation_step
+        else:
+            offset = translation_step
+    
+        if ctrl_pressed:
+            offset *= 10
+    
+        translate = np.array([[1, 0, 0, offset],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]])
+    
+        transform = translate
+        meshes[curr].transform(transform)
+
+    return True
+
+def key_callback_5(vis, action, mods):
+
+    if curr > 0:
+
+        shift_pressed = (mods & 0x1) != 0
+        ctrl_pressed = (mods & 0x2) != 0
+    
+        #if action == 1: # on pressing
+    
+        if shift_pressed:
+            offset = -translation_step
+        else:
+            offset = translation_step
+    
+        if ctrl_pressed:
+            offset *= 10
+    
+        translate = np.array([[1, 0, 0, 0],
+            [0, 1, 0, offset],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]])
+    
+        transform = translate
+        meshes[curr].transform(transform)
+
+    return True
+
+def key_callback_6(vis, action, mods):
+
+    if curr > 0:
+
+        shift_pressed = (mods & 0x1) != 0
+        ctrl_pressed = (mods & 0x2) != 0
+
+        if shift_pressed:
+            offset = -translation_step
+        else:
+            offset = translation_step
+    
+        if ctrl_pressed:
+            offset *= 10
+    
+        translate = np.array([[1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1, offset],
+            [0, 0, 0, 1]])
+    
+        transform = translate
+        meshes[curr].transform(transform)
+
+    return True
+
+def key_callback_reset_step(vis, action, mod):
+
+    global angle_step, translation_step, scale
+
+    angle_step = np.pi / 180
+    translation_step = 0.005
+    scale_up = 1.3
+    scale_down = 0.7
+
+    return True
+    
+def key_callback_scale_up(vis, action, mod):
+
+    if curr > 0 and action == 1: # on pressing
+    
+        scale = np.array([
+            [scale_up, 0,        0,        0],
+            [0,        scale_up, 0,        0],
+            [0,        0,        scale_up, 0],
+            [0,        0,        0,        1]])
+
+        transform = scale
+        meshes[curr].transform(transform)
+
+        center = meshes[curr].get_center()
+        meshes[curr].translate(-center)
+    
+    return True
+
+
+def key_callback_scale_down(vis, action, mod):
+
+    if curr > 0 and action == 1: # on pressing
+
+        scale = np.array([
+            [scale_down, 0,          0,          0],
+            [0,          scale_down, 0,          0],
+            [0,          0,          scale_down, 0],
+            [0,          0,          0,          1]])
+
+        transform = scale
+        meshes[curr].transform(transform)
+
+        center = meshes[curr].get_center()
+        meshes[curr].translate(-center)
+    
+    return True
+
 def show_menu():
 
     print('コマンドを入力してください')
-    print('show menu            : m[enu]')
-    print('load ply             : l <.ply>')
-    print('load script          : l <.txt>')
+    print('calc/clear normals   : normals')
+    print('capture screen       : cap')
+    print('centerling mesh      : centering')
     print('create polygon       : polygon <no. of edges> <size> <height>')
     print('delete selected ply  : d')
-    print('set rotate matrix:   : r <angle_x(degree) <angle_y(degree)> <angle_z(degree)>')
-    print('set scale matirx:    : s <scale_x> <scale_y> <scale_z>')
-    print('set translate matrix : t <offset_x> <offset_y> <offset_z>')
-    print('paint with color     : c <r(0-255)> <g(0-255) <b(0-255)>')
-    print('undo                 : u')
+    print('load ply             : l <.ply>')
+    print('load script          : l <.txt>')
     print('on/off selected mesh : selected')
     print('on/off axis          : axis')
-    print('calc/clear normals   : normals')
-    print('centerling mesh      : centering')
+    print('paint with color     : c <r(0-255)> <g(0-255) <b(0-255)>')
+    print('rotate mesh          : r <angle_x(degree) <angle_y(degree)> <angle_z(degree)> [<count>]')
     print('save ply             : save <ply filename>')
+    print('scale mesh           : s <scale_x> <scale_y> <scale_z> [<count>]')
+    print('show menu            : menu')
     print('terminate program    : quit') 
+    print('translate mesh       : t <offset_x> <offset_y> <offset_z> [<count>]')
+    print('undo                 : u')
     print()
 
 def getFloat3(str0, str1, str2):
@@ -94,17 +378,17 @@ def update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh):
 
 def main():
 
-    global input_queue, LINES
+    global input_queue, LINES, meshes, curr
                
     argv = sys.argv
     argc = len(argv)
     
-    print('%s rotates, scales and translates PLY' % argv[0])
+    print('%s creates and edits meshes' % argv[0])
     
-    meshes = []
+    #meshes = []
     names = []
     mesh = None
-    curr = 0
+    #curr = 0
     names.append('')
     fSelectedOnly = False
     fAxis = True
@@ -119,13 +403,32 @@ def main():
     LateralInner = [200,200,255]
 
     Points = []
+    
+    EyePos = None    
  
     input_queue = queue.Queue()
     
     threading.Thread(target=input_thread, daemon=True).start()
     
     # 可視化の準備
-    vis = o3d.visualization.Visualizer()
+    #vis = o3d.visualization.Visualizer()
+    vis = o3d.visualization.VisualizerWithKeyCallback()
+
+    vis.register_key_action_callback(ord('D'), key_callback_d)
+    vis.register_key_action_callback(ord('P'), key_callback_p)
+
+    vis.register_key_action_callback(ord("0"), key_callback_reset_step)
+    vis.register_key_action_callback(ord("1"), key_callback_1)
+    vis.register_key_action_callback(ord("2"), key_callback_2)
+    vis.register_key_action_callback(ord("3"), key_callback_3)
+    vis.register_key_action_callback(ord("4"), key_callback_4)
+    vis.register_key_action_callback(ord("5"), key_callback_5)
+    vis.register_key_action_callback(ord("6"), key_callback_6)
+    vis.register_key_action_callback(ord("7"), key_callback_updown_angle_step)
+    vis.register_key_action_callback(ord("8"), key_callback_updown_translation_step)
+    vis.register_key_action_callback(KEY_UP, key_callback_scale_up)
+    vis.register_key_action_callback(KEY_DOWN, key_callback_scale_down)
+
     vis.create_window(window_name='PLY Edit interactivelly', width=800, height=600)
     
     axis = o3d.io.read_triangle_mesh(os.path.join(os.path.dirname(__file__), 'axisXYZ.ply'))
@@ -137,6 +440,7 @@ def main():
     ctrl.set_front([0.5, 0.25, 0.5])
     
     show_menu()
+    screenNo = 1
     
     LINES = []
 
@@ -846,6 +1150,43 @@ def main():
                 else:
                     print('distribute <ply>')
                     print('distribute ply to the places specidied by Points[]') 
+
+            elif cmds[0] == 'cap':
+
+                dst_path = 'screen.png'
+
+                if len(cmds) < 2:
+                    dst_path = '%04d.png' % screenNo
+                else:
+                    filename, ext = os.path.splitext(cmds[1])
+
+                    if ext == '':
+                        ext = '.png'
+
+                    dst_path = '%s%s' % (filename, ext)
+                    no = 1
+
+                while os.path.exists(dst_path):
+
+                    if len(cmds) < 2:
+                        screenNo += 1
+                        dst_path = '%04d.png' % screenNo
+
+                    else:
+                        no += 1
+                        dst_path = '%s(%d)%s' % (filename, no, ext)
+
+                vis.capture_screen_image(dst_path)
+                print('save %s' % dst_path)
+
+            elif cmds[0] == 'getEyePos':
+
+                EyePos = ctrl.convert_to_pinhole_camera_parameters() 
+
+            elif cmds[0] == 'setEyePos':
+
+                if EyePos is not None:
+                    ctrl.convert_from_pinhole_camera_parameters(EyePos)
 
             elif cmds[0] == 'quit':
                 break
