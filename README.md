@@ -348,19 +348,56 @@
 <br>
 <strong>　画像から輪郭抽出(別プログラム)</strong><br>
 　　2値画像に近い画像から輪郭を抽出する。<br>
-　　python src/img2contour.py (画像ファイル) [(許容誤差)]<br>
-<img src="images/img2contour.svg"><br>    
+<img src="images/img2mesh.svg"><br>    
+
+　　<strong><span style="color:red;">pip install mapbox_earcut</span></strong><br>
+
+　　python src/img2mesh.py (画像ファイル) [(許容誤差)]<br>
+
 　　(例)<br>
 　　(コマンドプロンプトで以下を実行)<br>
 　　　python src/img2contour.py data/x.png<br>
 <br>
 　　(以降は PLY_interactive のコンソールで実行)<br>
-　　　sphere 0.01　･･･　ジョイント用の球を生成<br>
-　　　save sphere001.ply　･･･　一旦セーブ<br>
-　　　l x_contour.npy　･･･　輪郭データをロード<br>
-　　　POLYLINE 25 0.01　･･･　輪郭を折れ線でつなぐ<br>
-　　　distribute sphere001.ply　･･･　ジョイントを配置<br>
-<img src="images/img2contour.png"><br>  
+　　　<strong>裏側の作成</strong><br>
+　　　　l x_front.ply ･･･　表メッシュ(画像的には裏)ロード<br>
+　　　　c 200 200 255　･･･　薄い青に設定<br>
+　　　　l x_back.ply　･･･　裏メッシュ(画像的には表)ロード<br>
+　　　　　　　　　　　　　視点を変えないと見えない<br>
+　　　　c 0 0 255　･･･　濃い青に設定<br>
+　　　　save x1.ply　･･･　一旦セーブ<br>
+<br>
+　　　　d all　･･･　念のため余計なものを消して作業を続ける<br>
+<br>
+　　　<strong>表側の作成</strong><br>
+　　　　l x_back.ply　･･･　裏メッシュ(画像的には表)ロード<br>
+　　　　　　　　　　　　　<strong>注意</strong>: 視点を変えないと見えない<br>
+　　　　c 0 0 255　･･･　濃い青に設定<br>
+　　　　save x2.ply　･･･　一旦セーブ<br>
+<br>
+　　　　d all　･･･　念のため余計なものを消して作業を続ける<br>
+<br>
+　　　<strong>ジョイントのボール作成</strong><br>
+　　　　sphere 0.01　･･･　半径 0.01 の球を生成<br>
+　　　　　　　　　　　　　半径は後で POLYLINE で指定するサイズを選ぶ<br>
+　　　　save sphere001.ply　･･･　一旦セーブ<br>
+<br>
+<br>
+　　　　d all　･･･　念のため余計なものを消して作業を続ける<br>
+<br>
+　　　<strong>輪郭の作成</strong><br>
+　　　　l x_contour.npy　･･･　輪郭データをロード<br>
+　　　　POLYLINE 25 0.01　･･･　輪郭を折れ線でつなぐ<br>
+　　　　distribute sphere001.ply　･･･　ジョイントを配置<br>
+<br>
+　　　<strong>合成</strong><br>
+　　　　l x1.ply<br>
+　　　　l x2.ply<br>
+　　　　save x.ply<br>
+<br>
+　　　向きやサイズ、位置を調整する。これを「y」「z」に対しても実行。<br>
+　　　座標軸ラベルがやっとまともになった･･･<br>
+<img src="images/axisXYZ.png"><br>  
 </p>
 </body>
 
