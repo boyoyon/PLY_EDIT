@@ -1,0 +1,11 @@
+polygon 3
+r 180 0 0
+t 1 0 0
+r 0 0 70.529
+r 0 120 0 3
+polygon 3
+t 0 (1+np.cos(np.deg2rad(60)))*np.cos(np.deg2rad(90-70.529)) 0
+merge
+centering
+save inverted_pyramid.ply
+

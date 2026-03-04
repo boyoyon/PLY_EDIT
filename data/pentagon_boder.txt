@@ -1,0 +1,17 @@
+SurfaceOuter 128 128 255
+SurfaceInner 200 200 255
+
+polygon 4
+s 1/np.sqrt(2)*np.sin(np.deg2rad(36))*2.1 1 1/np.sqrt(2)*0.1
+t 0 0 np.cos(np.deg2rad(36))
+r 0 72 0 5
+r 0 18 0
+
+#polygon 5 0.95
+#save pentagon_boder.ply
+
+
+
+
+
+
