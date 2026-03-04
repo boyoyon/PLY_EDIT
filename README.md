@@ -396,6 +396,34 @@
 　　　座標軸ラベルがやっとまともになった･･･<br>
 <img src="images/axisXYZ.png"><br>  
 </p>
+<p>
+<strong>　キャプチャー関連</strong><br>
+　　コンソール入力のつもりが、Visualizer画面のキャプチャーになることが多発するので<br>
+　　Visualizer画面のキャプチャーを止めた。<br>
+　　代わりに, コンソール画面から<br>
+　　　cap<br>
+　　または<br>
+　　　cap (キャプチャー画像名)<br>
+　　とする。<br>
+　　これにより、スクリプト内から画面キャプチャーが可能になる。<br>
+　　<br>
+　　メッシュのサイズ、位置によってカメラ位置や画角が変化するので<br>
+　　　getEyePos　･･･　カメラパラメータの取得<br>
+　　　setEyePos　･･･　カメラパラメータの設定<br>
+　　も追加した。<br>
+　　(スクリプト例)<br>
+　　　getEyePos <br>
+　　　d all<br>
+　　　polygon 5<br>
+　　　t -np.cos(np.deg2rad(36)) 0 0<br>
+　　　r 0 0 -63.5/10*0<br>
+　　　t -np.cos(np.deg2rad(36)) 0 0<br>
+　　　r 0 72 0 5<br>
+　　　setEyePos<br>
+　　　cap <br>
+<img src="images/dodecahedron.gif"><br> 
+</p>
+<br>
 </body>
 
 </html>
