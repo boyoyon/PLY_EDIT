@@ -356,7 +356,7 @@
 
 　　(例)<br>
 　　(コマンドプロンプトで以下を実行)<br>
-　　　python src/img2contour.py data/x.png<br>
+　　　python src/img2mesh.py data/x.png<br>
 <br>
 　　(以降は PLY_interactive のコンソールで実行)<br>
 　　　<strong>裏側の作成</strong><br>
