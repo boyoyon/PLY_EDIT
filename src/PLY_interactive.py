@@ -341,9 +341,34 @@ def key_callback_X(vis, action, mods):
 
 def key_callback_Y(vis, action, mods):
 
+    param = ctrl.convert_to_pinhole_camera_parameters()
+
+    # 外部パラメータの算出方法がわからなかったので取得した値をそのまま設定...
+
+    E = np.array([[ 6.12323400e-17, 1.22464680e-16, -1.00000000e+00, -1.47911420e-31],
+        [ 9.99991074e-01,  4.22513628e-03,  6.17492234e-17,  1.18481613e-15],
+        [ 4.22513628e-03, -9.99991074e-01, -1.22204872e-16,  3.00000000e+00],
+        [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]])
+
+
+    param.extrinsic = E
+    ctrl.convert_from_pinhole_camera_parameters(param, allow_arbitrary=True)
+
     return False
 
 def key_callback_Z(vis, action, mods):
+
+    param = ctrl.convert_to_pinhole_camera_parameters()
+
+    # 外部パラメータの算出方法がわからなかったので取得した値をそのまま設定...
+
+    E = np.array([[ 9.99997484e-01,  2.74701742e-19, -2.24310995e-03,  3.81639165e-17],
+        [ 0.00000000e+00, -1.00000000e+00, -1.22464680e-16,  3.94430453e-31],
+        [-2.24310995e-03,  6.27980454e-17, -9.99997484e-01,  3.00000000e+00],
+        [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]])
+
+    param.extrinsic = E
+    ctrl.convert_from_pinhole_camera_parameters(param, allow_arbitrary=True)
 
     return False
 
