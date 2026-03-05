@@ -1,0 +1,19 @@
+SurfaceOuter 128 128 255
+SurfaceInner 230 230 255
+
+polygon 4 1/np.sqrt(2) # 一辺が長さ 1 の正方形
+s 1 1 0.1              # 長さ 1、幅 0.1 の棒
+t 0.5 0 0              # x軸の 0～1 に移動
+r 0 36 0 2             # 36°のくの字
+polygon 100 0.05       # 直径 0.1 の円(正100角形)
+polygon 100 0.05       # 直径 0.1 の円(正100角形)
+t np.cos(np.deg2rad(36)) 0 -np.sin(np.deg2rad(36))
+merge
+
+r 0 -18 0
+t -np.cos(np.deg2rad(18))-np.sin(np.deg2rad(18))/np.tan(np.deg2rad(36)) 0 0
+r 0 72 0 5 
+s 1/(np.cos(np.deg2rad(18))+np.sin(np.deg2rad(18))/np.tan(np.deg2rad(36))) 1 1/(np.cos(np.deg2rad(18))+np.sin(np.deg2rad(18))/np.tan(np.deg2rad(36))) 
+save star_border.ply
+
+
