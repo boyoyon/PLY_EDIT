@@ -422,6 +422,19 @@
 　　　setEyePos<br>
 　　　cap <br>
 <img src="images/dodecahedron.gif"><br> 
+
+<strong>　Visualizerショートカットキー</strong><br>
+　　コンソール画面ではなく, Visualizer 画面がアクティブな状態で使う。<br>
+　　・x　･･･　x軸方向からのビュー<br>
+　　・y　･･･　y軸方向からのビュー<br>
+　　・z　･･･　z軸方向からのビュー<br>
+　　(※ 外部パラメータの算出方法が判らなかったので取得した行列をそのまま設定･･･)<br>
+<br>
+　　・1/2/3　･･･　カメラ位置の回転。+Shiftで逆方向回転。+Ctrlで回転量増加<br>
+　　・4/5/6　･･･　カメラ位置の移動。+Shiftで逆方向移動。+Ctrlで移動量増加<br>
+　　・7/8　　･･･　回転/移動ステップの増減。+Shiftで増加<br>
+　　・↑↓　 ･･･　ズーム(6, Shtft+6と同じ)<br>
+　　・→←　 ･･･　移動(4,Shift+4と同じ)<br>
 </p>
 <br>
 </body>
