@@ -301,15 +301,15 @@
  <img src="images/sphere.svg"><br>
  <img src="images/nr_divs.svg"><br>
 <br>
-<strong>　点列 (Points[]) への点の追加削除</strong><br>
+<strong>　点列 (Points[ ]) への点の追加削除</strong><br>
 　　後で折れ線(polyline)や押し出し(extrude)で使うための点列に点を追加、削除する。<br>
-　　p　: Points[]を表示<br>
-　　p clear　：Points[]を殻にする<br>
-　　p (x座標) (y座標) (z座標)　：Points[]に点(x,y,z)を追加する<br>
-　　l ***.npy　：Points[]をクリアして***.npyを読み込む<br>
+　　p　: Points[ ]を表示<br>
+　　p clear　：Points[ ]を空にする<br>
+　　p (x座標) (y座標) (z座標)　：Points[ ]に点(x,y,z)を追加する<br>
+　　l ***.npy　：Points[ ]をクリアして***.npyを読み込む<br>
 <br>
 <strong>　折れ線接続</strong><br>
-　　点列 (Points[]) の点をパイプでつなぐ。<br>
+　　点列 (Points[ ]) の点をパイプでつなぐ。<br>
 　　polyline (パイプの画数) (パイプの直径) <br>
 　　(例)<br>
 　　　l data\F.txt　･･･　F字の頂点情報を読み込む<br>
@@ -333,7 +333,7 @@
 <img src="images/polyline4.png"><br>
 <br>
 <strong>　メッシュの配置</strong><br>
-　　Points[]の点にメッシュを配置する。<br>
+　　Points[ ]の点にメッシュを配置する。<br>
 　　distribute<br>
 　　(例)<br>
 　　　折れ線接続のジョイントとして球を配置する。<br>
@@ -436,7 +436,54 @@
 　　・↑↓　 ･･･　ズーム(6, Shtft+6と同じ)<br>
 　　・→←　 ･･･　移動(4,Shift+4と同じ)<br>
 </p>
+
+<strong>　カメラ制御</strong><br>
+<p>
+　　コンソールからカメラの向きや位置を制御する。<br>
+　　これでカメラを動かしながらキャプチャーができる。<br>
+　　(以下 x 軸の場合。y 軸、z 軸についても同様)<br>
+　　・cam x　･･･　x軸方向からのビュー<br>
+　　・cam rotate x (角度)　･･･　x軸周りに回転<br>
+　　・cam rotate -x (角度)　･･･　x軸周りに逆回転<br>
+　　・cam rotate x (-角度)　･･･　(同上)<br>
+　　・cam translate x (移動量)　･･･　x軸方向に平行移動<br>
+　　・cam translate -x (移動量)　･･･　x軸方向に平行移動<br>
+　　・cam translate x (-移動量)　･･･　(同上)<br>
+</p>
+<strong>　メッシュの頂点座標取得</strong><br>
+<p>
+　　メッシュの頂点座標を取得し, Points[ ]に格納する。<br>
+　　getPoints　[(分割数)]　<br>
+　　※　面毎に色を指定するため、メッシュには同じ頂点が複数存在する。<br>
+　　　　[(分割数)]は重複削除用のパラメータ。<br>
+　　　　Points[ ]をクリアして取得した頂点を格納する。<br>
+　　　　クリアしたくない(ことがあるか不明だが)場合は, GETPoints<br>
+　　(例)<br>
+　　l data\dodecahedron_wireframe.ply　･･･　正12面体をロード<br>
+　　centering　･･･　重心を原点に移動する<br>
+　　getPoints　･･･　頂点を取得<br>
+　　distribute sphere004.ply　･･･　頂点に球を配置<br>　
+<img src="images/dodecahedron_and_ball.png"><br> 
+　　頂点の順番は重複削除処理次第なので、折れ線接続するとグチャグチャになる。<br>
+　　(左)正12面体　(右)分割数25の球　･･･　何となく味がある<br>
+<img src="images/dodecahedron_and_polyline.png"><br> 
 <br>
+　　(例)<br>
+　　l data\dodecahedron_wireframe.ply　･･･　正12面体をロード<br>
+　　centering　･･･　重心を原点に移動する<br>
+　　getPoints　･･･　頂点を取得<br>
+　　s 0.25 0.25 0.25　･･･　1/4に縮小<br>
+　　c 0 0 0　･･･　縮小すると見えにくいので黒くする<br>
+　　save tmp.ply　･･･　一旦セーブ<br>
+　　distribute tmp.ply　･･･　縮小前の頂点位置に縮小した正12面体を配置<br>
+　　merge　･･･　配置したものと中央のものをマージする<br>
+　　s 0.25 0.25 0.25　･･･　1/4に縮小<br>
+　　save tmp2.ply　･･･　一旦セーブ<br>
+　　distribute tmp2.ply　･･･　フラクタルっぽいものが出来上がる。<br>
+　　merge ･･･　配置したものと中央のものをマージする<br>
+<br>
+<img src="images/dodecahedron_fractal.png"><br> 
+</p>
 </body>
 
 </html>
