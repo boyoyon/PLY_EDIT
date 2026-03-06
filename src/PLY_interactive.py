@@ -418,21 +418,25 @@ def show_menu():
 
     print('コマンドを入力してください')
     print('calc/clear normals   : normals')
-    print('capture screen       : cap')
+    print('capture screen       : cap (image name)')
     print('centerling mesh      : centering')
-    print('create polygon       : polygon <no. of edges> <size> <height>')
+    print('control camera       : cam x/y/z')
+    print('                     : cam rotate x/y/z (angle)')
+    print('                     : cam translate x/y/z (offset)')
+    print('create polygon       : polygon (no. of edges) (size) (height)')
     print('delete selected ply  : d')
-    print('load ply             : l <.ply>')
-    print('load script          : l <.txt>')
+    print('get points           : getPoints, or GETPoints')
+    print('load ply             : l (.ply)')
+    print('load script          : l (.txt)')
     print('on/off selected mesh : selected')
     print('on/off axis          : axis')
-    print('paint with color     : c <r(0-255)> <g(0-255) <b(0-255)>')
-    print('rotate mesh          : r <angle_x(degree) <angle_y(degree)> <angle_z(degree)> [<count>]')
-    print('save ply             : save <ply filename>')
-    print('scale mesh           : s <scale_x> <scale_y> <scale_z> [<count>]')
+    print('paint with color     : c (r(0-255)) (g(0-255)) (b(0-255))')
+    print('rotate mesh          : r (angle_x(degree)) (angle_y(degree)) (angle_z(degree)) [(count)]')
+    print('save ply             : save (ply filename)')
+    print('scale mesh           : s (scale_x) (scale_y) (scale_z) [(count)]')
     print('show menu            : menu')
     print('terminate program    : quit') 
-    print('translate mesh       : t <offset_x> <offset_y> <offset_z> [<count>]')
+    print('translate mesh       : t (offset_x) (offset_y) (offset_z) [(count)]')
     print('undo                 : u')
     print()
 
@@ -473,7 +477,7 @@ def update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh):
 
 def main():
 
-    global input_queue, LINES, ctrl
+    global input_queue, LINES, ctrl, angle_step, translation_step
                
     argv = sys.argv
     argc = len(argv)
@@ -609,8 +613,17 @@ def main():
                         Points = np.load(cmds[1]).tolist()
  
             elif cmds[0] == 'axis':
-    
-                if fAxis:
+  
+                if len(cmds) > 1:
+                    if cmds[1] == 'off':
+                        vis.remove_geometry(axis)
+                    elif cmds[1] == 'on':
+                        vis.add_geometry(axis)
+                    else:
+                        print('invalid parametar (%s)' % cmds[1])
+                        continue
+  
+                elif fAxis:
                     vis.remove_geometry(axis)
                 else:
                     vis.add_geometry(axis)
@@ -789,8 +802,7 @@ def main():
     
                         R = o3d.geometry.get_rotation_matrix_from_xyz((rad_x, rad_y, rad_z))
                         count = 0
-    
-                        if len(cmds) > 4:
+                        if len(cmds) > 4: 
                             count = int(cmds[4])
     
                         update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
@@ -1292,6 +1304,134 @@ def main():
 
                 if EyePos is not None:
                     ctrl.convert_from_pinhole_camera_parameters(EyePos)
+
+            elif cmds[0] == 'getPoints' or cmds[0] == 'GETPoints':
+
+                if len(meshes) > 1:
+
+                    divider = 10
+                    if len(cmds) > 2:
+                        divider = int(cmds[2])
+
+                    pcd = o3d.geometry.PointCloud()
+                    pcd.points = meshes[curr].vertices
+                    vertices = np.asarray(pcd.points)                    
+
+                    minX = np.min(vertices[:,0])
+                    maxX = np.max(vertices[:,0])
+                    sizeX = maxX - minX
+                    
+                    minY = np.min(vertices[:,1])
+                    maxY = np.max(vertices[:,1])
+                    sizeY = maxY - minY
+                    
+                    minZ = np.min(vertices[:,2])
+                    maxZ = np.max(vertices[:,2])
+                    sizeZ = maxZ - minZ
+                    
+                    size = np.min((sizeX, sizeY, sizeZ))
+                    down_pcd = pcd.voxel_down_sample(voxel_size = size/divider)
+                    points = np.asarray(down_pcd.points).tolist()
+
+                    print('No. of points obtained:',len(points))
+
+                    if cmds[0] == 'getPoints':
+                        Points.clear()
+
+                    Points += points
+
+                else:
+                    print('no mesh')
+
+            elif cmds[0] == 'cam':
+
+                if len(cmds) > 1:               
+ 
+                    if cmds[1] == 'rotate':
+    
+                        curr_angle_step = angle_step
+                            
+                        if len(cmds) > 3:
+                            try:
+                                angle = float(eval(cmds[3]))
+                            except NameError:
+                                print('invalid angle(%s)' % cmds[3])
+                                continue
+                       
+                            curr_angle_step = angle_step
+                            angle_step = np.deg2rad(angle)
+    
+                        if cmds[2] == 'x':
+                           key_callback_1(vis, 1, 0)
+    
+                        elif cmds[2] == '-x':
+                           key_callback_1(vis, 1, 1)
+    
+                        if cmds[2] == 'y':
+                           key_callback_2(vis, 1, 0)
+    
+                        elif cmds[2] == '-y':
+                           key_callback_2(vis, 1, 1)
+    
+                        if cmds[2] == 'z':
+                           key_callback_3(vis, 1, 0)
+    
+                        elif cmds[2] == '-z':
+                           key_callback_3(vis, 1, 1)
+    
+                        if len(cmds) > 3:
+                           angle_step = curr_angle_step
+    
+                    elif cmds[1] == 'translate':
+    
+                        curr_translation_step = translation_step
+                        
+                        if len(cmds) > 3:
+                            try:
+                                offset = float(eval(cmds[3]))
+                            except NameError:
+                                print('invalid offset(%s)' % cmds[3])
+                                continue
+                       
+                            translation_step = offset
+                            
+                        if cmds[2] == 'x':
+                           key_callback_4(vis, 1, 0)
+    
+                        elif cmds[2] == '-x':
+                           key_callback_4(vis, 1, 1)
+    
+                        if cmds[2] == 'y':
+                           key_callback_5(vis, 1, 0)
+    
+                        elif cmds[2] == '-y':
+                           key_callback_5(vis, 1, 1)
+    
+                        if cmds[2] == 'z':
+                           key_callback_6(vis, 1, 0)
+    
+                        elif cmds[2] == '-z':
+                           key_callback_6(vis, 1, 1)
+    
+                        if len(cmds) > 3:
+                            translation_step = curr_translation_step
+    
+                    elif cmds[1] == 'x':
+                        key_callback_X(vis, -1, -1)
+    
+                    elif cmds[1] == 'y':
+                        key_callback_Y(vis, -1, -1)
+    
+                    elif cmds[1] == 'z':
+                        key_callback_Z(vis, -1, -1)
+    
+                else:
+                    print('cam rotate x/y/z/-x/-y/-z [angle]')
+                    print('cam translate x/y/z/-x/-y/-z [offset]')
+                    print('cam x')
+                    print('cam y')
+                    print('cam z')
+                    print()
 
             elif cmds[0] == 'quit':
                 break
