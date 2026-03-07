@@ -3,7 +3,7 @@ import numpy as np
 import threading
 import queue
 import copy, io, os, subprocess, sys
-from polygon import polygon, polyline
+from polygon import polygon, polyline, get_rotation_to_vector
 from sphere import sphere
 
 LINES = []
@@ -1283,15 +1283,38 @@ def main():
 
                 elif len(cmds) > 1:
 
-                    filename, ext = os.path.splitext(cmds[1])
+                    mesh = None
+                    mode = 0
 
-                    if ext == '.ply':
-
+                    if cmds[1].endswith('.ply'):
                         mesh = o3d.io.read_triangle_mesh(cmds[1])           
+
+                        if len(cmds) > 2:
+
+                            if cmds[2] == 'radial':
+                                mode = 1
+                            
+                            elif cmds[2] == '-radial':
+                                mode = 2
+
+                    elif cmds[1] == 'sphere':
+                        _meshes, _names = sphere(cmds[1:], LateralOuter, LateralInner)
+                        mesh = _meshes[0]
+
+                    if mesh is not None:
 
                         for i, p in enumerate(Points):
                             _mesh = copy.deepcopy(mesh)
-    
+   
+                            if mode > 0:
+
+                                R = get_rotation_to_vector(p)
+
+                                if mode == 2:
+                                    R = np.linalg.inv(R)
+                             
+                                _mesh.rotate(R, center=(0,0,0))
+ 
                             T = np.array([[1, 0, 0, p[0]],
                                           [0, 1, 0, p[1]],
                                           [0, 0, 1, p[2]],
@@ -1309,6 +1332,7 @@ def main():
                     meshes.append(accum)
                     
                     no = 2
+                    filename = cmds[1].split('.')[0]
                     name = '%s' % filename
                     while name in names:
                         name = '%s(%d)' % (filename, no)

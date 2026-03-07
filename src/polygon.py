@@ -20,9 +20,9 @@ def getInt3(str1, str2, str3):
 
     return (int1, int2, int3)
 
-def get_rotation_to_vector(target):
+def get_rotation_to_vector(target, source=np.array([1,0,0],np.float64)):
 
-    source = np.array([1, 0, 0], np.float64)
+    #source = np.array([1, 0, 0], np.float64)
 
     target = target / np.linalg.norm(target)
 
