@@ -80,6 +80,17 @@
 　　　distribute data/face.ply radial　･･･　メッシュを頂点に配置。メッシュの向きは動径方向<br>
 　　　normals　･･･　法線を計算する。clear normals と表示される場合はもう一回実施する<br>
 <img src="images/distribute5.png"><br>
+　　(例)<br>
+　　　l data/star_border.ply<br>
+<img src="images/distribute6.png"><br>
+　　　s 0.5 0.5 0.5　･･･　サイズを調整する<br>
+
+　　　r 0 0 -90　･･･　x軸方向を向くように調整する<br>
+<img src="images/distribute7.png"><br>
+　　　save star.ply<br>
+　　　正 12 面体の頂点が Points[ ] に格納されている場合<br>
+　　　distribute star.ply radial<br>
+<img src="images/distribute8.png"><br>
 </p>
 
 
