@@ -1,0 +1,2 @@
+p curve np.linspace(-1,1,100) T T**3 [0]*len(T)
+polyline

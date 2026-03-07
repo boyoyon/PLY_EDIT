@@ -1,0 +1,10 @@
+p polygon 30
+polyline 25 0.3
+sphere 0.3 25 0 180 -7 7
+t 0 0 1
+r 0 np.rad2deg(np.pi/15) 0 30
+merge
+s 1 0.1 1
+sphere 0.5
+merge
+save saturn.ply
