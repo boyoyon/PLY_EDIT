@@ -142,47 +142,49 @@ def polyline(cmds, Points, fClose, SurfaceOuter = (128,128,255), SurfaceInner = 
     meshes = []
     names = []
 
-    clonePoints = copy.deepcopy(Points)
+    if len(Points) > 1:
 
-    if len(cmds) > 1:
-
-        nr_divs = int(cmds[1])
-        if nr_divs < 3:
-            usagePolyline(cmds)
-            return meshes, names
-
-    else:
-        nr_divs = 25
-
-
-    if len(cmds) > 2:
-        try:
-            size = float(eval(cmds[2]))
-        except NameError:
-            usagePolyline(cmds)
-            return meshes, names
-    else:
-        size = 0.02
-
-
-    if len(Points) < 1:
-        usagePolyline(cmds)
-        return meshes, names
-
-    if fClose:
-        clonePoints.append(clonePoints[0])
-
-    _meshes = _polyiline(size, nr_divs, clonePoints, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
-
-    for i in range(len(_meshes)):
-                
-        if i == 0:
-            accum = copy.deepcopy(_meshes[i])
+        clonePoints = copy.deepcopy(Points)
+    
+        if len(cmds) > 1:
+    
+            nr_divs = int(cmds[1])
+            if nr_divs < 3:
+                usagePolyline(cmds)
+                return meshes, names
+    
         else:
-            accum += copy.deepcopy(_meshes[i])
-
-    meshes.append(accum)
-    names.append('POLYLINE%d' % nr_divs)
+            nr_divs = 25
+    
+    
+        if len(cmds) > 2:
+            try:
+                size = float(eval(cmds[2]))
+            except NameError:
+                usagePolyline(cmds)
+                return meshes, names
+        else:
+            size = 0.02
+    
+    
+        if len(Points) < 1:
+            usagePolyline(cmds)
+            return meshes, names
+    
+        if fClose:
+            clonePoints.append(clonePoints[0])
+    
+        _meshes = _polyiline(size, nr_divs, clonePoints, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+    
+        for i in range(len(_meshes)):
+                    
+            if i == 0:
+                accum = copy.deepcopy(_meshes[i])
+            else:
+                accum += copy.deepcopy(_meshes[i])
+    
+        meshes.append(accum)
+        names.append('POLYLINE%d' % nr_divs)
 
     return meshes, names
 
@@ -324,45 +326,53 @@ def _polyiline(size, nr_divs, points, SurfaceOuter, SurfaceInner, LateralOuter, 
 
     meshes = []
 
-    # y軸向き
-    pipe0 = _polygon(nr_divs, size, 1, 0, 1, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)[0]
+    if len(points) > 1:
 
-    # x軸向きになるように回転
-    R = o3d.geometry.get_rotation_matrix_from_xyz((0, 0, np.pi/2)) 
-    pipe0.rotate(R, center=(0,0,0))
-
-    for i in range(1, len(points)//2):
-        A = np.array(points[i-1])
-        B = np.array(points[i])
-        M = (A + B) * 0.5  
-        
-        l = np.linalg.norm(B - A)
+        # y軸向き
+        pipe0 = _polygon(nr_divs, size, 1, 0, 1, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)[0]
     
-        S = np.array([[l, 0, 0, 0],
-                      [0, 1, 0, 0],
-                      [0, 0, 1, 0],
-                      [0, 0, 0, 1]],np.float64)
-   
-        pipe = copy.deepcopy(pipe0)
- 
-        pipe.transform(S) 
+        # x軸向きになるように回転
+        R = o3d.geometry.get_rotation_matrix_from_xyz((0, 0, np.pi/2)) 
+        pipe0.rotate(R, center=(0,0,0))
     
-        R = get_rotation_to_vector(B - A)
-
-        pipe.rotate(R, center=(0,0,0))
+        if len(points) < 5:
+            end = len(points)
     
-        T = np.array([[1, 0, 0, M[0]],
-                      [0, 1, 0, M[1]],
-                      [0, 0, 1, M[2]],
-                      [0, 0, 0, 1]], np.float64)
-    
-        pipe.transform(T)
-
-        if i == 1:
-            accum = copy.deepcopy(pipe)
         else:
-            accum += copy.deepcopy(pipe)
-
-    meshes.append(accum)
+            end = len(points) // 2
+     
+        for i in range(1, end):
+            A = np.array(points[i-1])
+            B = np.array(points[i])
+            M = (A + B) * 0.5  
+            
+            l = np.linalg.norm(B - A)
+        
+            S = np.array([[l, 0, 0, 0],
+                          [0, 1, 0, 0],
+                          [0, 0, 1, 0],
+                          [0, 0, 0, 1]],np.float64)
+       
+            pipe = copy.deepcopy(pipe0)
+     
+            pipe.transform(S) 
+        
+            R = get_rotation_to_vector(B - A)
+    
+            pipe.rotate(R, center=(0,0,0))
+        
+            T = np.array([[1, 0, 0, M[0]],
+                          [0, 1, 0, M[1]],
+                          [0, 0, 1, M[2]],
+                          [0, 0, 0, 1]], np.float64)
+        
+            pipe.transform(T)
+    
+            if i == 1:
+                accum = copy.deepcopy(pipe)
+            else:
+                accum += copy.deepcopy(pipe)
+    
+        meshes.append(accum)
 
     return meshes
