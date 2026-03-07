@@ -56,6 +56,30 @@
 　　p curve np.linspace(-1,np.1,100) np.sin(T\*6) np.cos(T\*6) T<br>
 　　polyline<br>
 <img src="images/curve_2.png"><br>
+
+<strong>　PLY_interactive.py の distribute コマンド</strong><br>
+　　sphereコマンドを呼び出せるようにした。<br>
+　　(POLYLINE のサイズ毎にジョイント用 ply を作成しなくて良い)<br>
+　　(例)<br>
+　　　p polygon 5<br>
+　　　POLYLINE 25 0.3<br>
+<img src="images/distribute2.png"><br>
+　　　distribute sphere 0.3<br>
+<img src="images/distribute3.png"><br>
+<strong>　PLY_interactive.py の distribute コマンド：radial オプション</strong><br>
+　　distributeで配置したメッシュの向きを動径方向に向ける。<br>
+　　(元のメッシュが x 軸方向を向いている想定)<br>
+　　(例)<br>
+　　　l data/dodecahedron.ply　･･･　正12面体をロード<br>
+　　　getPoints　･･･　頂点座標を取得<br>
+　　　d　･･･　正12面体を削除<br>
+　　　distribute data/face.ply　･･･　メッシュを頂点に配置。元のメッシュの向きのまま<br>
+　　　normals　･･･　法線を計算する。clear normals と表示される場合はもう一回実施する<br>
+<img src="images/distribute4.png"><br>
+　　　d　･･･　配置されたメッシュを削除<br>
+　　　distribute data/face.ply radial　･･･　メッシュを頂点に配置。メッシュの向きは動径方向<br>
+　　　normals　･･･　法線を計算する。clear normals と表示される場合はもう一回実施する<br>
+<img src="images/distribute5.png"><br>
 </p>
 
 
