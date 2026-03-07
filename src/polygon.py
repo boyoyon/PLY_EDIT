@@ -331,7 +331,7 @@ def _polyiline(size, nr_divs, points, SurfaceOuter, SurfaceInner, LateralOuter, 
     R = o3d.geometry.get_rotation_matrix_from_xyz((0, 0, np.pi/2)) 
     pipe0.rotate(R, center=(0,0,0))
 
-    for i in range(1, len(points)):
+    for i in range(1, len(points)//2):
         A = np.array(points[i-1])
         B = np.array(points[i])
         M = (A + B) * 0.5  
