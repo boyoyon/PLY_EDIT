@@ -49,11 +49,11 @@
 　・数式で曲線の点を生成し Points[ ]に格納する<br>
 　　p curve (Tの式) (Tを使ったXの式) (Tを使ったYの式) (Tを使ったZの式)<br>
 　（例）<br>
-　　p curve np.linspace(-1,1,100) T T**3 [0]*len(T)<br>
+　　p curve np.linspace(-1,1,100) T T**3 [0]\*len(T)<br>
 　　polyline<br>
 <img src="images/curve.png"><br>
 　（例）<br>
-　　p curve np.linspace(-1,np.1,100) np.sin(T*6) np.cos(T*3) T<br>
+　　p curve np.linspace(-1,np.1,100) np.sin(T\*6) np.cos(T\*6) T<br>
 　　polyline<br>
 <img src="images/curve_2.png"><br>
 </p>
@@ -533,3 +533,4 @@
 </body>
 
 </html>
+
