@@ -483,6 +483,17 @@ def main():
     argc = len(argv)
     
     print('%s creates and edits meshes' % argv[0])
+    print('[usage] python %s [(screen width) (screen height)]' % argv[0])    
+
+    width = 800
+
+    if argc > 1:
+        width = int(argv[1])
+ 
+    height = 600
+ 
+    if argc > 2:
+        height = int(argv[2])
     
     meshes = []
     names = []
@@ -536,7 +547,7 @@ def main():
     vis.register_key_action_callback(KEY_LEFT, key_callback_42)
     vis.register_key_action_callback(KEY_RIGHT, key_callback_4)
 
-    vis.create_window(window_name='PLY Edit interactivelly', width=800, height=600)
+    vis.create_window(window_name='PLY Edit interactivelly', width=width, height=height)
     
     axis = o3d.io.read_triangle_mesh(os.path.join(os.path.dirname(__file__), 'axisXYZ.ply'))
     meshes.append(axis)
@@ -1196,6 +1207,52 @@ def main():
                         Points.clear()
                         print('Points[] is cleared')
 
+                    elif cmds[1] == 'polygon':
+
+                        _meshes, _names = polygon(cmds[1:], False, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+
+                        if len(_meshes) > 0:
+
+                            Points.clear()
+                            if len(cmds) < 4:
+                                Points = np.asarray(_meshes[0].vertices).tolist() 
+                            else:
+                                Points = np.asarray(_meshes[0].vertices).tolist()[::2]
+                    elif cmds[1] == 'curve':
+
+                        if len(cmds) < 5:
+                            print('p curve (range T) (eq. X with T) (eq. Y with T) (eq. Z with T)')
+                            continue
+
+                        else:
+
+                            try:
+                                T = eval(cmds[2])
+                            except NameError:
+                                print('error',cmds[2])
+                                continue
+    
+                            try:
+                                X = eval(cmds[3])
+                            except NameError:
+                                print('error',cmds[3])
+                                continue
+    
+                            try:
+                                Y = eval(cmds[4])
+                            except NameError:
+                                print('error',cmds[4])
+                                continue
+    
+                            try:
+                                Z = eval(cmds[5])
+                            except NameError:
+                                print('error',cmds[5])
+                                continue
+
+                            Points.clear()
+                            Points = list(zip(X,Y,Z))
+    
                     elif len(cmds)== 4:
 
                         try:
@@ -1203,19 +1260,19 @@ def main():
                         except NameError:
                             print('error',cmds[1])
                             continue
-
+    
                         try:
                             y = float(eval(cmds[2]))
                         except NameError:
                             print('error',cmds[2])
                             continue
-
+    
                         try:
                             z = float(eval(cmds[3]))
                         except NameError:
                             print('error', cmds[3])
                             continue
-
+    
                         Points.append((x, y, z))
                         print('Points[]=', Points)
 

@@ -144,44 +144,45 @@ def polyline(cmds, Points, fClose, SurfaceOuter = (128,128,255), SurfaceInner = 
 
     clonePoints = copy.deepcopy(Points)
 
-    if len(cmds) < 2:
-        usagePolyline(cmds)
-        return meshes, names
-
-    else:
+    if len(cmds) > 1:
 
         nr_divs = int(cmds[1])
         if nr_divs < 3:
             usagePolyline(cmds)
             return meshes, names
 
-        size = 1.0
+    else:
+        nr_divs = 25
 
-        if len(cmds) > 2:
-            try:
-                size = float(eval(cmds[2]))
-            except NameError:
-                usagePolyline(cmds)
-                return meshes, names
 
-        if len(Points) < 1:
+    if len(cmds) > 2:
+        try:
+            size = float(eval(cmds[2]))
+        except NameError:
             usagePolyline(cmds)
             return meshes, names
+    else:
+        size = 0.02
 
-        if fClose:
-            clonePoints.append(clonePoints[0])
 
-        _meshes = _polyiline(size, nr_divs, clonePoints, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+    if len(Points) < 1:
+        usagePolyline(cmds)
+        return meshes, names
 
-        for i in range(len(_meshes)):
+    if fClose:
+        clonePoints.append(clonePoints[0])
+
+    _meshes = _polyiline(size, nr_divs, clonePoints, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+
+    for i in range(len(_meshes)):
                 
-            if i == 0:
-                accum = copy.deepcopy(_meshes[i])
-            else:
-                accum += copy.deepcopy(_meshes[i])
+        if i == 0:
+            accum = copy.deepcopy(_meshes[i])
+        else:
+            accum += copy.deepcopy(_meshes[i])
 
-        meshes.append(accum)
-        names.append('POLYLINE%d' % nr_divs)
+    meshes.append(accum)
+    names.append('POLYLINE%d' % nr_divs)
 
     return meshes, names
 
