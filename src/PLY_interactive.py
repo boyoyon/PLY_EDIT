@@ -1307,12 +1307,12 @@ def main():
                             _mesh = copy.deepcopy(mesh)
    
                             if mode > 0:
+                              
+                                if mode == 2:
+                                    R = o3d.geometry.get_rotation_matrix_from_xyz((0, np.pi,0))
+                                    _mesh.rotate(R, center=(0,0,0))
 
                                 R = get_rotation_to_vector(p)
-
-                                if mode == 2:
-                                    R = np.linalg.inv(R)
-                             
                                 _mesh.rotate(R, center=(0,0,0))
  
                             T = np.array([[1, 0, 0, p[0]],
