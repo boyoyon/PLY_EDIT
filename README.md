@@ -14,6 +14,52 @@
 　pip install Open3D
 <p>
 
+<h3>更新項目</h3>
+<p>
+<strong>　PLY_interactive.py の起動オプション</strong><br>
+<p>
+　・Visualizerのウィンドウサイズ指定<br>
+　　python PLY_interactive [(幅) (高さ)]<br>
+</p>
+
+<strong>　PLY_interactive.py の p コマンド：polygon オプション</strong><br>
+<p>
+　・polygon 引数で正多角形の頂点座標を Ponint[ ]に格納する<br>
+　　p polygon 30<br>
+　　polyline　･･･　引数なしも受け付けるよう変更した(デフォルトの辺の数：25, サイズ：0.02)<br>
+
+<img src="images/p_polygon.png"><br>
+
+　　polyline の大きさを大きくすると隙間が目立つので埋める必要あり･･･<br>
+　　(例)<br>
+　　p polygon 30<br>
+　　polyline 25 0.3　･･･　隙間が目立つ<br>
+<img src="images/p_polygon2.png"><br>
+　　polyline と同じサイズの球を配置しても良いがメッシュが無駄に増える。<br>
+　　球面の一部を配置すれば無駄はないが、一部がどの程度かを計算するのが面倒<br>
+　　(torus生成コマンドと追加するか、回転や平行移動を面でつなぐなど要検討)<br>
+　　sphere 0.3 25 0 180 -7 7<br>
+　　t 0 0 1<br>
+　　r 0 np.rad2deg(np.pi/15) 0 30<br>
+<img src="images/p_polygon3.png"><br>
+　　polyline 25 0.3<br>
+<img src="images/p_polygon4.png"><br>
+
+<strong>　PLY_interactive.py の p コマンド：curve オプション</strong><br>
+　・数式で曲線の点を生成し Points[ ]に格納する<br>
+　　p curve (Tの式) (Tを使ったXの式) (Tを使ったYの式) (Tを使ったZの式)<br>
+　（例）<br>
+　　p curve np.linspace(-1,1,100) T T**3 [0]*len(T)<br>
+　　polyline<br>
+<img src="images/curve.png"><br>
+　（例）<br>
+　　p curve np.linspace(-1,np.1,100) np.sin(T*6) np.cos(T*3) T<br>
+　　polyline<br>
+<img src="images/curve_2.png"><br>
+</p>
+
+
+
 <h3>プリミティブ作成</h3>
 
 <p>
