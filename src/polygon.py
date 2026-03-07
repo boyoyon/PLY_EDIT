@@ -6,6 +6,8 @@ import copy
 # Internal
 #
 
+fWidth = False
+
 def rot2D(x, y, angle):
 
     X = np.cos(angle) * x - np.sin(angle) * y
@@ -60,6 +62,8 @@ def usagePolyline(cmds):
 
 def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,200,255), LateralOuter = (128, 128, 255) , LateralInner = (200,200,255)):
 
+    global fWidth
+
     meshes = []
     names = []
 
@@ -90,6 +94,11 @@ def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,
             except NameError:
                 usagePolygon(cmds)
        
+        if width != 0:
+            fWidth = True
+        else:
+            fWidth = False
+
         delta = 0.0
 
         if len(cmds) > 4:
@@ -165,11 +174,6 @@ def polyline(cmds, Points, fClose, SurfaceOuter = (128,128,255), SurfaceInner = 
                 return meshes, names
         else:
             size = 0.02
-    
-    
-        if len(Points) < 1:
-            usagePolyline(cmds)
-            return meshes, names
     
         if fClose:
             clonePoints.append(clonePoints[0])
@@ -335,12 +339,13 @@ def _polyiline(size, nr_divs, points, SurfaceOuter, SurfaceInner, LateralOuter, 
         R = o3d.geometry.get_rotation_matrix_from_xyz((0, 0, np.pi/2)) 
         pipe0.rotate(R, center=(0,0,0))
     
-        if len(points) < 5:
-            end = len(points)
-    
-        else:
+        if fWidth:
             end = len(points) // 2
-     
+        else:
+            end = len(points)
+   
+        print(len(points)) 
+ 
         for i in range(1, end):
             A = np.array(points[i-1])
             B = np.array(points[i])

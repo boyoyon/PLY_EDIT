@@ -1214,7 +1214,7 @@ def main():
                         if len(_meshes) > 0:
 
                             Points.clear()
-                            if len(cmds) < 4:
+                            if len(cmds) < 5:
                                 Points = np.asarray(_meshes[0].vertices).tolist() 
                             else:
                                 Points = np.asarray(_meshes[0].vertices).tolist()[::2]
