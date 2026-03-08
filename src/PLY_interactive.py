@@ -511,6 +511,8 @@ def main():
     SurfaceInner = [200,200,255]
     LateralOuter = [128,128,255]
     LateralInner = [200,200,255]
+    PaddingOuter = [128,128,255]
+    PaddingInner = [200,200,255]
 
     Points = []
     
@@ -697,6 +699,24 @@ def main():
     
                 print('Current Setting:', LateralInner)
     
+            elif cmds[0] == 'PaddingOuter':
+    
+                if len(cmds) != 4:
+                    print('specify red(0-255) green(0-255) blue(0-255)')
+                else:
+                    PaddingOuter = [int(cmds[1]),int(cmds[2]), int(cmds[3])]
+    
+                print('Current Setting:', PaddingOuter)
+    
+            elif cmds[0] == 'PaddingInner':
+    
+                if len(cmds) != 4:
+                    print('specify red(0-255) green(0-255) blue(0-255)')
+                else:
+                    PaddingInner = [int(cmds[1]),int(cmds[2]), int(cmds[3])]
+    
+                print('Current Setting:', PaddingInner)
+
             elif cmds[0] == 'selected':
     
                 print(names[curr])
@@ -1049,10 +1069,10 @@ def main():
             elif cmds[0] == 'polyline' or cmds[0] == 'POLYLINE': 
 
                 if cmds[0] == 'polyline': # open path
-                    _meshes, _names = polyline(cmds, Points, False, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+                    _meshes, _names = polyline(cmds, Points, False, True, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, PaddingOuter, PaddingInner)
 
                 else: # closed path
-                    _meshes, _names = polyline(cmds, Points, True, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+                    _meshes, _names = polyline(cmds, Points, True, True, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, PaddingOuter, PaddingInner)
 
                 if len(_meshes) > 0:
 
@@ -1073,6 +1093,32 @@ def main():
                     ctrl.set_front([0.5, 0.25, 0.5])
                     vis.update_geometry(mesh)
 
+            elif cmds[0] == 'poly-line' or cmds[0] == 'POLY-LINE': 
+
+                if cmds[0] == 'polyline': # open path
+                    _meshes, _names = polyline(cmds, Points, False, False, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+
+                else: # closed path
+                    _meshes, _names = polyline(cmds, Points, True, False, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+
+                if len(_meshes) > 0:
+
+                    update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+
+                    vis.add_geometry(_meshes[0])
+                    meshes.append(_meshes[0])
+
+                    name0 = _names[0]
+                    name = '%s' % name0
+                    no = 2
+                    while name in names:
+                        name = '%s(%d)' % (name0, no)
+                        no += 1
+                    names.append(name)
+                   
+                    curr = len(meshes) - 1
+                    ctrl.set_front([0.5, 0.25, 0.5])
+                    vis.update_geometry(mesh)
             elif cmds[0] == 'sphere':
 
                 _meshes, _names = sphere(cmds, LateralOuter, LateralInner)

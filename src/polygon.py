@@ -1,6 +1,7 @@
 import numpy as np
 import open3d as o3d
 import copy
+from sphere import _sphere
 
 #
 # Internal
@@ -43,6 +44,23 @@ def get_rotation_to_vector(target, source=np.array([1,0,0],np.float64)):
 
     return o3d.geometry.get_rotation_matrix_from_axis_angle(axis * theta)
 
+def get_rotation_matrix_from_vectors(vec1, vec2):
+
+    if np.isnan(vec1).any() or np.isnan(vec2).any():
+        # print('vectors including nan are specified')
+        return np.eye(3)
+
+    a = vec1 / (np.linalg.norm(vec1) + 0.0000001)
+    b = vec2 / (np.linalg.norm(vec2) + 0.0000001)
+    
+    v = np.cross(a, b)
+    c = np.dot(a, b)
+
+    s = np.linalg.norm(v)
+    if s < 1e-8: return np.eye(3)
+    k = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
+    return np.eye(3) + k + k.dot(k) * ((1 - c) / (s ** 2))
+
 def usagePolygon(cmds):
     print('polygon <nr_of_edges(>=3)> [<size> <width>]')
     print('negative width causes extruded polygon without top/bottom surfaces')
@@ -51,7 +69,7 @@ def usagePolygon(cmds):
     print()
 
 def usagePolyline(cmds):
-    print('polyline <nr_of_edges(>=3)> <size>')
+    print('polyline [<nr_of_edges(>=3)> <size> <ratio> <start> <end>]')
     for i in range(len(cmds)):
         print('%s ' % cmds[i], end="")
     print()
@@ -146,7 +164,7 @@ def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,
 
     return meshes, names
 
-def polyline(cmds, Points, fClose, SurfaceOuter = (128,128,255), SurfaceInner = (200,200,255), LateralOuter = (128, 128, 255) , LateralInner = (200,200,255)):
+def polyline(cmds, Points, fClose, fPadding = False, SurfaceOuter = (128,128,255), SurfaceInner = (200,200,255), LateralOuter = (128, 128, 255) , LateralInner = (200,200,255), PaddingOuter = (255, 180, 255), PaddingInner = (255, 230, 255)):
 
     meshes = []
     names = []
@@ -174,11 +192,31 @@ def polyline(cmds, Points, fClose, SurfaceOuter = (128,128,255), SurfaceInner = 
                 return meshes, names
         else:
             size = 0.02
+
+        if len(cmds) > 3:
+            try:
+                ratio = float(eval(cmds[3]))
+            except NameError:
+                usagePolyline(cmds)
+                return meshes, names
+        else:
+            ratio = 1.0
+
+        start = ''
+        
+        if len(cmds) > 4:
+            start = cmds[4]
+
+        end = '';
+
+        if len(cmds) > 5:
+            end = cmds[5]
     
         if fClose:
             clonePoints.append(clonePoints[0])
     
-        _meshes = _polyiline(size, nr_divs, clonePoints, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+        _meshes =  _polyiline(size, nr_divs, ratio, fPadding, start, end, Points, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, PaddingOuter, PaddingInner)
+
     
         for i in range(len(_meshes)):
                     
@@ -189,6 +227,9 @@ def polyline(cmds, Points, fClose, SurfaceOuter = (128,128,255), SurfaceInner = 
     
         meshes.append(accum)
         names.append('POLYLINE%d' % nr_divs)
+
+    else:
+        usagePolyline(cmds)
 
     return meshes, names
 
@@ -325,8 +366,7 @@ def _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, Lat
 
     return meshes
 
-
-def _polyiline(size, nr_divs, points, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner):
+def _polyiline(size, nr_divs, ratio, fPadding, start, end, points, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, PaddingOuter, PaddingInner):
 
     meshes = []
 
@@ -336,34 +376,31 @@ def _polyiline(size, nr_divs, points, SurfaceOuter, SurfaceInner, LateralOuter, 
         pipe0 = _polygon(nr_divs, size, 1, 0, 1, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)[0]
     
         # x軸向きになるように回転
-        R = o3d.geometry.get_rotation_matrix_from_xyz((0, 0, np.pi/2)) 
-        pipe0.rotate(R, center=(0,0,0))
+        R0 = o3d.geometry.get_rotation_matrix_from_xyz((0, 0, np.pi/2)) 
+        pipe0.rotate(R0, center=(0,0,0))
     
         if fWidth:
-            end = len(points) // 2
+            nr_points = len(points) // 2
         else:
-            end = len(points)
-   
-        print(len(points)) 
+            nr_points = len(points)
  
-        for i in range(1, end):
+        for i in range(1, nr_points):
             A = np.array(points[i-1])
             B = np.array(points[i])
             M = (A + B) * 0.5  
             
             l = np.linalg.norm(B - A)
         
-            S = np.array([[l, 0, 0, 0],
+            S = np.array([[l * ratio, 0, 0, 0],
                           [0, 1, 0, 0],
                           [0, 0, 1, 0],
                           [0, 0, 0, 1]],np.float64)
        
             pipe = copy.deepcopy(pipe0)
-     
             pipe.transform(S) 
         
-            R = get_rotation_to_vector(B - A)
-    
+            R = get_rotation_to_vector(B - A) # pipe direction
+
             pipe.rotate(R, center=(0,0,0))
         
             T = np.array([[1, 0, 0, M[0]],
@@ -372,11 +409,98 @@ def _polyiline(size, nr_divs, points, SurfaceOuter, SurfaceInner, LateralOuter, 
                           [0, 0, 0, 1]], np.float64)
         
             pipe.transform(T)
-    
+           
+             
             if i == 1:
                 accum = copy.deepcopy(pipe)
             else:
                 accum += copy.deepcopy(pipe)
+    
+            if fPadding:
+   
+                if i < nr_points - 1:
+     
+     
+                    C = np.array(points[i+1])
+        
+                    l2 = np.linalg.norm(C-B)
+        
+                    dot_BA_CB = np.dot(B-A, C-B)
+                    cos_theta = dot_BA_CB / (l * l2)
+                    theta = np.arccos(np.clip(cos_theta, -1.0, 1.0))
+                
+                    elevation = [0, np.pi, nr_divs]
+        
+                    #azimuth = [-theta, 0, nr_divs]
+                    azimuth = [0, theta, nr_divs]
+                    #azimuth = [-theta/2, theta/2, nr_divs]
+        
+                    joint, _ = _sphere(size, elevation, azimuth, PaddingOuter, PaddingInner)
+                    JOINT = copy.deepcopy(joint[0])
+        
+                    R2 = o3d.geometry.get_rotation_matrix_from_xyz((0, np.pi, 0)) 
+                    JOINT.rotate(R2, center=(0,0,0))
+                    
+                    y_axis = np.array([0.0, 1.0, 0.0])
+                    Y_AXIS = np.cross(C-B, B-A)
+         
+                    R3 = get_rotation_matrix_from_vectors(y_axis, Y_AXIS)
+                    JOINT.rotate(R3, center=(0,0,0))
+        
+                    x_axis = R3 @ np.array([1.0, 0.0, 0.0])
+                    X_AXIS = B - A
+        
+                    R4 = get_rotation_matrix_from_vectors(x_axis, X_AXIS)
+                    JOINT.rotate(R4, center=(0,0,0))
+                
+                    T2 = np.array([[1, 0, 0, B[0]],
+                                   [0, 1, 0, B[1]],
+                                   [0, 0, 1, B[2]],
+                                   [0, 0, 0, 1]], np.float64)
+        
+                    JOINT.transform(T2)              # move pipe end
+        
+                    accum += copy.deepcopy(JOINT)   
+            
+                    if start == 'sphere' and i == 1:
+    
+                        azimuth = [0, np.pi, nr_divs]
+                        joint, _ = _sphere(size, elevation, azimuth, PaddingOuter, PaddingInner)
+        
+                        START = joint[0]
+         
+                        T3 = np.array([[1, 0, 0, -l/2],
+                                       [0, 1, 0, 0],
+                                       [0, 0, 1, 0],
+                                       [0, 0, 0, 1]], np.float64)
+                        
+                        START.transform(T3)              # move pipe start
+                        START.rotate(R, center=(0,0,0))  # rotate along the direction of line segment
+                        START.transform(T)               # move to the location of line segment
+                        accum += copy.deepcopy(START)
+    
+                if end == 'sphere' and i == nr_points - 1:
+
+                    azimuth = [0, np.pi, nr_divs]
+                    elevation = [0, np.pi, nr_divs]
+        
+                    joint, _ = _sphere(size, elevation, azimuth, PaddingOuter, PaddingInner)
+    
+                    END = joint[0]
+     
+                    R2 = o3d.geometry.get_rotation_matrix_from_xyz((0, np.pi, 0)) 
+                    
+                    END.rotate(R2, center=(0,0,0))
+
+                    T3 = np.array([[1, 0, 0, l/2],
+                                   [0, 1, 0, 0],
+                                   [0, 0, 1, 0],
+                                   [0, 0, 0, 1]], np.float64)
+    
+                    END.transform(T3)              # move pipe end
+                    END.rotate(R, center=(0,0,0))  # rotate along the direction of line segment
+                    END.transform(T)               # move to the location of line segment
+                    accum += copy.deepcopy(END)
     
         meshes.append(accum)
 
