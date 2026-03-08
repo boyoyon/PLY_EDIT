@@ -30,21 +30,42 @@
 
 <img src="images/p_polygon.png"><br>
 
-　　polyline の大きさを大きくすると隙間が目立つので埋める必要あり･･･<br>
+　　polyline の隙間を埋めるようにした。･<br>
 　　(例)<br>
 　　p polygon 30<br>
-　　polyline 25 0.3　･･･　隙間が目立つ<br>
-<img src="images/p_polygon2.png"><br>
-　　polyline と同じサイズの球を配置しても良いがメッシュが無駄に増える。<br>
-　　球面の一部を配置すれば無駄はないが、一部がどの程度かを計算するのが面倒<br>
-　　(torus生成コマンドを追加するか、回転や平行移動を面でつなぐなど要検討)<br>
-　　sphere 0.3 25 0 180 -7 7<br>
-　　t 0 0 1<br>
-　　r 0 np.rad2deg(np.pi/15) 0 30<br>
-<img src="images/p_polygon3.png"><br>
+　　polyline 25 0.3　･･･　隙間が埋められている(微妙な隙間は残るが)<br>
+<img src="images/p_polygon1.png"><br>
+　　パディング部分の色は PaddingOuter, PaddingInner で指定する。<br>
+　　PaddingOuter 255 180 255<br>
+　　PaddingInner 255 230 255<br>
+　　p polygon 30<br>
 　　polyline 25 0.3<br>
-<img src="images/p_polygon4.png"><br>
+<img src="images/p_polygon3.png"><br> 
+　　従来通り, 隙間を残す場合はコマンドの間にハイフンを入れる<br>
+　　poly-line 25 0.3<br>
+<img src="images/p_polygon2.png"><br>
 
+　　polyline の パイプとパイプの間に隙間を入れる場合は、第三引数(ratio)で指定する。<br>
+　　(例)<br>
+　　p curve np.linspace(-1, 1,100) T np.sin(T*np.pi*3) [0]*len(T)<br>
+　　poly-line 25 0.3　･･･　ratio指定なし (ratio=1.0)<br>
+<img src="images/ratio1.png"><br> 
+　　poly-line 25 0.3 0.5　･･･　ratio指定あり (ratio=0.5)<br>
+<img src="images/ratio05.png"><br> 
+　　polyline の始点と終点にフタを置けるようにした。<br>
+　　(例)<br>
+　　　p clear　･･･　Points[ ] をクリア<br>
+　　　p 0 0 0　･･･　Points[ ] に(0.0, 0.0, 0.0)を追加<br>
+　　　p 1 0 0　･･･　Points[ ] に(1.0, 0.0, 0.0)を追加<br>
+　　　p 1.1.1　･･･　Points[ ] に(1.0, 1.0, 1.0)を追加<br>
+　　　polyline 25 0.3<br>
+<img src="images/no_cap.png"><br>
+　　　d<br>
+　　　polyline 25 0.3 1 sphere<br>
+<img src="images/start_cap.png"><br>
+　　　d<br>
+　　　polyline 25 0.3 1 sphere sphere<br>
+<img src="images/end_cap.png"><br>
 <strong>　PLY_interactive.py の p コマンド：curve オプション</strong><br>
 　・数式で曲線の点を生成し Points[ ]に格納する<br>
 　　p curve (Tの式) (Tを使ったXの式) (Tを使ったYの式) (Tを使ったZの式)<br>
