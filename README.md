@@ -47,7 +47,7 @@
 
 　　polyline の パイプとパイプの間に隙間を入れる場合は、第三引数(ratio)で指定する。<br>
 　　(例)<br>
-　　p curve np.linspace(-1, 1,100) T np.sin(T*np.pi*3) [0]*len(T)<br>
+　　p curve np.linspace(-1, 1,100) T np.sin(T\*np.pi\*3) [0]\*len(T)<br>
 　　poly-line 25 0.3　･･･　ratio指定なし (ratio=1.0)<br>
 <img src="images/ratio1.png"><br> 
 　　poly-line 25 0.3 0.5　･･･　ratio指定あり (ratio=0.5)<br>
@@ -589,5 +589,6 @@
 </body>
 
 </html>
+
 
 
