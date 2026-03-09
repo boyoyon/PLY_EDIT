@@ -16,6 +16,18 @@
 
 <h3>更新項目</h3>
 <p>
+<strong>　PLY_interactive.py の polygon コマンド</strong><br>
+　　最終半径を追加<br>
+　　polygon (辺の数) (初期半径) (幅)　(螺旋高さ)　(回転数)　(最終半径)<br>
+</p>
+<img src="images/polygon2.png"><br>
+</p>
+<p>
+　　polygon の軌道を Points[ ]に格納して polyline コマンドでメッシュ化<br>
+　　p　polygon (辺の数) (初期半径) (幅)　(螺旋高さ)　(回転数)　(最終半径)<br>
+</p>
+<img src="images/p_polygon5.png"><br>
+<p>
 <strong>　PLY_interactive.py の起動オプション</strong><br>
 <p>
 　・Visualizerのウィンドウサイズ指定<br>
