@@ -243,7 +243,9 @@ def _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, Lat
     fSideOnly = False
     if width < 0 or finalSize != size:
         fSideOnly = True
-        width *= -1
+
+        if width < 0:
+            width *= -1
 
     meshes = []
 
