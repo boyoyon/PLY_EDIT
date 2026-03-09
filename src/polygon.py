@@ -106,10 +106,18 @@ def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,
         
         if len(cmds) > 5:
             count = int(cmds[5])
+
+        finalSize = size
  
+        if len(cmds) > 6:
+            try:
+                finalSize = float(eval(cmds[6]))
+            except NameError:
+                usagePolygon(cmds)
+
         if fIntegrate:
 
-            _meshes = _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+            _meshes = _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, finalSize)
 
             for i in range(len(_meshes)):
                 
@@ -123,7 +131,7 @@ def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,
 
         else:
 
-            meshes = _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+            meshes = _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, finalSize)
     
             names = []
     
@@ -189,11 +197,8 @@ def polyline(cmds, Points, fClose, fPadding = False, SurfaceOuter = (128,128,255
 
         if len(cmds) > 5:
             end = cmds[5]
-    
-        if fClose:
-            clonePoints.append(clonePoints[0])
-    
-        _meshes =  _polyiline(size, nr_divs, ratio, fPadding, start, end, Points, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, PaddingOuter, PaddingInner)
+   
+        _meshes =  _polyiline(size, nr_divs, ratio, fClose, fPadding, start, end, clonePoints, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, PaddingOuter, PaddingInner)
 
     
         for i in range(len(_meshes)):
@@ -216,7 +221,7 @@ def polyline(cmds, Points, fClose, fPadding = False, SurfaceOuter = (128,128,255
 # implementation
 #
 
-def _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner):
+def _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, finalSize):
 
     fgc = np.array(SurfaceOuter)
     bgc = np.array(SurfaceInner)
@@ -236,7 +241,7 @@ def _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, Lat
     startAngle = stepAngle / 2
 
     fSideOnly = False
-    if width < 0:
+    if width < 0 or finalSize != size:
         fSideOnly = True
         width *= -1
 
@@ -249,8 +254,13 @@ def _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, Lat
     vertTop = np.zeros((num1, 3), np.float64)
     vertSide = np.zeros((num1 * 2, 3), np.float64)
 
+    step = (size - finalSize) / nr_divs / count
+
     for i in range(nr_divs * count + 1):
         
+        if finalSize != size:
+            x0 = size - step * i
+
         angle = stepAngle * i + startAngle
         x, z = rot2D(x0, z0, angle)
         vertTop[i] = [x,y0 + delta * i / nr_divs + width/2, z]
@@ -345,7 +355,7 @@ def _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, Lat
 
     return meshes
 
-def _polyiline(size, nr_divs, ratio, fPadding, start, end, points, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, PaddingOuter, PaddingInner):
+def _polyiline(size, nr_divs, ratio, fClose, fPadding, start, end, points, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, PaddingOuter, PaddingInner):
 
     meshes = []
     accum = None
@@ -353,15 +363,21 @@ def _polyiline(size, nr_divs, ratio, fPadding, start, end, points, SurfaceOuter,
     if len(points) > 1:
 
         # y軸向き
-        pipe0 = _polygon(nr_divs, size, 1, 0, 1, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)[0]
+        pipe0 = _polygon(nr_divs, size, 1, 0, 1, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, size)[0]
     
         # x軸向きになるように回転
         R0 = o3d.geometry.get_rotation_matrix_from_xyz((0, 0, np.pi/2)) 
         pipe0.rotate(R0, center=(0,0,0))
    
-        _points = np.unique(np.array(points), axis=0)
-        nr_points = _points.shape[0]
+        nr_points = np.unique(np.array(points), axis=0).shape[0]
 
+        if fClose:
+            if len(points) > nr_points:
+                points[nr_point] = points[0] # ユニークなデータの後に最初のデータを付加
+            else:
+                points.append(points[0])
+
+            nr_points += 1
  
         for i in range(1, nr_points):
             A = np.array(points[i-1])
@@ -388,13 +404,12 @@ def _polyiline(size, nr_divs, ratio, fPadding, start, end, points, SurfaceOuter,
                           [0, 0, 0, 1]], np.float64)
         
             pipe.transform(T)
-           
-             
+    
             if i == 1:
                 accum = copy.deepcopy(pipe)
             else:
                 accum += copy.deepcopy(pipe)
-    
+             
             if fPadding:
    
                 if i < nr_points - 1:
