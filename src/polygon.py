@@ -7,8 +7,6 @@ from sphere import _sphere
 # Internal
 #
 
-fWidth = False
-
 def rot2D(x, y, angle):
 
     X = np.cos(angle) * x - np.sin(angle) * y
@@ -25,41 +23,25 @@ def getInt3(str1, str2, str3):
 
 def get_rotation_to_vector(target, source=np.array([1,0,0],np.float64)):
 
-    #source = np.array([1, 0, 0], np.float64)
-
-    target = target / np.linalg.norm(target)
-
-    axis = np.cross(source, target)
-    axis_norm = np.linalg.norm(axis)
-
-    if axis_norm < 1e-10:
-        if np.dot(source, target):
-            return np.eye(3)
-        else:
-            return -np.eye(3)
+    a = source / np.linalg.norm(source)
+    b = target / np.linalg.norm(target)
     
-    axis = axis / axis_norm
-    cos_theta = np.dot(source, target)
-    theta = np.arccos(np.clip(cos_theta, -1.0, 1.0))
-
-    return o3d.geometry.get_rotation_matrix_from_axis_angle(axis * theta)
-
-def get_rotation_matrix_from_vectors(vec1, vec2):
-
-    if np.isnan(vec1).any() or np.isnan(vec2).any():
-        # print('vectors including nan are specified')
-        return np.eye(3)
-
-    a = vec1 / (np.linalg.norm(vec1) + 0.0000001)
-    b = vec2 / (np.linalg.norm(vec2) + 0.0000001)
-    
+    # 回転軸（外積）と回転角（内積から算出）
     v = np.cross(a, b)
     c = np.dot(a, b)
-
     s = np.linalg.norm(v)
-    if s < 1e-8: return np.eye(3)
-    k = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
-    return np.eye(3) + k + k.dot(k) * ((1 - c) / (s ** 2))
+    
+    # ベクトルが平行な場合の処理（外積が0になるため）
+    if s < 1e-8:
+        return np.eye(3) if c > 0 else -np.eye(3) # 同方向なら単位行列、逆方向なら反転
+
+    # 回転ベクトル（軸 * 角度）の作成
+    # 角度 θ = atan2(sin, cos)
+    theta = np.arctan2(s, c)
+    axis_angle = (v / s) * theta
+    
+    # Open3Dの関数で回転行列を取得
+    return o3d.geometry.get_rotation_matrix_from_axis_angle(axis_angle)
 
 def usagePolygon(cmds):
     print('polygon <nr_of_edges(>=3)> [<size> <width>]')
@@ -79,8 +61,6 @@ def usagePolyline(cmds):
 #
 
 def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,200,255), LateralOuter = (128, 128, 255) , LateralInner = (200,200,255)):
-
-    global fWidth
 
     meshes = []
     names = []
@@ -112,11 +92,6 @@ def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,
             except NameError:
                 usagePolygon(cmds)
        
-        if width != 0:
-            fWidth = True
-        else:
-            fWidth = False
-
         delta = 0.0
 
         if len(cmds) > 4:
@@ -168,6 +143,9 @@ def polyline(cmds, Points, fClose, fPadding = False, SurfaceOuter = (128,128,255
 
     meshes = []
     names = []
+    accum = None
+
+    print('polyline:',len(Points))
 
     if len(Points) > 1:
 
@@ -225,8 +203,9 @@ def polyline(cmds, Points, fClose, fPadding = False, SurfaceOuter = (128,128,255
             else:
                 accum += copy.deepcopy(_meshes[i])
     
-        meshes.append(accum)
-        names.append('POLYLINE%d' % nr_divs)
+        if accum is not None:
+            meshes.append(accum)
+            names.append('POLYLINE%d' % nr_divs)
 
     else:
         usagePolyline(cmds)
@@ -369,6 +348,7 @@ def _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, Lat
 def _polyiline(size, nr_divs, ratio, fPadding, start, end, points, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, PaddingOuter, PaddingInner):
 
     meshes = []
+    accum = None
 
     if len(points) > 1:
 
@@ -378,11 +358,10 @@ def _polyiline(size, nr_divs, ratio, fPadding, start, end, points, SurfaceOuter,
         # x軸向きになるように回転
         R0 = o3d.geometry.get_rotation_matrix_from_xyz((0, 0, np.pi/2)) 
         pipe0.rotate(R0, center=(0,0,0))
-    
-        if fWidth:
-            nr_points = len(points) // 2
-        else:
-            nr_points = len(points)
+   
+        _points = np.unique(np.array(points), axis=0)
+        nr_points = _points.shape[0]
+
  
         for i in range(1, nr_points):
             A = np.array(points[i-1])
@@ -400,8 +379,8 @@ def _polyiline(size, nr_divs, ratio, fPadding, start, end, points, SurfaceOuter,
             pipe.transform(S) 
         
             R = get_rotation_to_vector(B - A) # pipe direction
-
-            pipe.rotate(R, center=(0,0,0))
+            if not np.allclose(R,-np.eye(3), atol=1e-8):
+                pipe.rotate(R, center=(0,0,0))
         
             T = np.array([[1, 0, 0, M[0]],
                           [0, 1, 0, M[1]],
@@ -420,7 +399,6 @@ def _polyiline(size, nr_divs, ratio, fPadding, start, end, points, SurfaceOuter,
    
                 if i < nr_points - 1:
      
-     
                     C = np.array(points[i+1])
         
                     l2 = np.linalg.norm(C-B)
@@ -434,7 +412,7 @@ def _polyiline(size, nr_divs, ratio, fPadding, start, end, points, SurfaceOuter,
                     #azimuth = [-theta, 0, nr_divs]
                     azimuth = [0, theta, nr_divs]
                     #azimuth = [-theta/2, theta/2, nr_divs]
-        
+       
                     joint, _ = _sphere(size, elevation, azimuth, PaddingOuter, PaddingInner)
                     JOINT = copy.deepcopy(joint[0])
         
@@ -444,14 +422,25 @@ def _polyiline(size, nr_divs, ratio, fPadding, start, end, points, SurfaceOuter,
                     y_axis = np.array([0.0, 1.0, 0.0])
                     Y_AXIS = np.cross(C-B, B-A)
          
-                    R3 = get_rotation_matrix_from_vectors(y_axis, Y_AXIS)
-                    JOINT.rotate(R3, center=(0,0,0))
+                    #R3 = get_rotation_matrix_from_vectors(y_axis, Y_AXIS)
+                    R3 = get_rotation_to_vector(Y_AXIS, y_axis)
+                    if np.allclose(R3,-np.eye(3), atol=1e-8):
+                        print('R3 == -eye(3)')
+
+                    else:
+                        JOINT.rotate(R3, center=(0,0,0))
         
                     x_axis = R3 @ np.array([1.0, 0.0, 0.0])
                     X_AXIS = B - A
         
-                    R4 = get_rotation_matrix_from_vectors(x_axis, X_AXIS)
+                    #R4 = get_rotation_matrix_from_vectors(x_axis, X_AXIS)
+                    R4 = get_rotation_to_vector(X_AXIS, x_axis)
                     JOINT.rotate(R4, center=(0,0,0))
+                    
+                    if np.allclose(R4,-np.eye(3), atol=1e-8):
+                        print('R4 == -eye(3)')
+                        _triangles = np.asarray(JOINT.triangles)[:,[0,2,1]]
+                        JOINT.triangles = o3d.utility.Vector3iVector(_triangles)
                 
                     T2 = np.array([[1, 0, 0, B[0]],
                                    [0, 1, 0, B[1]],
@@ -502,6 +491,7 @@ def _polyiline(size, nr_divs, ratio, fPadding, start, end, points, SurfaceOuter,
                     END.transform(T)               # move to the location of line segment
                     accum += copy.deepcopy(END)
     
-        meshes.append(accum)
+        if accum is not None:
+            meshes.append(accum)
 
     return meshes

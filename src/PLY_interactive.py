@@ -16,6 +16,8 @@ KEY_RIGHT = 262
 KEY_UP    = 265
 KEY_DOWN  = 264
 
+MIN_VALUE = 0.0000001
+
 angle_step = np.pi / 180
 translation_step = 0.01
 scale_up = 1.01
@@ -1457,8 +1459,14 @@ def main():
                     sizeZ = maxZ - minZ
                     
                     size = np.min((sizeX, sizeY, sizeZ))
-                    down_pcd = pcd.voxel_down_sample(voxel_size = size/divider)
-                    points = np.asarray(down_pcd.points).tolist()
+                    
+                    if size > MIN_VALUE:
+                        down_pcd = pcd.voxel_down_sample(voxel_size = size/divider)
+                        points = np.asarray(down_pcd.points).tolist()
+
+                    else:
+                        print('volume 0 mesh. get points by numpy unique')
+                        points = np.unique(vertices, axis=0).tolist()
 
                     print('No. of points obtained:',len(points))
 
