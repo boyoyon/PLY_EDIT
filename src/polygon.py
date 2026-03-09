@@ -373,7 +373,7 @@ def _polyiline(size, nr_divs, ratio, fClose, fPadding, start, end, points, Surfa
 
         if fClose:
             if len(points) > nr_points:
-                points[nr_point] = points[0] # ユニークなデータの後に最初のデータを付加
+                points[nr_points] = points[0] # ユニークなデータの後に最初のデータを付加
             else:
                 points.append(points[0])
 
