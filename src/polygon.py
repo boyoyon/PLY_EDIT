@@ -7,6 +7,8 @@ from sphere import _sphere
 # Internal
 #
 
+MIN_VALUE = 0.0000001
+
 def rot2D(x, y, angle):
 
     X = np.cos(angle) * x - np.sin(angle) * y
@@ -144,8 +146,6 @@ def polyline(cmds, Points, fClose, fPadding = False, SurfaceOuter = (128,128,255
     meshes = []
     names = []
     accum = None
-
-    print('polyline:',len(Points))
 
     if len(Points) > 1:
 
@@ -369,7 +369,7 @@ def _polyiline(size, nr_divs, ratio, fPadding, start, end, points, SurfaceOuter,
             M = (A + B) * 0.5  
             
             l = np.linalg.norm(B - A)
-        
+ 
             S = np.array([[l * ratio, 0, 0, 0],
                           [0, 1, 0, 0],
                           [0, 0, 1, 0],
@@ -402,16 +402,17 @@ def _polyiline(size, nr_divs, ratio, fPadding, start, end, points, SurfaceOuter,
                     C = np.array(points[i+1])
         
                     l2 = np.linalg.norm(C-B)
-        
+
+                    if l2 < MIN_VALUE:
+                        continue
+
                     dot_BA_CB = np.dot(B-A, C-B)
                     cos_theta = dot_BA_CB / (l * l2)
                     theta = np.arccos(np.clip(cos_theta, -1.0, 1.0))
                 
                     elevation = [0, np.pi, nr_divs]
         
-                    #azimuth = [-theta, 0, nr_divs]
                     azimuth = [0, theta, nr_divs]
-                    #azimuth = [-theta/2, theta/2, nr_divs]
        
                     joint, _ = _sphere(size, elevation, azimuth, PaddingOuter, PaddingInner)
                     JOINT = copy.deepcopy(joint[0])
@@ -422,18 +423,15 @@ def _polyiline(size, nr_divs, ratio, fPadding, start, end, points, SurfaceOuter,
                     y_axis = np.array([0.0, 1.0, 0.0])
                     Y_AXIS = np.cross(C-B, B-A)
          
-                    #R3 = get_rotation_matrix_from_vectors(y_axis, Y_AXIS)
                     R3 = get_rotation_to_vector(Y_AXIS, y_axis)
                     if np.allclose(R3,-np.eye(3), atol=1e-8):
                         print('R3 == -eye(3)')
-
-                    else:
-                        JOINT.rotate(R3, center=(0,0,0))
+                        R3 = o3d.geometry.get_rotation_matrix_from_xyz((np.pi, 0, 0)) 
+                    JOINT.rotate(R3, center=(0,0,0))
         
                     x_axis = R3 @ np.array([1.0, 0.0, 0.0])
                     X_AXIS = B - A
         
-                    #R4 = get_rotation_matrix_from_vectors(x_axis, X_AXIS)
                     R4 = get_rotation_to_vector(X_AXIS, x_axis)
                     JOINT.rotate(R4, center=(0,0,0))
                     
