@@ -1097,7 +1097,7 @@ def main():
 
             elif cmds[0] == 'poly-line' or cmds[0] == 'POLY-LINE': 
 
-                if cmds[0] == 'polyline': # open path
+                if cmds[0] == 'poly-line': # open path
                     _meshes, _names = polyline(cmds, Points, False, False, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
 
                 else: # closed path
