@@ -14,592 +14,314 @@
 　pip install Open3D
 <p>
 
-<h3>更新項目</h3>
-<p>
-<strong>　PLY_interactive.py の polygon コマンド</strong><br>
-　　最終半径を追加<br>
-　　polygon (辺の数) (初期半径) (幅)　(螺旋高さ)　(回転数)　(最終半径)<br>
+<h3>使い方</h3>
+
+<h4>起動・終了</h4>
+<p><strong>起動</strong><br>
+<br>
+python PLY_interactive.py [(幅) (高さ)]<br>
+・引数で Visualizer 画面の幅、高さを指定可能。<br>
+　起動後でもサイズ変更可能。<br>
+<br>
+　コンソールにコマンドを入力すると結果が Visualizer 画面に表示される。<br>
 </p>
-<img src="images/polygon2.png"><br>
-</p>
+<img src="images/screen.svg">
+
 <p>
-　　polygon の軌道を Points[ ]に格納して polyline コマンドでメッシュ化<br>
-　　p　polygon (辺の数) (初期半径) (幅)　(螺旋高さ)　(回転数)　(最終半径)<br>
-</p>
-<img src="images/p_polygon5.png"><br>
-<p>
-<strong>　PLY_interactive.py の起動オプション</strong><br>
-<p>
-　・Visualizerのウィンドウサイズ指定<br>
-　　python PLY_interactive [(幅) (高さ)]<br>
-</p>
-
-<strong>　PLY_interactive.py の p コマンド：polygon オプション</strong><br>
-<p>
-　・polygon 引数で正多角形の頂点座標を Ponint[ ]に格納する<br>
-　　p polygon 30<br>
-　　polyline　･･･　引数なしも受け付けるよう変更した(デフォルトの辺の数：25, サイズ：0.02)<br>
-
-<img src="images/p_polygon.png"><br>
-
-　　polyline の隙間を埋めるようにした。･<br>
-　　(例)<br>
-　　p polygon 30<br>
-　　polyline 25 0.3　･･･　隙間が埋められている(微妙な隙間は残るが)<br>
-<img src="images/p_polygon1.png"><br>
-　　パディング部分の色は PaddingOuter, PaddingInner で指定する。<br>
-　　PaddingOuter 255 180 255<br>
-　　PaddingInner 255 230 255<br>
-　　p polygon 30<br>
-　　polyline 25 0.3<br>
-<img src="images/p_polygon3.png"><br> 
-　　従来通り, 隙間を残す場合はコマンドの間にハイフンを入れる<br>
-　　poly-line 25 0.3<br>
-<img src="images/p_polygon2.png"><br>
-
-　　polyline の パイプとパイプの間に隙間を入れる場合は、第三引数(ratio)で指定する。<br>
-　　(例)<br>
-　　p curve np.linspace(-1, 1,100) T np.sin(T\*np.pi\*3) [0]\*len(T)<br>
-　　poly-line 25 0.3　･･･　ratio指定なし (ratio=1.0)<br>
-<img src="images/ratio1.png"><br> 
-　　poly-line 25 0.3 0.5　･･･　ratio指定あり (ratio=0.5)<br>
-<img src="images/ratio05.png"><br> 
-　　polyline の始点と終点にフタを置けるようにした。<br>
-　　(例)<br>
-　　　p clear　･･･　Points[ ] をクリア<br>
-　　　p 0 0 0　･･･　Points[ ] に(0.0, 0.0, 0.0)を追加<br>
-　　　p 1 0 0　･･･　Points[ ] に(1.0, 0.0, 0.0)を追加<br>
-　　　p 1.1.1　･･･　Points[ ] に(1.0, 1.0, 1.0)を追加<br>
-　　　polyline 25 0.3<br>
-<img src="images/no_cap.png"><br>
-　　　d<br>
-　　　polyline 25 0.3 1 sphere<br>
-<img src="images/start_cap.png"><br>
-　　　d<br>
-　　　polyline 25 0.3 1 sphere sphere<br>
-<img src="images/end_cap.png"><br>
-<strong>　PLY_interactive.py の p コマンド：curve オプション</strong><br>
-　・数式で曲線の点を生成し Points[ ]に格納する<br>
-　　p curve (Tの式) (Tを使ったXの式) (Tを使ったYの式) (Tを使ったZの式)<br>
-　（例）<br>
-　　p curve np.linspace(-1,1,100) T T**3 [0]\*len(T)<br>
-　　polyline<br>
-<img src="images/curve.png"><br>
-　（例）<br>
-　　p curve np.linspace(-1,np.1,100) np.sin(T\*6) np.cos(T\*6) T<br>
-　　polyline<br>
-<img src="images/curve_2.png"><br>
-
-<strong>　PLY_interactive.py の distribute コマンド</strong><br>
-　　sphereコマンドを呼び出せるようにした。<br>
-　　(POLYLINE のサイズ毎にジョイント用 ply を作成しなくて良い)<br>
-　　(例)<br>
-　　　p polygon 5<br>
-　　　POLYLINE 25 0.3<br>
-<img src="images/distribute2.png"><br>
-　　　distribute sphere 0.3<br>
-<img src="images/distribute3.png"><br>
-<strong>　PLY_interactive.py の distribute コマンド：radial オプション</strong><br>
-　　distributeで配置したメッシュの向きを動径方向に向ける。<br>
-　　(元のメッシュが x 軸方向を向いている想定)<br>
-　　(例)<br>
-　　　l data/dodecahedron.ply　･･･　正12面体をロード<br>
-　　　getPoints　･･･　頂点座標を取得<br>
-　　　d　･･･　正12面体を削除<br>
-　　　distribute data/face.ply　･･･　メッシュを頂点に配置。元のメッシュの向きのまま<br>
-　　　normals　･･･　法線を計算する。clear normals と表示される場合はもう一回実施する<br>
-<img src="images/distribute4.png"><br>
-　　　d　･･･　配置されたメッシュを削除<br>
-　　　distribute data/face.ply radial　･･･　メッシュを頂点に配置。メッシュの向きは動径方向<br>
-　　　normals　･･･　法線を計算する。clear normals と表示される場合はもう一回実施する<br>
-<img src="images/distribute5.png"><br>
-　　(例)<br>
-　　　l data/star_border.ply<br>
-<img src="images/distribute6.png"><br>
-　　　s 0.5 0.5 0.5　･･･　サイズを調整する<br>
-
-　　　r 0 0 -90　･･･　x軸方向を向くように調整する<br>
-<img src="images/distribute7.png"><br>
-　　　save star.ply<br>
-　　　正 12 面体の頂点が Points[ ] に格納されている場合<br>
-　　　distribute star.ply radial<br>
-<img src="images/distribute8.png"><br>
+　(基本操作) ･･･ [ ]はオプション<br>
+　・m　　　　　　　　　　　　　　　　･･･　メニューを表示する<br>
+　・axis　　　　　　　　　　　　　　　･･･　座標軸を消す⇔表示する<br>
+　・l　(.plyファイル)　　　　　　　　　･･･　PLYファイルをロードしメッシュを表示する<br>
+　・r　(x回転角)　(y回転角)　(z回転角)　･･･　メッシュを回転する<br>
+　・s　(x倍率)　(y倍率)　(z倍率)　　　　･･･　メッシュを拡大/縮小する<br>
+　・t　(x移動量)　(y移動量)　(x移動量)　･･･　メッシュを移動する<br>
+　・merge　　　　　　　　　　　　　　･･･　メッシュをマージする<br>
+　・normals　　　　　　　　　　　　　･･･　法線を計算する / 削除する。<br>
+　・d　[all]　　　　　　　　　　　　･･･　メッシュを削除する。[all]は全部削除。<br>
+　・u　　　　　　　　　　　　　　　　･･･　前の操作を取り消す<br>
+　・cap　[ファイル名]　　　　　　　　･･･　Visualizer 画面をキャプチャーする<br>
+　・save　(.plyファイル)　　　　　　　･･･　メッシュを保存する<br>
+　・quit　　　　　　　　　　　　　　　･･･　終了する<br>
+<br>
+　※ パラメータにスペースを含めることはできない。<br>
+　※ 実数値パラメータには numpy 関数(np.***) を含んだ式を指定することができる。<br>
 </p>
 
-
-
-<h3>プリミティブ作成</h3>
-
+<h4>Visualizer 画面でのキー操作</h4>
 <p>
-　<strong>リングの作成</strong><br>
-　　python src\createRing.py (分割数) (サイズ) (幅) (表面色) (裏面色)<br>
+※ 元の Visualizer 操作キーは, hキー押下でコンソールに表示される。<br>
 <br>
-　(例１)<br>
-　　python src\createRing.py  100  1  0.01  0  0  255  200  200  255<br>
-<br>
-　　　y-z 平面上にリング(100角形)を作成。サイズ(半径)は 1, 幅は 0.01。<br>
-　　　表面は濃い青(0 0 255), 裏面は薄い青(200 200 255)。<br>
-<img src="images/ring_100.gif">
-<br>
-　(例２)<br>
-　　python src\createRing.py 5  1  0.01  0  0  255  200  200  255<br>
-<br>
-　　　y-z 平面上にリング(5角形)を作成。サイズ(半径)は 1, 幅は 0.01。<br>
-　　　表面は濃い青(0 0 255), 裏面は薄い青(200 200 255)。<br>
-<img src="images/ring_5.gif">
-<br>
-　<strong>白黒リングの作成</strong><br>
-　　python src\createRingBW.py (分割数) (サイズ) (幅)<br>
-<br>
-　(例１)<br>
-　　python src\createRingBW.py  100  1  0.01<br>
-<br>
-　　　y-z 平面上にリング(100角形)を作成。サイズ(半径)は 1, 幅は 0.01。<br>
-<img src="images/ringBW_100.gif">
+カスタマイズしたキー操作<br> 
+・x　･･･　x軸方向からのビュー<br>
+・y　･･･　y軸方向からのビュー<br>
+・z　･･･　z軸方向からのビュー<br>
+</p>
+<img src="images/VisualizerCtrl.svg">
+<p>
+・1/2/3　･･･　カメラ位置の回転。+Shiftで逆方向回転。+Ctrlで回転量増加<br>
+・4/5/6　･･･　カメラ位置の移動。+Shiftで逆方向移動。+Ctrlで移動量増加<br>
+・7/8　　･･･　回転/移動ステップの増減。+Shiftで増加<br>
+・↑↓　 ･･･　ズーム(6, Shtft+6と同じ)<br>
+・→←　 ･･･　移動(4,Shift+4と同じ)<br>
 </p>
 
-<h3>PLY編集</h3>
+<h4>コンソールからの Visualizer 制御</h4>
 <p>
-<strong>　回転・スケーリング・平行移動</strong><br>
+・getEyePos　･･･　カメラパラメータの取得<br>
+・setEyePos　･･･　カメラパラメータの設定<br>
 <br>
-　プリミティブ PLY を回転・スケーリング・平行移動して PLYを作成する。<br>
-　python src\PLY_RST.py (プリミティブPLY) (手順)<br>
+・cam x　　　　　　　　　　･･･　x軸方向からのビュー<br>
+・cam rotate x (角度)　　　･･･　x軸周りに回転<br>
+・cam rotate -x (角度)　　　･･･　x軸周りに逆回転<br>
+・cam rotate x (-角度)　　　･･･　(同上)<br>
+・cam translate x (移動量)　･･･　x軸方向に平行移動<br>
+・cam translate -x (移動量)　･･･　x軸方向に平行移動<br>
+・cam translate x (-移動量)　･･･　(同上)<br>
 <br>
-　(例１)<br>
-　　python src\PLY_RST.py data\ring_100.ply data\手順_りんご.txt<br>
-<br>
-　　(手順_りんご.txt)<br>
-　　　s 1 1 0.5    # z 方向に 0.5倍 (scaling)<br>
-　　　t 0 0 0.6    # z 方向に 0.6移動 (translation)<br>
-　　　rr 18 y 10   # y軸に周りに10°回転 (rotation) を 18回<br>
-　　　apple.ply    # apple.plyとしてセーブ<br>
-<br>
-　　　※ 手順ファイルの # 以降は無視されます。<br>
-<br>
-<img src="images/apple.png">
-<br>
-　(例２)<br>
-　　python src\PLY_RST.py data\ring_100.ply data\手順_砂時計.txt<br>
-<br>
-　　(手順_砂時計.txt)<br>
-　　　s 1 1 0.3　　  # z方向に0.3倍<br>
-　　　r z 45　　　　 # z軸周りに45°回転<br>
-　　　rr 36 x 10　　 # x軸周りに10°回転を36回<br>
-　　　hourglass.ply　# hourglass.ply としてセーブ<br>
-<img src="images/hourglass.png">
-<br>
-　(例３)<br>
-　　python src\PLY_RST.py data\ring_100.ply data\手順_螺旋.txt<br>
-<br>
-　　(手順_螺旋.txt)<br>
-　　　g 10 t 0 -1.5 0 r x 36 t 0.5 1.5 0　# (移動→回転→移動)をグループとして10回実行<br>
-　　　spiral.ply　　　　　　　　　　# spiral.ply としてセーブ<br>
-<img src="images/spiral.gif">
-<br>
-<strong>　回転・スケーリング・平行移動＋マージ</strong><br>
-<br>
-　　回転・スケーリング・平行移動で複数の PLY を作成し、<br>
-　　① python src\PLY_RST.py (プリミティブPLY) (手順)<br>
-<br>
-　　１つのPLYにマージする。<br>
-　　② python src\merge_mesh_plys.py (PLYファイルへのワイルドカード(例：*.PLY))<br>
-　　　　または<br>
-　　②'python src\merge_mesh_plys.py (PLYファイル1) (PLYファイル2) ･･･<br>
-<br>
-　　(例１)<br>
-　　　① python src\PLY_RST.py data\ring_100.ply data\手順_二枚貝.txt<br>
-<br>
-　　　(手順_二枚貝.txt)<br>
-　　　　s 1 0.5 0.5<br>
-　　　　r z -18<br>
-　　　　t -np.sin(np.deg2rad(18))*0.5 0 0<br>
-　　　　01.ply<br>
-<br>
-　　　　s 1 0.5 0.5<br>
-　　　　r z 18<br>
-　　　　t np.sin(np.deg2rad(18))*0.5 0 0<br>
-　　　　02.ply<br>
-<br>
-　　　※数値の部分に np(numpy) を使った式を使うことができます。<br>
-　　　　ただし, スペースを含めることはできません。<br>
-<br>
-　　　② python src\merge_mesh_plys.py *.ply<br>
-<br>
-　　　※ マージされた PLY が merged.ply に出力されます。<br>
-<img src="images/clams.gif"＞<br>
-<br>
-<strong>　手動で複数の PLY の位置関係を調整</strong>
-<br>
-　　python PLY_manual_edit.py (PLYファイル1) (PLYファイル2)<br>
-<br>
-　　1/2/3/4/5/6キーで PLY2 を回転、平行移動する。<br>
-　　Shiftキーで逆方向に回転, 平行移動。<br>
-　　7/8キー、Shift+7/Shift+8キーで回転量、平行移動量を増減。<br>
-　　Ctrlキーで回転量, 平行移動量を大きくする。<br>
-　　ESCキーを押下するとプログラム終了。マージされた結果が merged.ply に出力される。<br>
-<img src="images/manual_edit.gif"><br>
-<br>
-<strong>　回転・スケーリング・平行移動 [インタラクティブ版]</strong><br>
-<br>
-　　使い勝手が悪すぎたので, インタラクティブ版を作ってみた<br>
-<br>
-　　[0] 起動：python src\PLY_interactive.py<br>
-<img src="images/00.png"><br>
-　　コンソール画面からコマンドを入力する。<br>
-　　[1] PLYファイルロード：　load data\ring_100.ply<br>
-<img src="images/01.png"><br>
-　　[2] 回転コマンド：r 0 10 0 18<br>
-　　　　y軸周りに10°回転を18回繰り返す。<br>
-<img src="images/02.png"><br>
-　　[3] 座標軸を消す：axis<br>
-　　　　axisを入力するたびに, 座標軸を消す→表示するをトグルする。<br>
-<img src="images/03.png"><br>
-　　[4] PLYをセーブする：save ball.ply<br>
-<br>
-　　[5] メッシュを削除する：del<br>
-<img src="images/00.png"><br>
-　　[6] PLYファイルロード：　load data\ring_100.ply<br>
-<img src="images/01.png"><br>
-　　[7] 回転/スケーリング/平行移動コマンド：g s 1 0.9 0.9 t 0 -0.5 0 r 20 0 0 t 0.1 0.5 0 30<br>
-　　　　　グループコマンド<br>
-　　　　　　① y-z平面で0.9倍にスケーリング<br>
-　　　　　　② y方向に-0.5平行移動<br>
-　　　　　　③ x軸周りに20°回転<br>
-　　　　　　④ y方向に+0.5 x方向に+0.1<br>
-　　　　　①～④を30回繰り返す。<br>
-<img src="images/05.png"><br>
-　　[8] Undo：u<br>
-<img src="images/01.png"><br>
-　　[9] 終了：quit<br>
-　　　　　Open3D の Visualizer画面を選んでESCキー押下でも終了する。
+※ y, zについても同様のコマンドあり。<br>
+
 </p>
 
-<h3>PLY表示</h3>
-<p>
-　python src\o3d_display_mesh.py (PLY) [-normal]<br>
+<p><strong>終了</strong><br>
 <br>
-　　-normal/指定せず： 　　　　　　 法線を計算する/しない<br>
-　　マウスドラッグ: 　　　　　　　　モデルを回転する<br>
-　　ホィールボタン押下＋ドラッグ：　モデルを移動する<br>
-　　ホィールを回す：　　　　　　　　モデルの拡大、縮小<br>
-　　＠キー/[キー押下：　　　　　　　画角変更<br>
-　　pキー押下：　　　　　　　　　　 スクリーンキャプチャー<br>
-　　1キー/Shift+1キー押下：　　　　 モデルの回転(x軸周り)<br>
-　　2キー/Shift+1キー押下：　　　　 モデルの回転(y軸周り)<br>
-　　3キー/Shift+1キー押下：　　　　 モデルの回転(z軸周り)<br>
-　　4キー/Shift+1キー押下：　　　　 モデルの移動(x軸方向)<br>
-　　5キー/Shift+1キー押下：　　　　 モデルの移動(y軸方向)<br>
-　　6キー/Shift+1キー押下：　　　　 モデルの移動(z軸方向)<br>
-　　7キー/Shift+7キー押下：　　　　 回転量を下げる/上げる<br>
-　　8キー/Shift+8キー押下：　　　　 移動量を下げる/上げる<br>
-    Ctrlキー＋1/2/3/4/5/6キー：　　 回転量, 移動量を大きくする<br>
-　　↑キー/↓キー押下:　　　　　　　モデルのスケーリング<br>
-　　ESCキー押下：　　　　　　　　　プログラム終了<br>
-<br>
-　python src\o3d_display_mesh_animate.py (PLY) [-normal]<br>
-<br>
-　　回転しつづける<br>
-　　1～9キー,↑キー, ↓キーは効かない。
-</p>
-<h3>PLY interactive つづき</h3>
-<p>
-　デバッグできていないのに、機能追加･･･<br>
-<br>
-　<strong>多角形メッシュ生成</strong><br>
-　　polygon (辺の数) [(サイズ) (高さ)]<br>
-　　POLYGON (辺の数) [(サイズ) (高さ)]<br>
-<br>
-　(例) polygon 5<br>
-　　　 サイズ(外接円の半径)のデフォルトは 1<br>
-　　　 高さを指定しないと 0 (平板)<br>
-<img src="images/10.png"><br>
-　(例) polygon 5 1 0.2<br>
-　　　高さを指定すると柱になる(厚みがでる)<br>
-<img src="images/11.png"><br>
-　　　Open3D の Visualizer画面をクリックして wキーを押下するとワイヤーフレームを表示してくれる。<br>
-　　　(座標軸や文字もワイヤーフレーム表示になってしまうが･･･)<br>
-<img src="images/12.png"><br>
-　　(例) select<br>
-　　　　　select from  ['', 'polygon5_side', 'polygon5_top', 'polygon5_bottom']<br>
-<br>
-　　　　小文字版のコマンド(polygon)の場合、天板、底面、側面が別々のメッシュになっている。<br>
-　　　　個別に操作できるが、メッシュ選択やマージ機能がちゃんとできていないので不便。<br>
-　　　　削除する場合も d コマンドを3回実行する必要あり。<br>
-<br>
-　　(例) select polygon5_side<br>
-　　　　 r 30 0 0<br>
-<img src="images/13.png"><br>
+・Visualizer 画面で ESC キー押下<br>
+　または<br>
+・コンソールに quit と入力する。<br>
 
-　　大文字版のコマンド(POLYGON)だと全体が1個のメッシュになる。<br>
-　　(例) POLYGON 5 1 0.2<br>
-　　　　 r 30 0 0<br>
-<img src="images/14.png"><br>　
+<h4>ロード・セーブ:　l コマンド / save コマンド</h4>
 
-　　高さにマイナスを指定すると側面だけになる。<br>
-　　(例) polygon 5 1 -0.2<br>
-<img src="images/15.png"><br>　
-　　(例)正12面体を作る。<br>
-　　　　一辺をz軸に揃える： t -np.cos(np.deg2rad(36)) 0 0<br>
-<img src="images/16.png"><br>　
-　　　　z軸に沿って折り曲げる(五角形を起こす)：r 0 0 -63.5<br>
-<img src="images/17.png"><br>　
-　　　　回転したときに底辺が五角形になるように平行移動する：t -np.cos(np.deg2rad(36)) 0 0<br>
-<img src="images/18.png"><br>　
-　　　　y軸周りに72°回転を5回繰り返す：r 0 72 0 5<br>
-<img src="images/19.png"><br>
-　　　　正12面体の半分を一旦セーブ：save dodecahedron_half.ply<br>
+<p>
+<strong>ロード</strong><br>
 <br>
-　　　　裏返しにする：r 0 0 180<br>
-<img src="images/20.png"><br>　
-　　　　下半分をロードする前に持ち上げる：t 0 np.sin(np.deg2rad(36))*np.sin(np.deg2rad(63.5))*5 0<br>
-<img src="images/21.png"><br>　
-　　　　下半分をロードする：l dodecahedron_half.ply<br>
+・l　( .ply ファイル)　･･･　PLYファイルが読み込まれ Visualize 画面に表示される。<br>
 <br>
-<img src="images/22.png"><br>
-　<strong>スクリプト実行</strong><br>
-　コマンド列を記述したテキストファイルを読み込んでい実行する。<br>
-　CLI版とコマンドを変えてしまったので、CLI版の手順.txtはそのままでは使えない...<br>
-<br>
-　l ***.txt (エンターキー押下)<br>
-　(エンターキー押下)　← <br>
-<br>
-　(例) l data/dodecahedron.txt<br>
-<br>
-　(実行結果)<br>
-<img src="images/23.png"><br>
+・l　( .txt ファイル)　･･･　コマンド列が記述されたファイルが読み込まれ実行される。<br>
+　　　　　　　　　　　　　　※ もう一回エンターキーを押すと実行される。<br>
+・l　( .npy ファイル)　･･･　座標データが読み込まれ Points[ ]に格納される。<br>
+　　　　　　　　　　　　　　※ 後でPoints[ ]を使うコマンドを実行するまで外観上変化はない。
 
-　<strong>d all</strong><br>
-　一括で全メッシュを削除する。<br>
 <br>
-　<strong>merge</strong><br>
-　表示されている全メッシュを一個のメッシュにマージする。<br>
+<strong>セーブ</strong><br>
+<br>
+・save　( .ply ファイル)　･･･　メッシュを指定されたファイルにセーブする。<br>
+　　　　　　　　　　　　　　編集中のすべてのメッシュがマージされてセーブされる。
 </p>
+
+<h4>回転/スケーリング/平行移動/グループ:　r コマンド / s コマンド / t コマンド / g コマンド</h4>
+
+<p><strong>回転</strong><br>
+　r (x 軸周りの回転角度)　(y 軸周りの回転角度)　(z 軸周りの回転角度)　[(回数)]<br>
+　・角度は度数(degree)で指定する。
+</p>    
+<img src="images/rotate.svg">
 <p>
-<strong>　天板、底面、側面の色指定</strong><br>
-　天板・底面の表：SurfaceOuter xxx(0-255) xxx(0-255) xxx(0-255)<br>
-　天板・底面の裏：SurfaceInner xxx(0-255) xxx(0-255) xxx(0-255)<br>
-　側面の表　　　：LateralOuter xxx(0-255) xxx(0-255) xxx(0-255)<br>
-　側面の裏　　　：LateralInner xxx(0-255) xxx(0-255) xxx(0-255)<br>
+回数パラメータを指定すると, オリジナル＋(回数-1)回, 回転されたメッシュが作成される。
 </p>
+<img src="images/rotate2.svg">
+<p><strong>スケーリング</strong><br>
+　s (x 軸方向のスケーリング)　(y 軸方向のスケーリング)　(z 軸方向のスケーリング)　[(回数)]
+</p>
+
+<img src="images/scaling.svg">
+
 <p>
-<strong>　螺旋の作成</strong><br>
-　polygon　(辺の数) (サイズ) (高さ) (螺旋の高さ：一周毎の高さ) (回転数)<br>
-　(例)  polygon 100 0.5 0.1 0.6 4<br>
-<img src="images/24.png"><br>
-　l data/pole.txt を実行して作成した pole.ply の表示結果<br>
-<img src="images/pole.gif"><br>
-<strong>　情報表示</strong><br>
+回数パラメータを指定すると, オリジナル＋(回数-1)回, スケーリングされたメッシュが作成される。
+</p>
+
+<img src="images/scaling2.svg">
+
+<p><strong>平行移動</strong><br>
+　t (x 軸方向の平行移動量)　(y 軸方向の平行移動量)　(z 軸方向の平行移動量)　[(回数)]
+</p> 
+
+<img src="images/translate.svg">
+
+<p>
+回数パラメータを指定すると, オリジナル＋(回数-1)回, 平行移動されたメッシュが作成される。
+</p>
+
+<img src="images/translate2.svg">
+
+<p><strong>グループ</strong><br>
+　g 　(rコマンド/sコマンド/tコマンドの任意の並び)　[(回数)]
+</p> 
+
+<img src="images/group.svg">
+
+<h4>正多角形:　polygon コマンド</h4>
+
+<p style="padding-left:1em;"><strong>厚みのない正多角形</strong></p>
+
+<p>polygon (正多角形の辺の数) [(外接円半径)･･･]</p>
+
+<img src="images/polygon.svg">
+
+<p style="padding-left:1em;"><strong>厚みのある正多角形</strong></p>
+
+<p>polygon (正多角形の辺の数) [(外接円半径) (厚み)･･･]<br>
+・天板, 底面,側面の 3 つのメッシュが作成される。<br>
+・大文字(POLYGON)で指定すると, 天板, 底面, 側面がマージされた 1 つのメッシュが作成される。<br>
+・厚みにマイナスを指定すると側面のみ(天板, 底面なし)のメッシュが生成される。</p>
+
+<img src="images/polygon2.svg">
+
+<p>
+(例)
+</p>
+<img src="images/apple.svg">
+<p>
+(例)
+</p>
+<img src="images/hourglass.svg">
+
+<p style="padding-left:1em;"><strong>正多面体</strong></p>
+<p>正多角形を回転/スケーリング/平行移動することで正多面体を作る。<br>
+l (スクリプト) # スクリプトファイルをロードして実行する。
+</p>
+
+<img src="images/polyhedron.svg">
+<p>
+<strong>(例) 回転と平行移動で正五角形から正12面体を作る</strong>
+</p>
+<img src="images/dodecahedron.svg"><br>
+<p style="padding-left:1em;"><strong>螺旋</strong></p>
+<p>
+多角形の側面を作成しつつ y 軸方向に移動させることで螺旋を作ることができる。<br>
+polygon (多角形の辺の数) (外接円半径) (厚み) (螺旋高さ) (回転数) (最終半径)
+</p>
+<img src="images/spiral0.svg">
+
+<h4>色指定: c コマンド, 環境変数</h4>
+<p>
+　<strong>c コマンド</strong><br>
+　　メッシュ全体を単色で塗りつぶす。<br>
+　　c　(red 成分:0～255)　(green 成分:0～255)　(blue 成分:0～255)<br>
+<br>
+　<strong>環境変数</strong><br>
+　　天板・底面の表：SurfaceOuter (red 成分:0～255)　(green 成分:0～255)　(blue 成分:0～255)<br>
+　　天板・底面の裏：SurfaceInner (red 成分:0～255)　(green 成分:0～255)　(blue 成分:0～255)<br>
+<br>
+　　側面の表　　　：LateralOuter (red 成分:0～255)　(green 成分:0～255)　(blue 成分:0～255)<br>
+　　側面の裏　　　：LateralInner (red 成分:0～255)　(green 成分:0～255)　(blue 成分:0～255)<br>
+<br>
+　　padding の表　：PaddingOuter (red 成分:0～255)　(green 成分:0～255)　(blue 成分:0～255)<br>
+　　padding の裏　：PaddingInner (red 成分:0～255)　(green 成分:0～255)　(blue 成分:0～255)<br>
+　　※ padding については 折れ線：polyline コマンドで説明する。
+</p>
+
+<p>　(例)<br>
+　　　l  data\pole.txt<br>
+　　　(一部)<br>
+　　　　LateralOuter 255 0 0　　　# 側面(表)を赤に設定<br>
+　　　　LateralInner 255 230 230　# 側面(裏)をうすい赤に設定<br>
+　　　　polygon 100 0.5 0.1 0.6 4 # 螺旋を作成<br>
+　　　　save spiral_red.ply　　　 # セーブ<br>
+<br>
+　　　　LateralOuter 0 0 255　　　# 側面(表)を青に設定<br>
+　　　　LateralInner 230 230 255　# 側面(裏)をうすい青に設定<br>
+　　　　polygon 100 0.5 0.1 0.6 4 # 螺旋を作成<br>
+　　　　r 0 180 0　　　　　　　　 # y 軸周りに 180°回転<br>
+　　　　save spiral_blue.ply　　　# セーブ<br>
+
+</p>
+<img src="images/up.gif">
+<h4>球面:　sphere コマンド</h4>
+<p>
+sphere (半径)　(分割数)　(緯度開始角)　(緯度終了角)　(経度開始角)　(緯度終了角)<br>
+</p>
+<img src="images/sphere.svg">
+<p>
+分割数による外観の違い
+</p>
+<img src="images/sphere2.svg">
+
+<h4>3D座標:　p コマンド, getPoints コマンド</h4>
+<p>
+Points 配列に 3D座標を格納する。<br>
+後で distribute コマンド, polyline コマンド,などを実行する際に参照される。<br>
+使用例は distribute コマンド, polyline コマンドなどで説明する。<br>
+<br>
+・ p　･･･　現在の Points 配列の内容を表示する。<br>
+※ p clear　･･･　Points 配列を空にする。<br>
+・ p　(x 座標)　(y 座標)　(z座標)　･･･　Points 配列に座標を追加する。<br>
+※ getPoints　　　　　　　　　　　･･･　メッシュから頂点データを抽出し Points 配列に格納する。<br>
+・ GETPoints　　　　　　　　　　　･･･　メッシュから頂点データを抽出し Points 配列に追加する。<br>
+※ l　(.npyファイル)　　　　　　　･･･　.npy ファイルから 3D座標データを読み込み Points 配列に格納する。<br>
+※ p　(polygon コマンド)　　　　　･･･　polygon コマンドの生成する座標を Points 配列に格納する。<br>
+※ p　curve　(T パラメータの範囲式)　(T を使った x 座標式)　(T を使った y 座標式)　(T を使った z 座標式)<br>
+　　　　　　　　　　　　　　　　　･･･　パラメータ T による曲線座標を Points 配列に格納する。<br>
+<br>
+先頭に ※ のついているコマンドは, 実行前に Points 配列をクリアする。<br>
+</p>
+
+<h4>配置:　distribute コマンド</h4>
+<p>
+Points 配列に格納されている座標にメッシュを配置する。<br>
+・distribute　( .plyファイル)　･･･　.plyファイルを読み込み、配置する。<br>
+　　原点→配置場所方向に向けたい場合はオプション「radial」を指定する。<br>
+　　配置場所→原点方向に向けたい場合はオプション「-radial」を指定する。<br>
+<br>
+・distribute sphere (サイズ)　･･･　球を生成し配置する。<br>
+
+</p>
+<img src="images/distribute.svg">
+
+</p>
+
+<h4>折れ線:　polyline コマンド, POLYLINE コマンド</h4>
+<p>
+Points 配列の点を折れ線(パイプ)で接続する。<br>
+・polyline　[(断面の画数)　(断面の半径)　(比率)]　終点と始点をつながない。すき間を padding する。<br>
+・POLYLINE　[(断面の画数)　(断面の半径)　(比率)]　終点と始点をつなぐ。　　すき間を padding する。<br>
+・poly-line　[(断面の画数)　(断面の半径)　(比率)]　終点と始点をつながない。すき間を padding しない。<br>
+・POLY-LINE　[(断面の画数)　(断面の半径)　(比率)]　終点と始点をつなぐ。　　すき間を padding しない。<br>　
+<br>
+　<strong>断面の画数と断面の半径</strong><br>
+　・デフォルトの画数：25<br>
+　・デフォルトの半径：0.02<br>
+</p>
+<img src="images/polyline.svg">
+<p>
+　<strong>ハイフンありとハイフンなし, 小文字と大文字</strong><br>
+　　折れ線接続した際に、曲がり角でパイプとパイプの間にすき間ができる。<br>
+　　・ハイフンなし：　すき間を padding する。<br>
+　　・ハイフンあり：　すき間を padding しない。<br>
+　　・小文字：　終点と始点をつながない。<br>
+　　・大文字：　終点と始点をつなぐ。<br>
+</p>
+<img src="images/polyline2.svg">
+
+<p>
+　<strong>比率</strong><br>
+　　点と点をパイプで覆う比率を設定する。<br>
+　　・1.0(デフォルト)：　完全に覆う。<br>
+　　・0.0：　　　　　　　全く覆わない。(padding のみ)<br>
+　　・0 ＜, ＜ 1：　　　 　部分的に覆う。(破線。padding がじゃまな場合はハイフンありコマンドを使う)<br>
+</p>
+
+<img src="images/ratio.svg">
+
+<p>　ratio = 0の使用例</p>
+
+<img src="images/ratio2.svg">
+
+<h4>その他コマンド</h4>
+<p>
+　<strong>メッシュ情報表示</strong><br>
 　　i<br>
 　メッシュのx軸, y軸, z軸の幅, min, maxを表示する。<br>
 　(例)<br>
 　　x　4.799944　-2.399972　-　2.399972<br>
 　　y　4.666745　-2.333372　-　2.333372<br>
 　　z　4.874035　-2.437017　-　2.437017<br>
-<br>
-<strong>　センタリング</strong><br>
+</p>
+　<strong>センタリング</strong><br>
 　　centering<br>
-　　選択されているメッシュの重心が原点に位置するように平行移動する。<br>
-　　(全メッシュをセンタリングしたい場合は merge → centering )<br>
-　　(例)<br>
-<img src="images/centering.svg"><br>
-<br>
-<strong>　法線の計算/削除</strong><br>
-　normals<br>
-　法線の計算/削除をトグルする。<br>
-　Open3D Visualizer画面で Lキー(Lighting)を押下すると、Lighting on/off をドグルする。<br>
-<img src="images/normals.svg"><br>
-<br>
-<strong>　球の生成</strong><br>
-　　sphere (サイズ) [(分割数(25)) (緯度の開始角度(0)) (緯度の終了角度(180)) (経度の開始角度(0)) (経度の終了角度(360))]<br>
-　　(例) sphere 1 25 30 150 15 300<br>
- <img src="images/sphere.svg"><br>
- <img src="images/nr_divs.svg"><br>
-<br>
-<strong>　点列 (Points[ ]) への点の追加削除</strong><br>
-　　後で折れ線(polyline)や押し出し(extrude)で使うための点列に点を追加、削除する。<br>
-　　p　: Points[ ]を表示<br>
-　　p clear　：Points[ ]を空にする<br>
-　　p (x座標) (y座標) (z座標)　：Points[ ]に点(x,y,z)を追加する<br>
-　　l ***.npy　：Points[ ]をクリアして***.npyを読み込む<br>
-<br>
-<strong>　折れ線接続</strong><br>
-　　点列 (Points[ ]) の点をパイプでつなぐ。<br>
-　　polyline (パイプの画数) (パイプの直径) <br>
-　　(例)<br>
-　　　l data\F.txt　･･･　F字の頂点情報を読み込む<br>
-　　　polyline 5 0.02　･･･　終点と始点はつながない<br>
-　　　t 0.2 0.2 0　･･･ 終点, 始点が見えないので平行移動して座標軸から離す<br>
-　　　d　･･･　削除<br>
-　　　POLYLINE 5 0.02　･･･　終点と始点をつなぐ<br>
-　　　t 0.2 0.2 0　･･･ 終点, 始点が見えないので平行移動して座標軸から離す<br>
-<img src="images/polyline1.svg"><br>
-　　ジョイント処理していないので、パイプの繋ぎめには(まだ)穴が開いている。<br>
-<img src="images/polyline2.png"><br>
-<br>
-　　(例)<br>
-　　　カオスの軌道情報を読み込んで折れ線接続する。<br>
-　　　l data\chaos_trajectory.npy　･･･　カオスの軌道情報を読み込む<br>
-　　　polyline 5 0.02<br>
-　　　s 0.05 0.05 0.05　･･･　大きすぎるので縮小する<br>
-　　　axis<br>
-　　　axis　・・・表示倍率を合わせるため座標軸を消して再表示する<br>
-<img src="images/polyline3.png"><br>
-<img src="images/polyline4.png"><br>
-<br>
-<strong>　メッシュの配置</strong><br>
-　　Points[ ]の点にメッシュを配置する。<br>
-　　distribute<br>
-　　(例)<br>
-　　　折れ線接続のジョイントとして球を配置する。<br>
-　　　shpere 0.02　･･･　ジョイントとなる球を生成。座標軸に隠れて見えない<br>
-　　　save sphere002.ply　･･･　一旦セーブ<br>
-　　　l data\F.txt　･･･　「F」の頂点座標をロード<br>
-　　　POLYLINE 25 0.02　･･･　「F」の折れ線作成<br>
-　　　distribute sphere002.ply　･･･　頂点に球を配置<br>
-　　　merge　･･･　折れ線とジョイントをマージ<br>
-　　　t 0.2 0.2 0　･･･　座標軸から離す<br>
-<img src="images/distribute.png"><br>
-<br>
-<strong>　画像から輪郭抽出(別プログラム)</strong><br>
-　　2値画像に近い画像から輪郭を抽出する。<br>
-<img src="images/img2mesh.svg"><br>    
-
-　　<strong><span style="color:red;">pip install mapbox_earcut</span></strong><br>
-
-　　python src/img2mesh.py (画像ファイル) [(許容誤差)]<br>
-
-　　(例)<br>
-　　(コマンドプロンプトで以下を実行)<br>
-　　　python src/img2mesh.py data/x.png<br>
-<br>
-　　(以降は PLY_interactive のコンソールで実行)<br>
-　　　<strong>裏側の作成</strong><br>
-　　　　l x_front.ply ･･･　表メッシュ(画像的には裏)ロード<br>
-　　　　c 200 200 255　･･･　薄い青に設定<br>
-　　　　save x1.ply　･･･　一旦セーブ<br>
-<br>
-　　　　d all　･･･　念のため余計なものを消して作業を続ける<br>
-<br>
-　　　<strong>表側の作成</strong><br>
-　　　　l x_back.ply　･･･　裏メッシュ(画像的には表)ロード<br>
-　　　　　　　　　　　　　<strong>注意</strong>: 視点を変えないと見えない<br>
-　　　　c 0 0 255　･･･　濃い青に設定<br>
-　　　　save x2.ply　･･･　一旦セーブ<br>
-<br>
-　　　　d all　･･･　念のため余計なものを消して作業を続ける<br>
-<br>
-　　　<strong>ジョイントのボール作成</strong><br>
-　　　　sphere 0.01　･･･　半径 0.01 の球を生成<br>
-　　　　　　　　　　　　　半径は後で POLYLINE で指定するサイズを選ぶ<br>
-　　　　save sphere001.ply　･･･　一旦セーブ<br>
-<br>
-<br>
-　　　　d all　･･･　念のため余計なものを消して作業を続ける<br>
-<br>
-　　　<strong>輪郭の作成</strong><br>
-　　　　l x_contour.npy　･･･　輪郭データをロード<br>
-　　　　POLYLINE 25 0.01　･･･　輪郭を折れ線でつなぐ<br>
-　　　　distribute sphere001.ply　･･･　ジョイントを配置<br>
-<br>
-　　　<strong>合成</strong><br>
-　　　　l x1.ply<br>
-　　　　l x2.ply<br>
-　　　　save x.ply<br>
-<br>
-　　　向きやサイズ、位置を調整する。これを「y」「z」に対しても実行。<br>
-　　　座標軸ラベルがやっとまともになった･･･<br>
-<img src="images/axisXYZ.png"><br>  
-</p>
+　　(例)
 <p>
-<strong>　キャプチャー関連</strong><br>
-　　コンソール入力のつもりが、Visualizer画面のキャプチャーになることが多発するので<br>
-　　Visualizer画面のキャプチャーを止めた。<br>
-　　代わりに, コンソール画面から<br>
-　　　cap<br>
-　　または<br>
-　　　cap (キャプチャー画像名)<br>
-　　とする。<br>
-　　これにより、スクリプト内から画面キャプチャーが可能になる。<br>
-　　<br>
-　　メッシュのサイズ、位置によってカメラ位置や画角が変化するので<br>
-　　　getEyePos　･･･　カメラパラメータの取得<br>
-　　　setEyePos　･･･　カメラパラメータの設定<br>
-　　も追加した。<br>
-　　(スクリプト例)<br>
-　　　getEyePos <br>
-　　　d all<br>
-　　　polygon 5<br>
-　　　t -np.cos(np.deg2rad(36)) 0 0<br>
-　　　r 0 0 -63.5/10*0<br>
-　　　t -np.cos(np.deg2rad(36)) 0 0<br>
-　　　r 0 72 0 5<br>
-　　　setEyePos<br>
-　　　cap <br>
-<img src="images/dodecahedron.gif"><br> 
-
-<strong>　Visualizerショートカットキー</strong><br>
-　　コンソール画面ではなく, Visualizer 画面がアクティブな状態で使う。<br>
-　　・x　･･･　x軸方向からのビュー<br>
-　　・y　･･･　y軸方向からのビュー<br>
-　　・z　･･･　z軸方向からのビュー<br>
-　　(※ 外部パラメータの算出方法が判らなかったので取得した行列をそのまま設定･･･)<br>
-<br>
-　　・1/2/3　･･･　カメラ位置の回転。+Shiftで逆方向回転。+Ctrlで回転量増加<br>
-　　・4/5/6　･･･　カメラ位置の移動。+Shiftで逆方向移動。+Ctrlで移動量増加<br>
-　　・7/8　　･･･　回転/移動ステップの増減。+Shiftで増加<br>
-　　・↑↓　 ･･･　ズーム(6, Shtft+6と同じ)<br>
-　　・→←　 ･･･　移動(4,Shift+4と同じ)<br>
-</p>
-
-<strong>　カメラ制御</strong><br>
-<p>
-　　コンソールからカメラの向きや位置を制御する。<br>
-　　これでカメラを動かしながらキャプチャーができる。<br>
-　　(以下 x 軸の場合。y 軸、z 軸についても同様)<br>
-　　・cam x　･･･　x軸方向からのビュー<br>
-　　・cam rotate x (角度)　･･･　x軸周りに回転<br>
-　　・cam rotate -x (角度)　･･･　x軸周りに逆回転<br>
-　　・cam rotate x (-角度)　･･･　(同上)<br>
-　　・cam translate x (移動量)　･･･　x軸方向に平行移動<br>
-　　・cam translate -x (移動量)　･･･　x軸方向に平行移動<br>
-　　・cam translate x (-移動量)　･･･　(同上)<br>
-</p>
-<strong>　メッシュの頂点座標取得</strong><br>
-<p>
-　　メッシュの頂点座標を取得し, Points[ ]に格納する。<br>
-　　getPoints　[(分割数)]　<br>
-　　※　面毎に色を指定するため、メッシュには同じ頂点が複数存在する。<br>
-　　　　[(分割数)]は重複削除用のパラメータ。<br>
-　　　　Points[ ]をクリアして取得した頂点を格納する。<br>
-　　　　クリアしたくない(ことがあるか不明だが)場合は, GETPoints<br>
-　　(例)<br>
-　　l data\dodecahedron_wireframe.ply　･･･　正12面体をロード<br>
-　　centering　･･･　重心を原点に移動する<br>
-　　getPoints　･･･　頂点を取得<br>
-　　distribute sphere004.ply　･･･　頂点に球を配置<br>　
-<img src="images/dodecahedron_and_ball.png"><br> 
-　　頂点の順番は重複削除処理次第なので、折れ線接続するとグチャグチャになる。<br>
-　　(左)正12面体　(右)分割数25の球　･･･　何となく味がある<br>
-<img src="images/dodecahedron_and_polyline.png"><br> 
-<br>
-　　(例)<br>
-　　l data\dodecahedron_wireframe.ply　･･･　正12面体をロード<br>
-　　centering　･･･　重心を原点に移動する<br>
-　　getPoints　･･･　頂点を取得<br>
-　　s 0.25 0.25 0.25　･･･　1/4に縮小<br>
-　　c 0 0 0　･･･　縮小すると見えにくいので黒くする<br>
-　　save tmp.ply　･･･　一旦セーブ<br>
-　　distribute tmp.ply　･･･　縮小前の頂点位置に縮小した正12面体を配置<br>
-　　merge　･･･　配置したものと中央のものをマージする<br>
-　　s 0.25 0.25 0.25　･･･　1/4に縮小<br>
-　　save tmp2.ply　･･･　一旦セーブ<br>
-　　distribute tmp2.ply　･･･　フラクタルっぽいものが出来上がる。<br>
-　　merge ･･･　配置したものと中央のものをマージする<br>
-<br>
-<img src="images/dodecahedron_fractal.png"><br> 
+<img src="images/centering.svg">
 </p>
 </body>
-
 </html>
 
 
