@@ -305,6 +305,17 @@ Points 配列の点を折れ線(パイプ)で接続する。<br>
 
 <img src="images/ratio2.svg">
 
+<p>
+　<strong>折れ線の使用例</strong><br>
+　　他のソフトウェアで作成した 3D 軌道データを PLY 化する。<br>
+　　　l  data\chaos_trajectory.npy　･･･　10,000点のカオス軌道データ<br>
+　　　poly-line<br>
+<br>
+　　※ padding 処理は地味に重いので, 点の数が多い場合はハイフンありを使った方が良い。<br>
+　　　 ハイフンなし(polyline)で実行すると, すごく時間が掛り, 作成されるメッシュも巨大になる。<br>
+</p>
+<img src="images/polyline3.svg">
+
 <h4>その他コマンド</h4>
 <p>
 　<strong>メッシュ情報表示</strong><br>
@@ -323,6 +334,7 @@ Points 配列の点を折れ線(パイプ)で接続する。<br>
 </p>
 </body>
 </html>
+
 
 
 
