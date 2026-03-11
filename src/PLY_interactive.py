@@ -1261,11 +1261,15 @@ def main():
 
                         if len(_meshes) > 0:
 
+                            nr_points = int(cmds[2])
+
                             Points.clear()
                             if len(cmds) < 5:
-                                Points = np.asarray(_meshes[0].vertices).tolist() 
+                                _points = np.asarray(_meshes[0].vertices).tolist() 
                             else:
-                                Points = np.asarray(_meshes[0].vertices).tolist()[::2]
+                                _points = np.asarray(_meshes[0].vertices).tolist()[::2]
+                            Points = _points[:nr_points]
+
                     elif cmds[1] == 'curve':
 
                         if len(cmds) < 5:

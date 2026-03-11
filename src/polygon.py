@@ -371,18 +371,22 @@ def _polyiline(size, nr_divs, ratio, fClose, fPadding, start, end, points, Surfa
         R0 = o3d.geometry.get_rotation_matrix_from_xyz((0, 0, np.pi/2)) 
         pipe0.rotate(R0, center=(0,0,0))
    
+        # 頂点が重複している場合がある
         nr_points = np.unique(np.array(points), axis=0).shape[0]
 
-        if fClose:
-            if len(points) > nr_points:
-                points[nr_points] = points[0] # ユニークなデータの後に最初のデータを付加
-            else:
-                points.append(points[0])
+        # パイプの作成 
+        for i in range(0, nr_points):
 
-            nr_points += 1
- 
-        for i in range(1, nr_points):
-            A = np.array(points[i-1])
+            # 線分の終点側でパイプを作成する。not fClose の場合i==0 はスキップ
+            if not fClose and i == 0:
+                continue
+
+            if i == 0:
+                _prev= nr_points - 1
+            else:
+                _prev = i - 1
+
+            A = np.array(points[_prev])
             B = np.array(points[i])
             M = (A + B) * 0.5  
             
@@ -407,86 +411,35 @@ def _polyiline(size, nr_divs, ratio, fClose, fPadding, start, end, points, Surfa
         
             pipe.transform(T)
     
-            if i == 1:
+            if accum is None:
                 accum = copy.deepcopy(pipe)
             else:
                 accum += copy.deepcopy(pipe)
-             
-            if fPadding:
-   
-                if i < nr_points - 1:
-     
-                    C = np.array(points[i+1])
-        
-                    l2 = np.linalg.norm(C-B)
+           
+            # not fClose で最初の点と最後の点に球指定があった場合の対応 
+            if not fClose:
 
-                    if l2 < MIN_VALUE:
-                        continue
+                azimuth = [0, np.pi, nr_divs]
+                elevation = [0, np.pi, nr_divs]
 
-                    dot_BA_CB = np.dot(B-A, C-B)
-                    cos_theta = dot_BA_CB / (l * l2)
-                    theta = np.arccos(np.clip(cos_theta, -1.0, 1.0))
-                
-                    elevation = [0, np.pi, nr_divs]
-        
-                    azimuth = [0, theta, nr_divs]
-       
-                    joint, _ = _sphere(size, elevation, azimuth, PaddingOuter, PaddingInner)
-                    JOINT = copy.deepcopy(joint[0])
-        
-                    R2 = o3d.geometry.get_rotation_matrix_from_xyz((0, np.pi, 0)) 
-                    JOINT.rotate(R2, center=(0,0,0))
-                    
-                    y_axis = np.array([0.0, 1.0, 0.0])
-                    Y_AXIS = np.cross(C-B, B-A)
-         
-                    R3 = get_rotation_to_vector(Y_AXIS, y_axis)
-                    if np.allclose(R3,-np.eye(3), atol=1e-8):
-                        print('R3 == -eye(3)')
-                        R3 = o3d.geometry.get_rotation_matrix_from_xyz((np.pi, 0, 0)) 
-                    JOINT.rotate(R3, center=(0,0,0))
-        
-                    x_axis = R3 @ np.array([1.0, 0.0, 0.0])
-                    X_AXIS = B - A
-        
-                    R4 = get_rotation_to_vector(X_AXIS, x_axis)
-                    JOINT.rotate(R4, center=(0,0,0))
-                    
-                    if np.allclose(R4,-np.eye(3), atol=1e-8):
-                        print('R4 == -eye(3)')
-                        _triangles = np.asarray(JOINT.triangles)[:,[0,2,1]]
-                        JOINT.triangles = o3d.utility.Vector3iVector(_triangles)
-                
-                    T2 = np.array([[1, 0, 0, B[0]],
-                                   [0, 1, 0, B[1]],
-                                   [0, 0, 1, B[2]],
-                                   [0, 0, 0, 1]], np.float64)
-        
-                    JOINT.transform(T2)              # move pipe end
-        
-                    accum += copy.deepcopy(JOINT)   
-            
-                    if start == 'sphere' and i == 1:
-    
-                        azimuth = [0, np.pi, nr_divs]
-                        joint, _ = _sphere(size, elevation, azimuth, PaddingOuter, PaddingInner)
-        
-                        START = joint[0]
-         
-                        T3 = np.array([[1, 0, 0, -l/2],
-                                       [0, 1, 0, 0],
-                                       [0, 0, 1, 0],
-                                       [0, 0, 0, 1]], np.float64)
-                        
-                        START.transform(T3)              # move pipe start
-                        START.rotate(R, center=(0,0,0))  # rotate along the direction of line segment
-                        START.transform(T)               # move to the location of line segment
-                        accum += copy.deepcopy(START)
-    
-                if end == 'sphere' and i == nr_points - 1:
+                if start == 'sphere' and i == 1:
 
                     azimuth = [0, np.pi, nr_divs]
-                    elevation = [0, np.pi, nr_divs]
+                    joint, _ = _sphere(size, elevation, azimuth, PaddingOuter, PaddingInner)
+    
+                    START = joint[0]
+     
+                    T3 = np.array([[1, 0, 0, -l/2],
+                                   [0, 1, 0, 0],
+                                   [0, 0, 1, 0],
+                                   [0, 0, 0, 1]], np.float64)
+                    
+                    START.transform(T3)              # move pipe start
+                    START.rotate(R, center=(0,0,0))  # rotate along the direction of line segment
+                    START.transform(T)               # move to the location of line segment
+                    accum += copy.deepcopy(START)
+
+                if end == 'sphere' and i == nr_points - 1:
         
                     joint, _ = _sphere(size, elevation, azimuth, PaddingOuter, PaddingInner)
     
@@ -495,7 +448,7 @@ def _polyiline(size, nr_divs, ratio, fClose, fPadding, start, end, points, Surfa
                     R2 = o3d.geometry.get_rotation_matrix_from_xyz((0, np.pi, 0)) 
                     
                     END.rotate(R2, center=(0,0,0))
-
+    
                     T3 = np.array([[1, 0, 0, l/2],
                                    [0, 1, 0, 0],
                                    [0, 0, 1, 0],
@@ -505,6 +458,69 @@ def _polyiline(size, nr_divs, ratio, fClose, fPadding, start, end, points, Surfa
                     END.rotate(R, center=(0,0,0))  # rotate along the direction of line segment
                     END.transform(T)               # move to the location of line segment
                     accum += copy.deepcopy(END)
+
+            # パディングの作成。A → B → C の並びのB で実施 
+            if fPadding:
+   
+                _next = i + 1
+
+                # 最終ポイントの場合, C は最初の点
+                if i == nr_points - 1:
+                   
+                    if not fClose:
+                        continue
+
+                    _next = 0
+ 
+                C = np.array(points[_next])
+    
+                l2 = np.linalg.norm(C-B)
+
+                if l2 < MIN_VALUE:
+                    continue
+
+                dot_BA_CB = np.dot(B-A, C-B)
+                cos_theta = dot_BA_CB / (l * l2)
+                theta = np.arccos(np.clip(cos_theta, -1.0, 1.0))
+           
+                elevation = [0, np.pi, nr_divs]
+    
+                azimuth = [0, theta, nr_divs]
+   
+                joint, _ = _sphere(size, elevation, azimuth, PaddingOuter, PaddingInner)
+                JOINT = copy.deepcopy(joint[0])
+    
+                R2 = o3d.geometry.get_rotation_matrix_from_xyz((0, np.pi, 0)) 
+                JOINT.rotate(R2, center=(0,0,0))
+                
+                y_axis = np.array([0.0, 1.0, 0.0])
+                Y_AXIS = np.cross(C-B, B-A)
+     
+                R3 = get_rotation_to_vector(Y_AXIS, y_axis)
+                
+                if np.allclose(R3,-np.eye(3), atol=1e-8):
+                    R3 = o3d.geometry.get_rotation_matrix_from_xyz((np.pi, 0, 0)) 
+                
+                JOINT.rotate(R3, center=(0,0,0))
+    
+                x_axis = R3 @ np.array([1.0, 0.0, 0.0])
+                X_AXIS = B - A
+    
+                R4 = get_rotation_to_vector(X_AXIS, x_axis)
+                JOINT.rotate(R4, center=(0,0,0))
+                
+                if np.allclose(R4,-np.eye(3), atol=1e-8):
+                    _triangles = np.asarray(JOINT.triangles)[:,[0,2,1]]
+                    JOINT.triangles = o3d.utility.Vector3iVector(_triangles)
+            
+                T2 = np.array([[1, 0, 0, B[0]],
+                               [0, 1, 0, B[1]],
+                               [0, 0, 1, B[2]],
+                               [0, 0, 0, 1]], np.float64)
+    
+                JOINT.transform(T2)              # move pipe end
+    
+                accum += copy.deepcopy(JOINT)   
     
         if accum is not None:
             meshes.append(accum)
