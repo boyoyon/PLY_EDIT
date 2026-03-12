@@ -417,12 +417,12 @@ def _polyiline(size, nr_divs, ratio, fClose, fPadding, start, end, points, Surfa
                 accum += copy.deepcopy(pipe)
            
             # not fClose で最初の点と最後の点に球指定があった場合の対応 
-            if not fClose:
+            if not fClose and fPadding:
 
                 azimuth = [0, np.pi, nr_divs]
                 elevation = [0, np.pi, nr_divs]
 
-                if start == 'sphere' and i == 1:
+                if (start == 'sphere' or start == '-sphere') and i == 1:
 
                     azimuth = [0, np.pi, nr_divs]
                     joint, _ = _sphere(size, elevation, azimuth, PaddingOuter, PaddingInner)
@@ -437,9 +437,14 @@ def _polyiline(size, nr_divs, ratio, fClose, fPadding, start, end, points, Surfa
                     START.transform(T3)              # move pipe start
                     START.rotate(R, center=(0,0,0))  # rotate along the direction of line segment
                     START.transform(T)               # move to the location of line segment
+
+                    if start == '-sphere':
+                        _triangles = np.asarray(START.triangles)[:,[0,2,1]]
+                        START.triangles = o3d.utility.Vector3iVector(_triangles)
+
                     accum += copy.deepcopy(START)
 
-                if end == 'sphere' and i == nr_points - 1:
+                if (end == 'sphere' or end == '-sphere') and i == nr_points - 1:
         
                     joint, _ = _sphere(size, elevation, azimuth, PaddingOuter, PaddingInner)
     
@@ -457,6 +462,11 @@ def _polyiline(size, nr_divs, ratio, fClose, fPadding, start, end, points, Surfa
                     END.transform(T3)              # move pipe end
                     END.rotate(R, center=(0,0,0))  # rotate along the direction of line segment
                     END.transform(T)               # move to the location of line segment
+
+                    if end == '-sphere':
+                        _triangles = np.asarray(END.triangles)[:,[0,2,1]]
+                        END.triangles = o3d.utility.Vector3iVector(_triangles)
+
                     accum += copy.deepcopy(END)
 
             # パディングの作成。A → B → C の並びのB で実施 
@@ -508,11 +518,11 @@ def _polyiline(size, nr_divs, ratio, fClose, fPadding, start, end, points, Surfa
     
                 R4 = get_rotation_to_vector(X_AXIS, x_axis)
                 JOINT.rotate(R4, center=(0,0,0))
-                
+               
                 if np.allclose(R4,-np.eye(3), atol=1e-8):
                     _triangles = np.asarray(JOINT.triangles)[:,[0,2,1]]
                     JOINT.triangles = o3d.utility.Vector3iVector(_triangles)
-            
+
                 T2 = np.array([[1, 0, 0, B[0]],
                                [0, 1, 0, B[1]],
                                [0, 0, 1, B[2]],
