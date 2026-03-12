@@ -343,7 +343,7 @@ Points 配列の点を折れ線(パイプ)で接続する。<br>
 　・sphere　･･･　裏返さない<br>
 　・-sphere　･･･　裏返す<br>
 　(例)<br>
-　　l　data/ramon.txt<br>
+　　l　data/raimon.txt<br>
 　　polyline　25　0.02　1 shpere　sphere<br>
 </p>
 
@@ -378,6 +378,7 @@ Points 配列の点を折れ線(パイプ)で接続する。<br>
 </p>
 </body>
 </html>
+
 
 
 
