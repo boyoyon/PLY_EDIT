@@ -46,6 +46,18 @@
 　　　モードに 1 を指定すると z 座標は 0.01ずつ増える。<br>
 </p>
 <img src="images/draw.svg">
+
+<p>
+　<strong>システムコマンド：　dir, copy, move, ren, del</strong><br>
+　　コンソールから dir, copy, move, ren, del を実行できるようにした。
+</p>
+
+<p>
+　<strong>電卓：　calc</strong><br>
+　　(例) calc np.sin(np.deg2rad(36))
+　　コンソールから 式を入力して計算できるようにした。
+</p>
+
 <h3>使い方</h3>
 
 <h4>起動・終了</h4>
@@ -410,7 +422,6 @@ Points 配列の点を折れ線(パイプ)で接続する。<br>
 </p>
 </body>
 </html>
-
 
 
 
