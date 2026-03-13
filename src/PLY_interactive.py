@@ -1341,21 +1341,17 @@ def main():
 
                         if len(Points) > 0:
 
-                            dst_path = 'Points.npy'
+                            filename = 'Points'
 
                             if len(cmds) > 2:
+                                filename = os.path.splitext(cmds[2])[0]
 
-                                dst_path = cmds[2]
-
-                            if not dst_path.endswith('.npy'):
-
-                                dst_path += '.npy'
+                            dst_path = '%s.npy' % filename
 
                             no = 2
                             while os.path.exists(dst_path):
 
-                                filename, ext = os.path.splitext(dst_path)
-                                dst_path = '%s_%d%s' % (filename, no, ext)
+                                dst_path = '%s_%d.npy' % (filename, no)
                                 no += 1 
 
                             np.save(dst_path, np.array(Points))
@@ -1627,11 +1623,18 @@ def main():
 
             elif cmds[0] == 'calc':
 
-                fResult, value = Eval(cmds[1])
+                if len(cmds) > 1:
 
-                if fResult:
-                    print(value)
+                    cmd = ''
+                    for c in cmds[1:]:
+                        cmd += '%s ' % c 
+
+                    fResult, value = Eval(cmd)
+
+                    if fResult:
+                        print(value)
                 else:
+                    print('calc <expression>')
                     continue
 
             elif cmds[0] == 'draw':
@@ -1688,6 +1691,14 @@ def main():
 
                  else:
                      print('img2mesh <image file> ... background color shall be black')
+
+            elif cmds[0] == 'dir' or cmds[0] == 'copy' or cmds[0] == 'move' or cmds[0] == 'ren' or cmds[0] == 'del':
+
+                cmd = ''
+                for c in cmds:
+                    cmd += '%s ' % c
+
+                subprocess.run(cmd, shell=True)
 
             elif cmds[0] == 'quit':
                 break
