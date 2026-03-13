@@ -11,9 +11,41 @@
 
 <h3>環境構築</h3>
 <p>
-　pip install Open3D
+　pip install Open3D<br>
+  pip install mapbox_earcut　･･･　img2mesh で使用
 <p>
 
+<h3>更新項目</h3>
+
+<p>
+　<strong>画像からのメッシュ作成</strong><br>
+　img2mesh　(画像ファイル名)<br>
+　コンソールから実行できるようにした。表, 裏, 輪郭の 3メッシュがロードされる。<br>
+　・背景が黒でないとうまく動作しない。<br>
+　・表と裏は select してみないとわからない.<br> 
+</p>
+<img src="images/img2mesh2.svg">
+<p>
+　<strong>3D座標：　pコマンド</strong><br>
+　オプションを追加<br>
+　・p　centering　･･･　Points配列内の座標をセンタリングする <br>
+　・p　r　xx　xx　xx　･･･　Points配列内の座標の回転 <br>
+　・p　s　xx　xx　xx　･･･　Points配列内の座標のスケーリング <br>
+　・p　t　xx　xx　xx　･･･　Points配列内の座標の平行移動 <br>
+　・p　save　( .npyファイル名)　･･･　Points配列内の座標を .npy ファイルに保存<br>　
+<br>
+　※ メッシュをスケーリングすると枠が太ったり細くなったりするので必要と思って実装したが、s(スケーリング)と save 以外はメッシュ化してから従来のコマンドで実施しても同じだった･･･<br>
+　　メッシュ化しないと何が起こっているのかわからない。<br>
+</p>
+
+<p>
+　<strong>手書き入力：　draw コマンド</strong><br>
+　draw　[(入力画面幅)　(入力画面高さ)　(モード)]<br>
+　※ (今のところ)一筆書きのみ。思い付きで実装したがいまいち ･･･<br>
+　　　モード指定なしだと、z 座標は 0 固定。<br>
+　　　モードに 1 を指定すると z 座標は 0.01ずつ増える。<br>
+</p>
+<img src="images/draw.svg">
 <h3>使い方</h3>
 
 <h4>起動・終了</h4>
@@ -378,9 +410,6 @@ Points 配列の点を折れ線(パイプ)で接続する。<br>
 </p>
 </body>
 </html>
-
-
-
 
 
 
