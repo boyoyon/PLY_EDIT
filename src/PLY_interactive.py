@@ -1692,7 +1692,7 @@ def main():
                  else:
                      print('img2mesh <image file> ... background color shall be black')
 
-            elif cmds[0] == 'dir' or cmds[0] == 'copy' or cmds[0] == 'move' or cmds[0] == 'ren' or cmds[0] == 'del':
+            elif cmds[0] == 'python' or cmds[0] == 'dir' or cmds[0] == 'copy' or cmds[0] == 'move' or cmds[0] == 'ren' or cmds[0] == 'del':
 
                 cmd = ''
                 for c in cmds:
