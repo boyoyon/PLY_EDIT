@@ -94,7 +94,7 @@ if contours:
         
         meshFront.paint_uniform_color(front_color)
 
-        dst_path = '%s_front.ply' % filename
+        dst_path = '%s_A.ply' % filename
         o3d.io.write_triangle_mesh(dst_path, meshFront)
         print('save %s' % dst_path)
 
@@ -109,7 +109,7 @@ if contours:
         
         meshBack.paint_uniform_color(back_color)
 
-        dst_path = '%s_back.ply' % filename
+        dst_path = '%s_AA.ply' % filename
         o3d.io.write_triangle_mesh(dst_path, meshBack)
         print('save %s' % dst_path)
 

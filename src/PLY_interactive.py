@@ -5,6 +5,9 @@ import queue
 import copy, io, os, subprocess, sys
 from polygon import polygon, polyline, get_rotation_to_vector
 from sphere import sphere
+from getValues import Eval, Evals
+from draw import getDrawingPoints
+from RST import *
 
 LINES = []
 input_queue = None
@@ -49,6 +52,20 @@ def refresh(vis, meshes, fAxis):
 
     for i in range(start, len(meshes)):
         vis.add_geometry(meshes[i])           
+
+def usageP(Points):
+      print('p: display current points')
+      print('p clear: clear points')
+      print('p xx xx xx: append the point to points')
+      print('p polygon: append polygon vertices to points')
+      print('p curve (range T) (eq.X with T) (eq.Y with T) (eq.Z with T): append cueve to points')
+      print('p centering: centering points')
+      print('p r xx xx xx : rotate points')
+      print('p s xx xx xx : scale points')
+      print('p t xx xx xx : translate points')
+      print('p g (array of r/s/t commands) : apply group operation to points')
+      print('l xxxx.npy: load points into Points[]')
+      print('Points[]=',Points)
 
 def key_callback_d(vis, action, mod):
     pass # supress depth capture
@@ -442,33 +459,6 @@ def show_menu():
     print('undo                 : u')
     print()
 
-def getFloat3(str0, str1, str2):
-
-    fResult = True
-    values = []
-
-    try:
-        values.append(float(eval(str0)))
-    except NameError:
-        print('NameError: %s' % str0)
-        fResult = False
-    else:
-
-        try:
-            values.append(float(eval(str1)))
-        except NameError:
-            print('NameError: %s' % str1)
-            fResult = False
-        else:
-    
-            try:
-                values.append(float(eval(str2)))
-            except NameError:
-                print('NameError: %s' % str2)
-                fResult = False
-
-    return fResult, values
-
 def update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh):
 
     if len(meshes) > 1: # meshes[0]: axisXYZ
@@ -489,12 +479,12 @@ def main():
 
     width = 800
 
-    if argc > 1:
+    if argc > 1 and argv[1].isdecimal():
         width = int(argv[1])
  
     height = 600
  
-    if argc > 2:
+    if argc > 2 and argv[2].isdecimal():
         height = int(argv[2])
     
     meshes = []
@@ -650,12 +640,10 @@ def main():
             elif cmds[0] == 'c':
   
                 if len(meshes) < 2:
-                    print('no meshes to be processed')
+                    print('no meshes')
                     continue
  
-                if len(cmds) != 4:
-                    print('specify red(0-255) green(0-255) blue(0-255)')
-                else:
+                if len(cmds) > 3 and cmds[1].isdecimal() and cmds[2].isdecimal() and cmds[3].isdecimal():
                     red = int(cmds[1]) / 255
                     green = int(cmds[2]) / 255
                     blue = int(cmds[3]) / 255
@@ -664,59 +652,70 @@ def main():
  
                     meshes[curr].paint_uniform_color([red, green, blue])
                     vis.update_geometry(meshes[curr])
+
+                else:
+                    print('specify red(0-255) green(0-255) blue(0-255)')
+                        
     
             elif cmds[0] == 'SurfaceOuter':
     
-                if len(cmds) != 4:
-                    print('specify red(0-255) green(0-255) blue(0-255)')
-                else:
+                if len(cmds) > 3 and cmds[1].isdecimal() and cmds[2].isdecimal() and cmds[3].isdecimal():
+                    red = int(cmds[1]) / 255
                     SurfaceOuter = [int(cmds[1]),int(cmds[2]), int(cmds[3])]
     
+                else:
+                    print('specify red(0-255) green(0-255) blue(0-255)')
+
                 print('Current Setting:', SurfaceOuter)
     
             elif cmds[0] == 'SurfaceInner':
     
-                if len(cmds) != 4:
-                    print('specify red(0-255) green(0-255) blue(0-255)')
-                else:
+                if len(cmds) > 3 and cmds[1].isdecimal() and cmds[2].isdecimal() and cmds[3].isdecimal():
                     SurfaceInner = [int(cmds[1]),int(cmds[2]), int(cmds[3])]
+                
+                else:
+                    print('specify red(0-255) green(0-255) blue(0-255)')
     
                 print('Current Setting:', SurfaceInner)
     
             elif cmds[0] == 'LateralOuter':
     
-                if len(cmds) != 4:
-                    print('specify red(0-255) green(0-255) blue(0-255)')
-                else:
+                if len(cmds) > 3 and cmds[1].isdecimal() and cmds[2].isdecimal() and cmds[3].isdecimal():
                     LateralOuter = [int(cmds[1]),int(cmds[2]), int(cmds[3])]
     
+                else:
+                    print('specify red(0-255) green(0-255) blue(0-255)')
+                
                 print('Current Setting:', LateralOuter)
     
             elif cmds[0] == 'LateralInner':
     
-                if len(cmds) != 4:
-                    print('specify red(0-255) green(0-255) blue(0-255)')
-                else:
+                if len(cmds) > 3 and cmds[1].isdecimal() and cmds[2].isdecimal() and cmds[3].isdecimal():
                     LateralInner = [int(cmds[1]),int(cmds[2]), int(cmds[3])]
     
+                else:
+                    print('specify red(0-255) green(0-255) blue(0-255)')
+                
                 print('Current Setting:', LateralInner)
     
             elif cmds[0] == 'PaddingOuter':
     
-                if len(cmds) != 4:
-                    print('specify red(0-255) green(0-255) blue(0-255)')
-                else:
+                if len(cmds) > 3 and cmds[1].isdecimal() and cmds[2].isdecimal() and cmds[3].isdecimal():
                     PaddingOuter = [int(cmds[1]),int(cmds[2]), int(cmds[3])]
     
+                else:
+                    print('specify red(0-255) green(0-255) blue(0-255)')
+                
                 print('Current Setting:', PaddingOuter)
     
             elif cmds[0] == 'PaddingInner':
     
-                if len(cmds) != 4:
-                    print('specify red(0-255) green(0-255) blue(0-255)')
-                else:
+                if len(cmds) > 3 and cmds[1].isdecimal() and cmds[2].isdecimal() and cmds[3].isdecimal():
                     PaddingInner = [int(cmds[1]),int(cmds[2]), int(cmds[3])]
     
+                else:
+                    print('specify red(0-255) green(0-255) blue(0-255)')
+                
                 print('Current Setting:', PaddingInner)
 
             elif cmds[0] == 'selected':
@@ -817,207 +816,160 @@ def main():
                     print('unable to delete')
                    
             elif cmds[0] == 'r':
-    
-                if len(cmds) < 4:
-                    print('specify angle_x(degree) angle_y(degree) angle_z(degree) [<count(>=2)>]')
-                elif len(meshes) < 2:
-                    print('no mesh')
-                      
-                else:
-    
-                    fResult, values = getFloat3(cmds[1], cmds[2], cmds[3])
-    
-                    if fResult:
-    
-                        rad_x = np.deg2rad(values[0])
-                        rad_y = np.deg2rad(values[1])
-                        rad_z = np.deg2rad(values[2])
-    
-                        R = o3d.geometry.get_rotation_matrix_from_xyz((rad_x, rad_y, rad_z))
-                        count = 0
-                        if len(cmds) > 4: 
-                            count = int(cmds[4])
-    
-                        update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
-    
-                        if count < 2:
-                            meshes[curr].rotate(R, center=(0,0,0))
-                            vis.update_geometry(meshes[curr])
-    
-                        else:
-                            accum = copy.deepcopy(meshes[curr])
+   
+                if len(meshes) < 2:
+                    print('no mesh') 
+                    continue
+   
+                R = getRotateMatrix(cmds[1:])
 
-                            for i in range(count - 1):
-                                meshes[curr].rotate(R, center=(0,0,0))
-                                accum += copy.deepcopy(meshes[curr])
-                        
-                            meshes[curr] = copy.deepcopy(accum)
-    
-                            refresh(vis, meshes, fAxis)
-                            ctrl.set_front([0.5, 0.25, 0.5])
+                if R is not None:
+
+                    count = 0
+
+                    if len(cmds) > 4:
+
+                        if cmds[4].isdecimal(): 
+                            count = int(cmds[4])
+                        else:
+                            usageRotate()
+                            continue
+
+                    update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+
+                    if count < 2:
+                        meshes[curr].rotate(R, center=(0,0,0))
+                        vis.update_geometry(meshes[curr])
+
+                    else:
+                        accum = copy.deepcopy(meshes[curr])
+
+                        for i in range(count - 1):
+                            meshes[curr].rotate(R, center=(0,0,0))
+                            accum += copy.deepcopy(meshes[curr])
+                    
+                        meshes[curr] = copy.deepcopy(accum)
+
+                    refresh(vis, meshes, fAxis)
+                    ctrl.set_front([0.5, 0.25, 0.5])
      
             elif cmds[0] == 's':
-    
-                if len(cmds) < 4:
-                    print('specify scalee_x scale_y scale_z [<count(>=2)>]')
-                
-                elif len(meshes) < 2:
+   
+                if len(meshes) < 2:
                     print('no mesh')
+                    continue 
+ 
+                S = getScaleMatrix(cmds[1:])
+
+                if S is not None:
+ 
+                    count = 0
     
-                else:
-    
-                    fResult, values = getFloat3(cmds[1], cmds[2], cmds[3])
-    
-                    if fResult:
-    
-                        S = np.array([[values[0],  0,          0,         0],
-                                      [ 0,         values[1],  0,         0],
-                                      [ 0,         0,          values[2], 0],
-                                      [ 0,         0,          0,         1]])
-    
-                        count = 0
-        
-                        if len(cmds) > 4:
+                    if len(cmds) > 4:
+
+                        if cmds[4].isdecimal():
                             count = int(cmds[4])
-        
-                        update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
-        
-                        if count < 2:
-                            meshes[curr].transform(S)
-                            vis.update_geometry(meshes[curr])
-        
                         else:
-                            accum = copy.deepcopy(meshes[curr])
-                            for i in range(count - 1):
-                                meshes[curr].transform(S)
-                                accum += copy.deepcopy(meshes[curr])
-                            
-                            meshes[curr] = copy.deepcopy(accum)
-        
-                            refresh(vis, meshes, fAxis)
-                            ctrl.set_front([0.5, 0.25, 0.5])
+                            usageScale()
+                            continue
+    
+                    update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+    
+                    if count < 2:
+                        meshes[curr].transform(S)
+                        vis.update_geometry(meshes[curr])
+    
+                    else:
+                        accum = copy.deepcopy(meshes[curr])
+                        for i in range(count - 1):
+                            meshes[curr].transform(S)
+                            accum += copy.deepcopy(meshes[curr])
+                        
+                        meshes[curr] = copy.deepcopy(accum)
+    
+                    refresh(vis, meshes, fAxis)
+                    ctrl.set_front([0.5, 0.25, 0.5])
     
             elif cmds[0] == 't':
     
-                if len(cmds) < 4:
-                    print('specify offset_x offset_y offset_z [<count(>=2)>]')
-                
-                elif len(meshes) < 2:
+                if len(meshes) < 2:
                     print('no mesh')
+                    continue
+
+                T = getTranslateMatrix(cmds[1:])
+                 
+                if T is not None:
+
+                    count = 0
     
-                else:
-    
-                    fResult, values = getFloat3(cmds[1], cmds[2], cmds[3])
-    
-                    if fResult:
-    
-                        T = np.array([[ 1,  0,  0, values[0]],
-                                      [ 0,  1,  0, values[1]],
-                                      [ 0,  0,  1, values[2]],
-                                      [ 0,  0,  0, 1]])
-        
-        
-                        count = 0
-        
-                        if len(cmds) > 4:
+                    if len(cmds) > 4:
+
+                        if cmds[4].isdecimal():
                             count = int(cmds[4])
-        
-                        update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
- 
-                        if count < 2:
-                            meshes[curr].transform(T)
-                            vis.update_geometry(meshes[curr])
-        
                         else:
-                            accum = copy.deepcopy(meshes[curr])
-                            
-                            for i in range(count - 1):
-                                meshes[curr].transform(T)
-                                accum += copy.deepcopy(meshes[curr])
-                            
-                            meshes[curr] = copy.deepcopy(accum)
-        
-                            refresh(vis, meshes, fAxis)
-                            ctrl.set_front([0.5, 0.25, 0.5])
+                            usageTranslate()
+                            continue     
+
+                    update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+ 
+                    if count < 2:
+                        meshes[curr].transform(T)
+                        vis.update_geometry(meshes[curr])
+    
+                    else:
+                        accum = copy.deepcopy(meshes[curr])
+                        
+                        for i in range(count - 1):
+                            meshes[curr].transform(T)
+                            accum += copy.deepcopy(meshes[curr])
+                        
+                        meshes[curr] = copy.deepcopy(accum)
+    
+                    refresh(vis, meshes, fAxis)
+                    ctrl.set_front([0.5, 0.25, 0.5])
     
             elif cmds[0] == 'g':
     
-                if len(cmds) < 5:
-                    print('specify group operation (ex. t xx xx xx r xx xx xx) [<count(>=2)>]')
-   
-                elif len(meshes) < 2:
+                if len(meshes) < 2:
                     print('no mesh')
- 
-                else:
-                    G = np.eye(4)
-    
-                    idx = 1
-                    fResult = True
-    
-                    while len(cmds) - idx > 3:
-    
-                        fResult, values = getFloat3(cmds[idx+1], cmds[idx+2], cmds[idx+3])
-    
-                        if not fResult:
-                            break;
-    
-                        if cmds[idx] == 'r' or cmds[idx] == 'R':
-    
-                            rad_x = np.deg2rad(values[0])
-                            rad_y = np.deg2rad(values[1])
-                            rad_z = np.deg2rad(values[2])
-    
-                            r = o3d.geometry.get_rotation_matrix_from_xyz((rad_x, rad_y, rad_z))
-                            
-                            R = np.eye(4)
-                            R[:3,:3] = r
-    
-                            G = G @ R
-    
-                        elif cmds[idx] == 's' or cmds[idx] == 'S':
-    
-                            S = np.array([[values[0],  0,          0,         0],
-                                          [ 0,         values[1],  0,         0],
-                                          [ 0,         0,          values[2], 0],
-                                          [ 0,         0,          0,         1]])
-    
-                            G = G @ S
-    
-                        elif cmds[idx] == 't' or cmds[idx] == 'T':
-     
-                            T = np.array([[ 1,  0,  0, values[0]],
-                                          [ 0,  1,  0, values[1]],
-                                          [ 0,  0,  1, values[2]],
-                                          [ 0,  0,  0, 1]])
+                    continue
+
+                G, fRemain = getGroupMatrix(cmds[1:])
+
+                if G is not None:
         
-                            G = G @ T
+                    count = 0
+                    accum = None
     
-                        idx += 4
-    
-                    if fResult:
-        
-                        count = 0
-        
-                        if len(cmds) - idx > 0:
-                            count = int(cmds[idx])
-        
-                        update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
- 
-                        if count < 2:
-                            meshes[curr].transform(G)
-                            vis.update_geometry(meshes[curr])
-        
+                    if fRemain:
+
+                        if cmds[-1].isdecimal(): 
+                            count = int(cmds[-1])
                         else:
-                            accum = copy.deepcopy(meshes[curr])
-                            
-                            for i in range(count - 1):
-                                meshes[curr].transform(G)
-                                accum += copy.deepcopy(meshes[curr])
-                            
+                            usageGroup()
+                            continue 
+   
+                    update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+ 
+                    if count < 2:
+                        meshes[curr].transform(G)
+                        vis.update_geometry(meshes[curr])
+    
+                    else:
+                        accum = copy.deepcopy(meshes[curr])
+                        
+                        for i in range(count - 1):
+                            meshes[curr].transform(G)
+                            accum += copy.deepcopy(meshes[curr])
+                        
+                        if accum is not None:
                             meshes[curr] = copy.deepcopy(accum)
-        
+    
                             refresh(vis, meshes, fAxis)
                             ctrl.set_front([0.5, 0.25, 0.5])
+
+                        else:
+                            print('no meshes added')
     
             elif cmds[0] == 'polygon':
     
@@ -1175,7 +1127,9 @@ def main():
                     print('undo buffer is empty')
     
             elif cmds[0] == 'save':
-    
+   
+                accum = None
+ 
                 if len(meshes) > 1:
                     
                     for i in range(1,len(meshes)):
@@ -1183,8 +1137,10 @@ def main():
                             accum = copy.deepcopy(meshes[i])
                         else:
                             accum += meshes[i]
-                    o3d.io.write_triangle_mesh(cmds[1], accum)
-                    print('save %s' % cmds[1])
+
+                    if accum is not None:
+                        o3d.io.write_triangle_mesh(cmds[1], accum)
+                        print('save %s' % cmds[1])
                 else:
                     print('no meshes to be saved')
   
@@ -1245,11 +1201,7 @@ def main():
             elif cmds[0] == 'p':
 
                 if len(cmds) < 2:
-                    print('p: display current Points[]')
-                    print('p clear: clear Points[]')
-                    print('p xxxx xxxx xxxx: append the point to Points[]')
-                    print('l xxxx.npy: load points into Points[]')
-                    print('Points[]=',Points)
+                    usageP(Points)
                 else:
                     if cmds[1] == 'clear':
                         Points.clear()
@@ -1273,60 +1225,153 @@ def main():
                     elif cmds[1] == 'curve':
 
                         if len(cmds) < 5:
-                            print('p curve (range T) (eq. X with T) (eq. Y with T) (eq. Z with T)')
+                            usageP(Points)
                             continue
 
                         else:
 
-                            try:
-                                T = eval(cmds[2])
-                            except NameError:
-                                print('error',cmds[2])
+                            fResult, value = Eval(cmds[2])
+
+                            if fResult:
+                                T = value
+                            else:
+                                usageP(Points)
                                 continue
-    
-                            try:
-                                X = eval(cmds[3])
-                            except NameError:
-                                print('error',cmds[3])
+
+                            fResult, value = Eval(cmds[3],T)
+
+                            if fResult:
+                                X = value
+                            else:
+                                usageP(Points)
                                 continue
-    
-                            try:
-                                Y = eval(cmds[4])
-                            except NameError:
-                                print('error',cmds[4])
+
+                            fResult, value = Eval(cmds[4],T)
+
+                            if fResult:
+                                Y = value
+                            else:
+                                usageP(Points)
                                 continue
-    
-                            try:
-                                Z = eval(cmds[5])
-                            except NameError:
-                                print('error',cmds[5])
+
+                            fResult, value = Eval(cmds[5],T)
+
+                            if fResult:
+                                Z = value
+                            else:
+                                usageP(Points)
                                 continue
 
                             Points.clear()
                             Points = list(zip(X,Y,Z))
     
+                    elif cmds[1] == 'centering':
+
+                        if len(Points) > 0:
+
+                            _points = np.array(Points)
+                            centroid = np.mean(_points, axis=0)
+                            Points.clear()
+                            Points = (_points - centroid).tolist()
+                            print('centring points')
+                            
+                        else:
+                            print('Points[] is empty')
+
+                    elif cmds[1] == 'r':
+
+                        if len(Points) > 0:
+                        
+                            R = getRotateMatrix(cmds[2:])
+
+                            if R is not None:
+
+                                for i, p in enumerate(Points):
+                                    Points[i] = (R @ np.array(p)).tolist()
+                                print('rotate points')
+                            else:
+                                usageP(Points)
+                                continue
+
+                        else:
+                            print('Points[] is empty')
+
+                    elif cmds[1] == 's':
+
+                        if len(Points) > 0:
+                        
+                            s = getScaleMatrix(cmds[2:])
+
+                            if s is not None:
+
+                                S = s[:3,:3]
+
+                                for i, p in enumerate(Points):
+
+                                    v1 = np.array(p)
+                                    Points[i] = (S @ np.array(p)).tolist()
+
+                                print('scaling points')
+                            else:
+                                usageP(Points)
+                                continue
+
+                        else:
+                            print('Points[] is empty')
+
+                    elif cmds[1] == 't':
+
+                        if len(Points) > 0:
+                        
+                            fResult, values = Evals(cmds[2:], 3)
+
+                            if fResult:
+
+                                for i, p in enumerate(Points):
+                                    Points[i] = np.array(p) + np.array(values).tolist()
+                                print('translate points')
+                            else:
+                                usageP(Points)
+                                continue
+
+                        else:
+                            print('Points[] is empty')
+
+                    elif cmds[1] == 'save':
+
+                        if len(Points) > 0:
+
+                            dst_path = 'Points.npy'
+
+                            if len(cmds) > 2:
+
+                                dst_path = cmds[2]
+
+                            if not dst_path.endswith('.npy'):
+
+                                dst_path += '.npy'
+
+                            no = 2
+                            while os.path.exists(dst_path):
+
+                                filename, ext = os.path.splitext(dst_path)
+                                dst_path = '%s_%d%s' % (filename, no, ext)
+                                no += 1 
+
+                            np.save(dst_path, np.array(Points))
+                            print('save %s' % dst_path)
+
+                        else:
+                            print('Points[] is empty')
+                        
+
                     elif len(cmds)== 4:
 
-                        try:
-                            x = float(eval(cmds[1]))
-                        except NameError:
-                            print('error',cmds[1])
-                            continue
-    
-                        try:
-                            y = float(eval(cmds[2]))
-                        except NameError:
-                            print('error',cmds[2])
-                            continue
-    
-                        try:
-                            z = float(eval(cmds[3]))
-                        except NameError:
-                            print('error', cmds[3])
-                            continue
-    
-                        Points.append((x, y, z))
-                        print('Points[]=', Points)
+                        fResult, values = Evals(cmds[1:], 3)
+
+                        if fResult: 
+                            Points.append(values)
+                            print('Points[]=', Points)
 
             elif cmds[0] == 'distribute':
 
@@ -1336,6 +1381,7 @@ def main():
                 elif len(cmds) > 1:
 
                     mesh = None
+                    accum = None
                     mode = 0
 
                     if cmds[1].endswith('.ply'):
@@ -1351,10 +1397,14 @@ def main():
 
                     elif cmds[1] == 'sphere':
                         _meshes, _names = sphere(cmds[1:], LateralOuter, LateralInner)
-                        mesh = _meshes[0]
+
+                        if len(_meshes) > 0:
+                            mesh = _meshes[0]
+                        else:
+                            print('no meshes created')
 
                     if mesh is not None:
-
+                        
                         for i, p in enumerate(Points):
                             _mesh = copy.deepcopy(mesh)
    
@@ -1381,7 +1431,8 @@ def main():
   
                     update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
  
-                    meshes.append(accum)
+                    if accum is not None:
+                        meshes.append(accum)
                     
                     no = 2
                     filename = cmds[1].split('.')[0]
@@ -1491,12 +1542,14 @@ def main():
                         curr_angle_step = angle_step
                             
                         if len(cmds) > 3:
-                            try:
-                                angle = float(eval(cmds[3]))
-                            except NameError:
-                                print('invalid angle(%s)' % cmds[3])
+
+                            fResult, value = Eval(cmds[3])
+
+                            if fResult:
+                                angle = value
+                            else:
                                 continue
-                       
+
                             curr_angle_step = angle_step
                             angle_step = np.deg2rad(angle)
     
@@ -1524,16 +1577,16 @@ def main():
                     elif cmds[1] == 'translate':
     
                         curr_translation_step = translation_step
-                        
+                       
                         if len(cmds) > 3:
-                            try:
-                                offset = float(eval(cmds[3]))
-                            except NameError:
-                                print('invalid offset(%s)' % cmds[3])
+
+                            fresult, value = Eval(cmds[3])
+
+                            if fResult:
+                                translation_step = value
+                            else:
                                 continue
                        
-                            translation_step = offset
-                            
                         if cmds[2] == 'x':
                            key_callback_4(vis, 1, 0)
     
@@ -1571,6 +1624,70 @@ def main():
                     print('cam y')
                     print('cam z')
                     print()
+
+            elif cmds[0] == 'calc':
+
+                fResult, value = Eval(cmds[1])
+
+                if fResult:
+                    print(value)
+                else:
+                    continue
+
+            elif cmds[0] == 'draw':
+
+                width = 800
+                heigt = 600
+                mode = 0
+               
+                if len(cmds) > 1:
+
+                    if cmds[1].isdecimal():
+                        width = int(cmds[1])
+
+                    else:
+                        print('draw [<width> <height> <mode>]')
+                        continue
+
+                if len(cmds) > 2:
+              
+                    if cmds[2].isdecimal():
+                        height = int(cmds[2])
+
+                    else:
+                        print('draw [<width> <height> <mode>]')
+                        continue
+
+                if len(cmds) > 3:
+
+                    if cmds[3].isdecimal():
+                        mode = int(cmds[3])
+
+                _points = getDrawingPoints(width, height, mode)
+                   
+                if _points is not None: 
+                    Points = _points.tolist()
+
+            elif cmds[0] == 'img2mesh':
+
+                 if len(cmds) > 1 and os.path.exists(cmds[1]):
+                     img2mesh = os.path.join(os.path.dirname(__file__), 'img2mesh.py')
+                     cmd = 'python %s %s' % (img2mesh, cmds[1]) 
+                     
+                     subprocess.run(cmd, shell=True)
+
+                     base = os.path.basename(cmds[1])
+                     filename = os.path.splitext(base)[0]
+
+                     LINES.append('l %s_contour.npy' % filename)
+                     LINES.append('l %s_A.ply' % filename)
+                     LINES.append('l %s_AA.ply' % filename)
+                     LINES.append('POLYLINE')
+
+                     print('Hit any key')
+
+                 else:
+                     print('img2mesh <image file> ... background color shall be black')
 
             elif cmds[0] == 'quit':
                 break

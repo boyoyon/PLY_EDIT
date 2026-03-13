@@ -2,6 +2,7 @@ import numpy as np
 import open3d as o3d
 import copy
 from sphere import _sphere
+from getValues import Eval, Evals
 
 #
 # Internal
@@ -15,13 +16,6 @@ def rot2D(x, y, angle):
     Y = np.sin(angle) * x + np.cos(angle) * y
 
     return X, Y
-
-def getInt3(str1, str2, str3):
-    int1 = int(str1)
-    int2 = int(str2)
-    int3 = int(str3)
-
-    return (int1, int2, int3)
 
 def get_rotation_to_vector(target, source=np.array([1,0,0],np.float64)):
 
@@ -72,7 +66,13 @@ def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,
         return meshes, names
 
     else:
-        nr_divs = int(cmds[1])
+        if not cmds[1].isdecimal():
+            usagePolygon(cmds)
+            return meshes, names
+        
+        else:
+            nr_divs = int(cmds[1])
+        
         if nr_divs < 3:
             usagePolygon(cmds)
             return meshes, names
@@ -80,39 +80,54 @@ def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,
         size = 1.0
 
         if len(cmds) > 2:
-            try:
-                size = float(eval(cmds[2]))
-            except NameError:
+
+            fResult, value = Eval(cmds[2])
+
+            if fResult:
+                size = value
+            else:
                 usagePolygon(cmds)
                 return meshes, names
 
         width = 0
         
         if len(cmds) > 3:
-            try:
-                width = float(eval(cmds[3]))
-            except NameError:
+
+            fResult, value = Eval(cmds[3])
+
+            if fResult:
+                width = value
+            else:
                 usagePolygon(cmds)
        
         delta = 0.0
 
         if len(cmds) > 4:
-            try:
-                delta = float(eval(cmds[4]))
-            except NameError:
+
+            fResult, value = Eval(cmds[4])
+
+            if fResult:
+                delta = value
+            else:
                 usagePolygon(cmds)
 
         count = 1
         
-        if len(cmds) > 5:
+        if len(cmds) > 5 and cmds[5].isdecimal():
             count = int(cmds[5])
+
+            if not cmds[5].isdecimal():
+                usagePolygon(cmds)
 
         finalSize = size
  
         if len(cmds) > 6:
-            try:
-                finalSize = float(eval(cmds[6]))
-            except NameError:
+
+            fResult, value = Eval(cmds[6])
+
+            if fResult:
+                finalSize = value
+            else:
                 usagePolygon(cmds)
 
         if fIntegrate:
@@ -160,8 +175,14 @@ def polyline(cmds, Points, fClose, fPadding = False, SurfaceOuter = (128,128,255
         clonePoints = copy.deepcopy(Points)
     
         if len(cmds) > 1:
-    
-            nr_divs = int(cmds[1])
+   
+            if not cmds[1].isdecimal():
+                usagePolyline(cmds)
+                return meshes, names
+
+            else: 
+                nr_divs = int(cmds[1])
+
             if nr_divs < 3:
                 usagePolyline(cmds)
                 return meshes, names
@@ -171,18 +192,24 @@ def polyline(cmds, Points, fClose, fPadding = False, SurfaceOuter = (128,128,255
     
     
         if len(cmds) > 2:
-            try:
-                size = float(eval(cmds[2]))
-            except NameError:
+
+            fResult, value = Eval(cmds[2])
+
+            if fResult:
+                size = value
+            else:
                 usagePolyline(cmds)
                 return meshes, names
         else:
             size = 0.02
 
         if len(cmds) > 3:
-            try:
-                ratio = float(eval(cmds[3]))
-            except NameError:
+
+            fResult, value = Eval(cmds[3])
+
+            if fResult:
+                ratio = value
+            else:
                 usagePolyline(cmds)
                 return meshes, names
         else:
@@ -470,7 +497,7 @@ def _polyiline(size, nr_divs, ratio, fClose, fPadding, start, end, points, Surfa
                     accum += copy.deepcopy(END)
 
             # パディングの作成。A → B → C の並びのB で実施 
-            if fPadding:
+            if fPadding and nr_points > 2:
    
                 _next = i + 1
 

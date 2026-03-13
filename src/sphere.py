@@ -1,6 +1,7 @@
 import numpy as np
 import open3d as o3d
 import copy
+from getValues import Eval, Evals
 
 #
 # Inner
@@ -33,9 +34,12 @@ def sphere(cmds, LateralOuter=(128,128,255), LateralInner=(200,200,255)):
         return meshes, names
 
     else:
-        try:
-            size = float(eval(cmds[1]))
-        except NameError:
+
+        fResult, value = Eval(cmds[1])
+        
+        if fResult:
+            size = value
+        else:
             usage(cmds)
             return meshes, names
 
@@ -44,21 +48,30 @@ def sphere(cmds, LateralOuter=(128,128,255), LateralInner=(200,200,255)):
         elevation_nr_divs = 25
 
         if len(cmds) > 2:
-            elevation_nr_divs = int(cmds[2])
+
+            if cmds[2].isdecimal():
+                elevation_nr_divs = int(cmds[2])
+            else:
+                usage(cmds)
+                return meshes, names
 
         azimuth_nr_divs = elevation_nr_divs
 
         if len(cmds) > 4:
 
-           try:
-               elevation_start = float(eval(cmds[3]))
-           except NameError:
+           fResult, value = Eval(cmds[3])
+
+           if fResult:
+               elevation_start = value
+           else:
                usage(cmds)
                return meshes, names
 
-           try:
-               elevation_end = float(eval(cmds[4]))
-           except NameError:
+           fResult, value = Eval(cmds[4])
+
+           if fResult:
+               elevation_end = value
+           else:
                usage(cmds)
                return meshes, names
 
@@ -67,22 +80,26 @@ def sphere(cmds, LateralOuter=(128,128,255), LateralInner=(200,200,255)):
 
         if len(cmds) > 6:
 
-           try:
-               azimuth_start = float(eval(cmds[5]))
-           except NameError:
+           fResult, value = Eval(cmds[5])
+
+           if fResult:
+               azimuth_start = value
+           else:
                usage(cmds)
                return meshes, names
 
-           try:
-               azimuth_end = float(eval(cmds[6]))
-           except NameError:
+           fResult, value = Eval(cmds[6])
+
+           if fResult:
+               azimuth_end = value
+           else:
                usage(cmds)
                return meshes, names
 
         elevations = [np.deg2rad(elevation_start), 
             np.deg2rad(elevation_end), elevation_nr_divs]
         
-        if len(cmds) > 7:
+        if len(cmds) > 7 and cmds.isdecimal():
            azimuth_nr_divs = int(cmds[7])
 
         azimuths = [np.deg2rad(azimuth_start), 
