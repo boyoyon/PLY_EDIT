@@ -555,6 +555,8 @@ def main():
     screenNo = 1
     
     LINES = []
+    _LINES = []
+    fInLoop = False
 
     while True:
     
@@ -567,7 +569,43 @@ def main():
             if len(cmds) == 0 or len(cmds[0]) == 0:
                 continue
     
-            if cmds[0] == 'm':
+            if cmds[0] == 'loop':
+
+                if len(cmds) > 1:
+                    if cmds[1] == 'start':
+                        fInLoop = True
+                        print('start loop command buffering')
+
+                    elif cmds[1] == 'quit':
+                        _LINES.celar()
+                        fInLoop = False
+
+                    elif cmds[1] == 'end':
+                        count = 1
+                        if len(cmds) > 2 and cmds[2].isdecimal():
+                            count = int(cmds[2])
+                        for i in range(count):
+                            for l in _LINES:
+                                cmd = ''
+                                for c in l:
+                                    cmd += '%s ' % c
+                                LINES.append(cmd)
+                        _LINES.clear()
+                        fInLoop = False
+                        print('Hit any key')
+
+                    else:
+                        print('loop start/quit/end [count]')
+                else:
+                    print('loop start/quit/end [count]')
+                
+                continue # loop start コマンドがバッファリングされないように
+
+            if fInLoop:
+                _LINES.append(cmds)
+                print('buffering loop command. type \"loop end\" or \"loop quit\" to stop buffering')
+
+            elif cmds[0] == 'm':
     
                 show_menu()
     
