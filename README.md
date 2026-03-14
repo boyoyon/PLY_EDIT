@@ -12,10 +12,33 @@
 <h3>環境構築</h3>
 <p>
 　pip install Open3D<br>
-  pip install mapbox_earcut　･･･　img2mesh で使用
+　pip install mapbox_earcut　･･･　img2mesh で使用<br>
+　pip install imageio　　　　･･･　img2gif.py で使用
 <p>
 
 <h3>更新項目</h3>
+
+<p>
+　<strong>ループ実行：　loop start/quit/end [count]</strong><br>
+　　指定したコマンド列を count 回数繰り返す。<br>
+　　(例)<br>
+　　　[ 0]　python src/PLY_interactive.py 400 300 # 画面サイズを指定して起動<br>
+　　　[ 1]　l　data/f.txt　　　　# F の頂点データ読み込み<br>
+　　　[ 2]　(エンターキー押下)　# スクリプト実行<br>
+　　　[ 3]　POLYLINE　　　　　　# F の輪郭の折れ線メッシュを作成する<br>
+　　　[ 4]　(Visualizer画面をドラッグしカメラ位置を設定する)<br>
+　　　[ 5]　getEyePos　　　　　 # カメラ位置を保存する<br>
+　　　[ 6]　del 0*.png　　　　　# 不要なキャプチャー画像を削除<br>
+　　　[ 7]　loop start　　　　　# ループコマンド列の入力を始める<br>
+　　　[ 8]　cap　　　　　　　　 # スクリーンキャプチャー<br>
+　　　[ 9]　r 0 10 0　　　　　　# y軸周りに10°回転<br>
+　　　[10]　setEyePos　　　　　 # カメラ位置を復元する<br>
+　　　[11]　loop end 36　　　　 # ループコマンド入力完了。36回繰り返す<br>
+　　　[12]　(エンターキー押下)　# スクリプト実行<br>
+　　　[13]　python　src\img2gif.py　0*.png　15　0 # 15fps, 無限繰り返しでgif化
+</p>
+
+<img src="images/rotate_F.gif">
 
 <p>
 　<strong>システムコマンド：　python</strong><br>
@@ -24,59 +47,19 @@
 　　※ TABによる補完が効かないのがちょっと残念･･･<br>
 　　(例)<br>
 　　　花びらふうのメッシュを作成～セーブし、思い付きスクリプトで変形してロード。<br>
-　　　 [1]　LateralOuter 255 128 255　　　　　　# 花びらの外側をピンクにする<br>
-　　　 [2]　LateralInner 230 230 255　　　　　　# 花びらの内側をうすい青にする<br>
-　　　 [3]　sphere 1 30 0 180 -360/5/2 360/5/2 　# 花びらを作成<br>
-　　　 [4]　t 0 1 0　　　　　　　　　　　　　　   # 花びらの付け根を原点に移動<br>
-　　　 [5]　r 30 0 0　　　　　　　　　　　　　　# 花びらを傾ける<br>
-　　　 [6]　r 0 360/5 0 5　　　　　　　　　　　 # 花びらを 5 枚にする<br>
-　　　 [7]　s 1 1.3 1　　　　　　　　　　　　　 # 縦(y軸方向)にちょっと伸ばす<br>
-　　　 [8]　save flower.ply　　　　　　　　　　 # セーブ<br>
-　　　 [9]　d　　　　　　　　　　　　　　　　　 # 消す<br>
+　　　[ 1]　LateralOuter 255 128 255　　　　　　# 花びらの外側をピンクにする<br>
+　　　[ 2]　LateralInner 230 230 255　　　　　　# 花びらの内側をうすい青にする<br>
+　　　[ 3]　sphere 1 30 0 180 -360/5/2 360/5/2 　# 花びらを作成<br>
+　　　[ 4]　t 0 1 0　　　　　　　　　　　　　　   # 花びらの付け根を原点に移動<br>
+　　　[ 5]　r 30 0 0　　　　　　　　　　　　　　# 花びらを傾ける<br>
+　　　[ 6]　r 0 360/5 0 5　　　　　　　　　　　 # 花びらを 5 枚にする<br>
+　　　[ 7]　s 1 1.3 1　　　　　　　　　　　　　 # 縦(y軸方向)にちょっと伸ばす<br>
+　　　[ 8]　save flower.ply　　　　　　　　　　 # セーブ<br>
+　　　[ 9]　d　　　　　　　　　　　　　　　　　 # 消す<br>
 　　　[10]　python src\twist.py flower.ply 50　 # <strong>外部スクリプトで</strong>ねじる (y方向のみのお試し実装)<br>
 　　　[11]　l flower_twisted.ply　　　　　　　　# ねじった ply をロード～表示
 </p>
 <img src="images/flower.svg">
-<p>
-　<strong>画像からのメッシュ作成</strong><br>
-　img2mesh　(画像ファイル名)<br>
-　コンソールから実行できるようにした。表, 裏の2メッシュ＋輪郭の座標がロードされる。<br>
-　・背景が黒でないとうまく動作しない。<br>
-　・表と裏は select してみないとわからない.<br> 
-</p>
-<img src="images/img2mesh2.svg">
-<p>
-　<strong>3D座標：　pコマンド</strong><br>
-　オプションを追加<br>
-　・p　centering　･･･　Points配列内の座標をセンタリングする <br>
-　・p　r　xx　xx　xx　･･･　Points配列内の座標の回転 <br>
-　・p　s　xx　xx　xx　･･･　Points配列内の座標のスケーリング <br>
-　・p　t　xx　xx　xx　･･･　Points配列内の座標の平行移動 <br>
-　・p　save　( .npyファイル名)　･･･　Points配列内の座標を .npy ファイルに保存<br>　
-<br>
-　※ メッシュをスケーリングすると枠が太ったり細くなったりするので必要と思って実装したが、s(スケーリング)と save 以外はメッシュ化してから従来のコマンドで実施しても同じだった･･･<br>
-　　メッシュ化しないと何が起こっているのかわからない。<br>
-</p>
-
-<p>
-　<strong>手書き入力：　draw コマンド</strong><br>
-　draw　[(入力画面幅)　(入力画面高さ)　(モード)]<br>
-　※ (今のところ)一筆書きのみ。思い付きで実装したがいまいち ･･･<br>
-　　　モード指定なしだと、z 座標は 0 固定。<br>
-　　　モードに 1 を指定すると z 座標は 0.01ずつ増える。<br>
-</p>
-<img src="images/draw.svg">
-
-<p>
-　<strong>システムコマンド：　dir, copy, move, ren, del</strong><br>
-　　コンソールから dir, copy, move, ren, del を実行できるようにした。
-</p>
-
-<p>
-　<strong>電卓：　calc</strong><br>
-　　(例) calc np.sin(np.deg2rad(36))
-　　コンソールから 式を入力して計算できるようにした。
-</p>
 
 <h3>使い方</h3>
 
@@ -329,8 +312,13 @@ Points 配列に 3D座標を格納する。<br>
 使用例は distribute コマンド, polyline コマンドなどで説明する。<br>
 <br>
 ・ p　･･･　現在の Points 配列の内容を表示する。<br>
-※ p clear　･･･　Points 配列を空にする。<br>
+・ p clear　･･･　Points 配列を空にする。<br>
 ・ p　(x 座標)　(y 座標)　(z座標)　･･･　Points 配列に座標を追加する。<br>
+・ p　centering　･･･　Points配列内の座標をセンタリングする <br>
+・ p　r　xx　xx　xx　･･･　Points配列内の座標の回転 <br>
+・ p　s　xx　xx　xx　･･･　Points配列内の座標のスケーリング <br>
+・ p　t　xx　xx　xx　･･･　Points配列内の座標の平行移動 <br>
+・ p　save　( .npyファイル名)　･･･　Points配列内の座標を .npy ファイルに保存<br>
 ※ getPoints　　　　　　　　　　　･･･　メッシュから頂点データを抽出し Points 配列に格納する。<br>
 ・ GETPoints　　　　　　　　　　　･･･　メッシュから頂点データを抽出し Points 配列に追加する。<br>
 ※ l　(.npyファイル)　　　　　　　･･･　.npy ファイルから 3D座標データを読み込み Points 配列に格納する。<br>
@@ -424,7 +412,26 @@ Points 配列の点を折れ線(パイプ)で接続する。<br>
 </p>
 <img src="images/polyline3.svg">
 
+<p>
+　<strong>画像からのメッシュ作成</strong><br>
+　img2mesh　(画像ファイル名)<br>
+　コンソールから実行できるようにした。表, 裏の2メッシュ＋輪郭の座標がロードされる。<br>
+　・背景が黒でないとうまく動作しない。<br>
+　・表と裏は select してみないとわからない.<br> 
+</p>
+<img src="images/img2mesh2.svg">
+
+<p>
+　<strong>手書き入力：　draw コマンド</strong><br>
+　draw　[(入力画面幅)　(入力画面高さ)　(モード)]<br>
+　※ (今のところ)一筆書きのみ。思い付きで実装したがいまいち ･･･<br>
+　　　モード指定なしだと、z 座標は 0 固定。<br>
+　　　モードに 1 を指定すると z 座標は 0.01ずつ増える。<br>
+</p>
+<img src="images/draw.svg">
+
 <h4>その他コマンド</h4>
+
 <p>
 　<strong>メッシュ情報表示</strong><br>
 　　i<br>
@@ -437,8 +444,18 @@ Points 配列の点を折れ線(パイプ)で接続する。<br>
 　<strong>センタリング</strong><br>
 　　centering<br>
 　　(例)
-<p>
+
 <img src="images/centering.svg">
+
+<p>
+　<strong>システムコマンド：　dir, copy, move, ren, del</strong><br>
+　　コンソールから dir, copy, move, ren, del を実行できるようにした。
+</p>
+
+<p>
+　<strong>電卓：　calc</strong><br>
+　　(例) calc np.sin(np.deg2rad(36))
+　　コンソールから 式を入力して計算できるようにした。
 </p>
 </body>
 </html>
