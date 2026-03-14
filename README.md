@@ -22,7 +22,7 @@
 　<strong>ループ実行：　loop start/quit/end [count]</strong><br>
 　　指定したコマンド列を count 回数繰り返す。<br>
 　　(例)<br>
-　　　[ 0]　python src/PLY_interactive.py 400 300 # 画面サイズを指定して起動<br>
+　　　[ 0]　python src\PLY_interactive.py 400 300 # 画面サイズを指定して起動<br>
 　　　[ 1]　l　data/f.txt　　　　# F の頂点データ読み込み<br>
 　　　[ 2]　(エンターキー押下)　# スクリプト実行<br>
 　　　[ 3]　POLYLINE　　　　　　# F の輪郭の折れ線メッシュを作成する<br>
