@@ -19,48 +19,69 @@
 <h3>更新項目</h3>
 
 <p>
-　<strong>ループ実行：　loop start/quit/end [count]</strong><br>
-　　指定したコマンド列を count 回数繰り返す。<br>
+　<strong>3D座標:　マーカー表示</strong><br>
+　　3D 座標は polyline コマンド, distribute コマンドなどでメッシュ化しないと,<br>
+　　どうなっているかわからなかったので、マーカー表示するようにした。<br>
+　　p　disp　･･･　Points 配列内座標のマーカー表示 on/off をトグルする。<br>
 　　(例)<br>
-　　　[ 0]　python src\PLY_interactive.py 400 300 # 画面サイズを指定して起動<br>
-　　　[ 1]　l　data/f.txt　　　　# F の頂点データ読み込み<br>
-　　　[ 2]　(エンターキー押下)　# スクリプト実行<br>
-　　　[ 3]　POLYLINE　　　　　　# F の輪郭の折れ線メッシュを作成する<br>
-　　　[ 4]　(Visualizer画面をドラッグしカメラ位置を設定する)<br>
-　　　[ 5]　getEyePos　　　　　 # カメラ位置を保存する<br>
-　　　[ 6]　del 0*.png　　　　　# 不要なキャプチャー画像を削除<br>
-　　　[ 7]　loop start　　　　　# ループコマンド列の入力を始める<br>
-　　　[ 8]　cap　　　　　　　　 # スクリーンキャプチャー<br>
-　　　[ 9]　r 0 10 0　　　　　　# y軸周りに10°回転<br>
-　　　[10]　setEyePos　　　　　 # カメラ位置を復元する<br>
-　　　[11]　loop end 36　　　　 # ループコマンド入力完了。36回繰り返す<br>
-　　　[12]　(エンターキー押下)　# スクリプト実行<br>
-　　　[13]　python　src\img2gif.py　0*.png　15　0 # 15fps, 無限繰り返しでgif化
+　　p　1　1　0　　･･･　3D 座標 (1,1,0) を追加する<br>
+　　p　-1　-1　0　･･･　3D 座標 (-1,-1,0) を追加する<br>
+　　p　clear　　　･･･　3D 座標を空にする<br>
+　　l　data/f.txt　･･･　「F」字の頂点座標を読み込む<br>
+　　p　t　0.4　0.4　0　･･･　座標軸と重なって見にくいので 3D 座標を平行移動する
 </p>
 
-<img src="images/rotate_F.gif">
+<img src="images/p.svg">
 
 <p>
-　<strong>システムコマンド：　python</strong><br>
-　　コンソールから python を実行できるようにした。<br>
-　　お試し機能は別の　python スクリプトで作成し、コンソールから呼び出す。<br>
-　　※ TABによる補完が効かないのがちょっと残念･･･<br>
-　　(例)<br>
-　　　花びらふうのメッシュを作成～セーブし、思い付きスクリプトで変形してロード。<br>
-　　　[ 1]　LateralOuter 255 128 255　　　　　　# 花びらの外側をピンクにする<br>
-　　　[ 2]　LateralInner 230 230 255　　　　　　# 花びらの内側をうすい青にする<br>
-　　　[ 3]　sphere 1 30 0 180 -360/5/2 360/5/2 　# 花びらを作成<br>
-　　　[ 4]　t 0 1 0　　　　　　　　　　　　　　   # 花びらの付け根を原点に移動<br>
-　　　[ 5]　r 30 0 0　　　　　　　　　　　　　　# 花びらを傾ける<br>
-　　　[ 6]　r 0 360/5 0 5　　　　　　　　　　　 # 花びらを 5 枚にする<br>
-　　　[ 7]　s 1 1.3 1　　　　　　　　　　　　　 # 縦(y軸方向)にちょっと伸ばす<br>
-　　　[ 8]　save flower.ply　　　　　　　　　　 # セーブ<br>
-　　　[ 9]　d　　　　　　　　　　　　　　　　　 # 消す<br>
-　　　[10]　python src\twist.py flower.ply 50　 # <strong>外部スクリプトで</strong>ねじる (y方向のみのお試し実装)<br>
-　　　[11]　l flower_twisted.ply　　　　　　　　# ねじった ply をロード～表示
-</p>
-<img src="images/flower.svg">
 
+　<strong>3D座標:　回転/スケーリング/平行移動/組み合わせの複数回実施</strong><br>
+　　メッシュに対して回転/スケーリング/平行移動/組み合わせを複数回できるが、<br>
+　　同様のことを 3D座標に対しても適用できるようにした。<br>
+
+</p>
+
+<p>
+　　回転/スケーリング/平行移動/組み合わせを複数回実施した点を使って面を張る。<br>
+　　surface　[pclose/eclose/peclose]<br>
+　　(例)<br>
+　　　p　polygon　30　･･･　正30角形の頂点<br>
+　　　p　r 0　0　-90　･･･　3D 座標群を z 軸周りに90°回転<br>
+　　　p　g　s　1　0.9　0.9　t　0　-0.5　0　r　20　0　0　t　0.1　0.5　0　30<br>
+　　　･･･　スケーリング/平行移動/回転を組み合わせた変換を30回実施<br>
+　　　surface　･･･　変換途中の座標を使って面を張る<br>
+<p>
+
+<img src="images/surface.svg">
+
+<p>
+　　surface コマンドのパラメータ：　pclose/eclose/peclose<br>
+　　※ テキトーに付けた名前<br>
+　　　 3D 座標列の path 方向の最後と最初を閉じる<br>
+　　　 押し出し(extrusion)方向の最後と最初を閉じる<br>
+</p>
+
+<img src="images/surface2.svg">
+
+<p>
+　　(例) eclose が有効な例<br>
+　　　draw　･･･　手書きで 2D 曲線を入力する<br>
+　　　p r 0 10 0 36　･･･　2D 曲線を360°回転して器っぽいものを作る。<br>
+</p>
+
+<img src="images/surface3.svg">
+
+<p>
+　　(例) pclose が有効な例<br>
+　　　l　data/f.txt　･･･　「F」字の頂点データをロード<br>
+　　　p　t　0.2　0.2　0　･･･　3D座標を平行移動(座標軸と重なって見ずらいため)<br>
+　　　p　t　0　0　0.2　2　･･･　z 軸方向に 0.2 移動(押し出す)<br>
+　　　※ count ≧ 2 にしないと面を張れない。<br>
+　　　surface　･･･　「F」の底辺がつながらない<br>
+　　　surface　pclose　･･･　底辺がつながる
+</p>
+
+<img src="images/surface4.svg">
 <h3>使い方</h3>
 
 <h4>起動・終了</h4>
@@ -433,6 +454,28 @@ Points 配列の点を折れ線(パイプ)で接続する。<br>
 <h4>その他コマンド</h4>
 
 <p>
+　<strong>ループ実行：　loop start/quit/end [count]</strong><br>
+　　指定したコマンド列を count 回数繰り返す。<br>
+　　(例)<br>
+　　　[ 0]　python src\PLY_interactive.py 400 300 # 画面サイズを指定して起動<br>
+　　　[ 1]　l　data/f.txt　　　　# F の頂点データ読み込み<br>
+　　　[ 2]　(エンターキー押下)　# スクリプト実行<br>
+　　　[ 3]　POLYLINE　　　　　　# F の輪郭の折れ線メッシュを作成する<br>
+　　　[ 4]　(Visualizer画面をドラッグしカメラ位置を設定する)<br>
+　　　[ 5]　getEyePos　　　　　 # カメラ位置を保存する<br>
+　　　[ 6]　del 0*.png　　　　　# 不要なキャプチャー画像を削除<br>
+　　　[ 7]　loop start　　　　　# ループコマンド列の入力を始める<br>
+　　　[ 8]　cap　　　　　　　　 # スクリーンキャプチャー<br>
+　　　[ 9]　r 0 10 0　　　　　　# y軸周りに10°回転<br>
+　　　[10]　setEyePos　　　　　 # カメラ位置を復元する<br>
+　　　[11]　loop end 36　　　　 # ループコマンド入力完了。36回繰り返す<br>
+　　　[12]　(エンターキー押下)　# スクリプト実行<br>
+　　　[13]　python　src\img2gif.py　0*.png　15　0 # 15fps, 無限繰り返しでgif化
+</p>
+
+<img src="images/rotate_F.gif">
+
+<p>
 　<strong>メッシュ情報表示</strong><br>
 　　i<br>
 　メッシュのx軸, y軸, z軸の幅, min, maxを表示する。<br>
@@ -448,8 +491,23 @@ Points 配列の点を折れ線(パイプ)で接続する。<br>
 <img src="images/centering.svg">
 
 <p>
-　<strong>システムコマンド：　dir, copy, move, ren, del</strong><br>
-　　コンソールから dir, copy, move, ren, del を実行できるようにした。
+　<strong>システムコマンド：　python, dir, copy, move, ren, del</strong><br>
+　　コンソールから dir, copy, move, ren, del を実行できるようにした。<br>
+　　(例)<br>
+　　　花びらふうのメッシュを作成～セーブし、思い付きスクリプトで変形してロード。<br>
+　　　[ 1]　LateralOuter 255 128 255　　　　　　# 花びらの外側をピンクにする<br>
+　　　[ 2]　LateralInner 230 230 255　　　　　　# 花びらの内側をうすい青にする<br>
+　　　[ 3]　sphere 1 30 0 180 -360/5/2 360/5/2 　# 花びらを作成<br>
+　　　[ 4]　t 0 1 0　　　　　　　　　　　　　　   # 花びらの付け根を原点に移動<br>
+　　　[ 5]　r 30 0 0　　　　　　　　　　　　　　# 花びらを傾ける<br>
+　　　[ 6]　r 0 360/5 0 5　　　　　　　　　　　 # 花びらを 5 枚にする<br>
+　　　[ 7]　s 1 1.3 1　　　　　　　　　　　　　 # 縦(y軸方向)にちょっと伸ばす<br>
+　　　[ 8]　save flower.ply　　　　　　　　　　 # セーブ<br>
+　　　[ 9]　d　　　　　　　　　　　　　　　　　 # 消す<br>
+　　　[10]　python src\twist.py flower.ply 50　 # <strong>外部スクリプトで</strong>ねじる (y方向のみのお試し実装)<br>
+　　　[11]　l flower_twisted.ply　　　　　　　　# ねじった ply をロード～表示
+</p>
+<img src="images/flower.svg">
 </p>
 
 <p>
