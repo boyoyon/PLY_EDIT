@@ -14,7 +14,7 @@ def usageTranslate():
 def usageGroup():        
     print('specify group operation (ex. r xx xx xx s xx xx xx t xx xx xx) [<count(>=2)>]')
    
-def getRotateMatrix(cmds):
+def getRotateMatrix(cmds, size=3):
 
     if len(cmds) < 3:
         usageRotate()
@@ -30,14 +30,20 @@ def getRotateMatrix(cmds):
             rad_y = np.deg2rad(values[1])
             rad_z = np.deg2rad(values[2])
     
-            R = o3d.geometry.get_rotation_matrix_from_xyz((rad_x, rad_y, rad_z))
+            if size == 4:
+                R = np.eye(4)
+                r = o3d.geometry.get_rotation_matrix_from_xyz((rad_x, rad_y, rad_z))
+                R[:3,:3] = t            
+
+            else:
+                R = o3d.geometry.get_rotation_matrix_from_xyz((rad_x, rad_y, rad_z))
             return R
 
         else:
             usageRotate()
             return None
     
-def getScaleMatrix(cmds):
+def getScaleMatrix(cmds, size=4):
  
     if len(cmds) < 3:
         usageScale()
@@ -48,11 +54,17 @@ def getScaleMatrix(cmds):
         fResult, values = Evals(cmds, 3)
     
         if fResult:
-    
-            S = np.array([[values[0],  0,          0,         0],
-                          [ 0,         values[1],  0,         0],
-                          [ 0,         0,          values[2], 0],
-                          [ 0,         0,          0,         1]])
+
+            if size == 4:    
+                S = np.array([[values[0],  0,          0,         0],
+                              [ 0,         values[1],  0,         0],
+                              [ 0,         0,          values[2], 0],
+                              [ 0,         0,          0,         1]])
+
+            else:
+                S = np.array([[values[0],  0,          0],
+                              [ 0,         values[1],  0],
+                              [ 0,         0,          values[2]]])
     
             return S
 
@@ -60,7 +72,7 @@ def getScaleMatrix(cmds):
             usageScale()
             return None
     
-def getTranslateMatrix(cmds):
+def getTranslateMatrix(cmds, size=4):
 
     if len(cmds) < 3:
         usageTranslate()
@@ -72,10 +84,16 @@ def getTranslateMatrix(cmds):
     
         if fResult:
     
-            T = np.array([[ 1,  0,  0, values[0]],
-                          [ 0,  1,  0, values[1]],
-                          [ 0,  0,  1, values[2]],
-                          [ 0,  0,  0, 1]])
+            if size == 4:
+
+                T = np.array([[ 1,  0,  0, values[0]],
+                              [ 0,  1,  0, values[1]],
+                              [ 0,  0,  1, values[2]],
+                              [ 0,  0,  0, 1]])
+
+            else:
+
+                T = np.array([values[0], values[1], values[2]])
         
             return T
 

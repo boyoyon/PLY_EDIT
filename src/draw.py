@@ -83,7 +83,7 @@ def getDrawingPoints(width, height, mode):
     if len(_points) > 0:
         _points = np.array(_points).astype(np.float64)
         _points[:,0] /= width
-        _points[:,1] /= -height # flip up/down
+        _points[:,1] = _points[:,1] / -height + 1.0 # flip up/down
 
         points = np.zeros((_points.shape[0], 3), np.float64)
         points[:,:2] = _points
@@ -92,6 +92,6 @@ def getDrawingPoints(width, height, mode):
             z = np.arange(_points.shape[0]) / 100
             points[:,2] = z
 
-        points -= np.mean(points, axis = 0)
+        #points -= np.mean(points, axis = 0)
 
     return points

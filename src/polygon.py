@@ -225,7 +225,7 @@ def polyline(cmds, Points, fClose, fPadding = False, SurfaceOuter = (128,128,255
         if len(cmds) > 5:
             end = cmds[5]
    
-        _meshes =  _polyiline(size, nr_divs, ratio, fClose, fPadding, start, end, clonePoints, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, PaddingOuter, PaddingInner)
+        _meshes =  _polyline(size, nr_divs, ratio, fClose, fPadding, start, end, clonePoints, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, PaddingOuter, PaddingInner)
 
     
         for i in range(len(_meshes)):
@@ -384,7 +384,7 @@ def _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, Lat
 
     return meshes
 
-def _polyiline(size, nr_divs, ratio, fClose, fPadding, start, end, points, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, PaddingOuter, PaddingInner):
+def _polyline(size, nr_divs, ratio, fClose, fPadding, start, end, points, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, PaddingOuter, PaddingInner):
 
     meshes = []
     accum = None

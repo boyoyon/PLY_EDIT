@@ -8,6 +8,7 @@ from sphere import sphere
 from getValues import Eval, Evals
 from draw import getDrawingPoints
 from RST import *
+from surface import *
 
 LINES = []
 input_queue = None
@@ -53,7 +54,34 @@ def refresh(vis, meshes, fAxis):
     for i in range(start, len(meshes)):
         vis.add_geometry(meshes[i])           
 
-def usageP(Points):
+Marker = None
+
+def displayMarker(vis, marker, Points, flag):
+
+    global Marker
+
+    if Marker is not None:
+        vis.remove_geometry(Marker)
+
+    if flag:
+
+        accum = None
+
+        for i, p in enumerate(Points):
+            _marker = copy.deepcopy(marker)
+            _marker.translate(np.array((p[0],p[1],p[2])))
+
+            if i == 0:
+                accum = copy.deepcopy(_marker)
+            else:
+                accum += copy.deepcopy(_marker)
+
+        Marker = copy.deepcopy(accum)
+        vis.add_geometry(Marker)
+
+    ctrl.set_front([0.5, 0.25, 0.5])
+
+def usageP():
       print('p: display current points')
       print('p clear: clear points')
       print('p xx xx xx: append the point to points')
@@ -65,7 +93,7 @@ def usageP(Points):
       print('p t xx xx xx : translate points')
       print('p g (array of r/s/t commands) : apply group operation to points')
       print('l xxxx.npy: load points into Points[]')
-      print('Points[]=',Points)
+      print()
 
 def key_callback_d(vis, action, mod):
     pass # supress depth capture
@@ -506,8 +534,9 @@ def main():
     PaddingOuter = [128,128,255]
     PaddingInner = [200,200,255]
 
-    Points = []
-    
+    Points = [] # 点の配列
+    P2 = []     # 点の配列の配列
+ 
     EyePos = None    
  
     input_queue = queue.Queue()
@@ -548,6 +577,8 @@ def main():
     
     vis.add_geometry(axis)
     
+    Pmarker = o3d.io.read_triangle_mesh(os.path.join(os.path.dirname(__file__), 'Pmarker.ply'))
+
     ctrl = vis.get_view_control()
     ctrl.set_front([0.5, 0.25, 0.5])
     
@@ -558,8 +589,10 @@ def main():
     _LINES = []
     fInLoop = False
 
+    fPdisp = True
+
     while True:
-    
+   
         try:
             # キューからコマンドを取得
             #cmds = input_queue.get_nowait().split(' ')
@@ -577,7 +610,7 @@ def main():
                         print('start loop command buffering')
 
                     elif cmds[1] == 'quit':
-                        _LINES.celar()
+                        _LINES.clear()
                         fInLoop = False
 
                     elif cmds[1] == 'end':
@@ -652,9 +685,12 @@ def main():
    
                     elif ext == '.npy':
 
-                        Points = []
+                        Points.clear()
                         Points = np.load(cmds[1]).tolist()
- 
+
+                        fPdisp = True 
+                        displayMarker(vis, Pmarker, Points, fPdisp)
+
             elif cmds[0] == 'axis':
   
                 if len(cmds) > 1:
@@ -1239,11 +1275,25 @@ def main():
             elif cmds[0] == 'p':
 
                 if len(cmds) < 2:
-                    usageP(Points)
+                    print('Points[]=', Points)
+                    print(len(Points))
+
                 else:
-                    if cmds[1] == 'clear':
+
+                    if cmds[1] == 'disp':
+
+                        if len(cmds) > 2:
+                            if cmds[2] == 'on':
+                                fPdisp = True
+                            elif cmds[2] == 'off':
+                                fPdisp = False
+                        else:
+                            fPdisp = not fPdisp
+
+                    elif cmds[1] == 'clear':
                         Points.clear()
                         print('Points[] is cleared')
+                        P2.clear()
 
                     elif cmds[1] == 'polygon':
 
@@ -1254,6 +1304,7 @@ def main():
                             nr_points = int(cmds[2])
 
                             Points.clear()
+                            P2.clear()
                             if len(cmds) < 5:
                                 _points = np.asarray(_meshes[0].vertices).tolist() 
                             else:
@@ -1263,7 +1314,7 @@ def main():
                     elif cmds[1] == 'curve':
 
                         if len(cmds) < 5:
-                            usageP(Points)
+                            usageP()
                             continue
 
                         else:
@@ -1273,7 +1324,7 @@ def main():
                             if fResult:
                                 T = value
                             else:
-                                usageP(Points)
+                                usageP()
                                 continue
 
                             fResult, value = Eval(cmds[3],T)
@@ -1281,7 +1332,7 @@ def main():
                             if fResult:
                                 X = value
                             else:
-                                usageP(Points)
+                                usageP()
                                 continue
 
                             fResult, value = Eval(cmds[4],T)
@@ -1289,7 +1340,7 @@ def main():
                             if fResult:
                                 Y = value
                             else:
-                                usageP(Points)
+                                usageP()
                                 continue
 
                             fResult, value = Eval(cmds[5],T)
@@ -1297,12 +1348,13 @@ def main():
                             if fResult:
                                 Z = value
                             else:
-                                usageP(Points)
+                                usageP()
                                 continue
 
                             Points.clear()
+                            P2.clear()
                             Points = list(zip(X,Y,Z))
-    
+
                     elif cmds[1] == 'centering':
 
                         if len(Points) > 0:
@@ -1310,9 +1362,10 @@ def main():
                             _points = np.array(Points)
                             centroid = np.mean(_points, axis=0)
                             Points.clear()
+                            P2.clear()
                             Points = (_points - centroid).tolist()
                             print('centring points')
-                            
+
                         else:
                             print('Points[] is empty')
 
@@ -1324,11 +1377,35 @@ def main():
 
                             if R is not None:
 
-                                for i, p in enumerate(Points):
-                                    Points[i] = (R @ np.array(p)).tolist()
-                                print('rotate points')
-                            else:
-                                usageP(Points)
+                                count = 1
+                                if len(cmds) > 5:
+                                    if cmds[5].isdecimal():
+                                        count = int(cmds[5])
+                               
+                                        P2.clear()
+                                        M = np.eye(3)
+                                        for c in range(count):
+                                            _p = [] 
+                                            for i, p in enumerate(Points):
+                                                _p.append((M @ np.array(p)).tolist())
+                                            P2.append(_p)
+                                            M = R @ M
+ 
+                                        Points = copy.deepcopy(P2[-1])
+                                        print('rotate points')
+
+                                    else: # cm1ds[5] is not decimal
+                                        usageP()
+                                        continue
+
+                                else: # len(cmds[5] <= 5
+
+                                    for i, p in enumerate(Points):
+                                        Points[i] = (R @ np.array(p)).tolist()
+                                    print('rotate points')
+
+                            else: # R is None
+                                usageP()
                                 continue
 
                         else:
@@ -1338,38 +1415,127 @@ def main():
 
                         if len(Points) > 0:
                         
-                            s = getScaleMatrix(cmds[2:])
+                            S = getScaleMatrix(cmds[2:], 3)
 
-                            if s is not None:
+                            if S is not None:
+                                 
+                                count = 1
+                                if len(cmds) > 5:
+                                    if cmds[5].isdecimal():
+                                        count = int(cmds[5])
 
-                                S = s[:3,:3]
+                                        P2.clear()
+                                        M = np.eye(3)
+                                        for c in range(count):
+                                            _p = [] 
+                                            for i, p in enumerate(Points):
+                                                _p.append((M @ np.array(p)).tolist())
+                                            P2.append(_p)
+                                            M = S @ M
+ 
+                                        Points = copy.deepcopy(P2[-1])
+                                        print('scale points')
 
-                                for i, p in enumerate(Points):
+                                    else: # cmds[5] is not decimal
+                                        usageP()
+                                        continue
 
-                                    v1 = np.array(p)
-                                    Points[i] = (S @ np.array(p)).tolist()
+                                else: # len(cmds[5] <= 5
 
-                                print('scaling points')
-                            else:
-                                usageP(Points)
+                                    for i, p in enumerate(Points):
+                                        Points[i] = (S @ np.array(p)).tolist()
+                                    print('scale points')
+
+                            else: # S is None
+                                usageP()
                                 continue
 
                         else:
                             print('Points[] is empty')
 
                     elif cmds[1] == 't':
+                        
+                        if len(Points) > 0:
+                        
+                            T = getTranslateMatrix(cmds[2:], 3)
+
+                            if T is not None:
+                                 
+                                count = 1
+                                if len(cmds) > 5:
+                                    if cmds[5].isdecimal():
+                                        count = int(cmds[5])
+
+                                        P2.clear()
+                                        M = np.array([0.0, 0.0, 0.0])
+
+                                        for c in range(count):
+                                            _p = [] 
+                                            for i, p in enumerate(Points):
+                                                _p.append((M + np.array(p)).tolist())
+                                            P2.append(_p)
+                                            M = M + T
+ 
+                                        Points = copy.deepcopy(P2[-1])
+                                        print('translate points')
+
+                                    else: # cmds[5] is not decimal
+                                        usageP()
+                                        continue
+
+                                else: # len(cmds[5] <= 5
+
+                                    for i, p in enumerate(Points):
+                                        Points[i] = (T + np.array(p)).tolist()
+
+                            else: # T is None
+                                usageP()
+                                continue
+
+                        else:
+                            print('Points[] is empty')
+
+                    elif cmds[1] == 'g':
 
                         if len(Points) > 0:
                         
-                            fResult, values = Evals(cmds[2:], 3)
+                            G, fRemain = getGroupMatrix(cmds[2:])
 
-                            if fResult:
+                            if G is not None:
+                                 
+                                count = 1
+                                if fRemain:
 
-                                for i, p in enumerate(Points):
-                                    Points[i] = np.array(p) + np.array(values).tolist()
-                                print('translate points')
-                            else:
-                                usageP(Points)
+                                    if cmds[-1].isdecimal():
+                                        count = int(cmds[-1])
+
+                                        P2.clear()
+                                        M = np.eye(4)
+                                        for c in range(count):
+                                            _p = [] 
+                                            for i, p in enumerate(Points):
+                                                _q = M @ np.array((p[0], p[1], p[2], 1))
+                                                _p.append((_q[0]/_q[3], _q[1]/_q[3], _q[2]/_q[3]))
+                                            P2.append(_p)
+                                            M = G @ M
+ 
+                                        Points = copy.deepcopy(P2[-1])
+                                        print('apply group operation to points')
+
+                                    else: # cmds[5] is not decimal
+                                        usageP()
+                                        continue
+                                
+                                else: # len(cmds[5] <= 5
+
+                                    for i, p in enumerate(Points):
+                                        _q = G @ np.array((p[0], p[1], p[2], 1))
+                                        Points[i] = (_q[0]/_q[3], _q[1]/_q[3], _q[2]/_q[3])
+
+                                    print('apply group operation to points')
+
+                            else: # G is None
+                                usageP()
                                 continue
 
                         else:
@@ -1406,6 +1572,136 @@ def main():
                         if fResult: 
                             Points.append(values)
                             print('Points[]=', Points)
+
+                    displayMarker(vis, Pmarker, Points, fPdisp)
+
+            elif cmds[0] == 'p2':
+
+                print('P2[]=', P2) 
+                print(len(P2))
+
+            elif cmds[0] == 'surface':
+
+                fPathClose = False
+                fExtClose = False
+                if len(cmds) > 1:
+                    if cmds[1] == 'pclose':
+                        fPathClose = True
+                    elif cmds[1] == 'eclose':
+                        fExtClose = True
+                    elif cmds[1] == 'peclose':
+                        fPathClose = True
+                        fExtClose = True
+
+                if len(P2) > 1:
+
+                    nr_layers = len(P2)
+                    accum = None
+
+                    for i in range(nr_layers):
+
+                        j = i + 1
+
+                        if i == nr_layers - 1:
+                            if fExtClose:
+                                j = 0
+                            else:
+                                break
+
+                        _meshes, _ = surface(P2, i, j, fPathClose, 0, LateralOuter, LateralInner)
+                        if i == 0:
+                            accum = copy.deepcopy(_meshes[0])
+                        else:
+                            accum += copy.deepcopy(_meshes[0])
+                       
+                    if len(_meshes) > 0:
+  
+                        update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+                        vis.add_geometry(accum)
+                        meshes.append(accum)
+  
+                        name0 = cmds[0]
+                        name = '%s' % name0
+                        no = 2
+                        while name in names:
+                            name = '%s(%d)' % (name0, no)
+                            no += 1
+                        names.append(name)
+                     
+                        curr = len(meshes) - 1
+                        ctrl.set_front([0.5, 0.25, 0.5])
+                        vis.update_geometry(mesh)
+
+                else:
+                    print('insufficient data to span surface')
+
+            elif cmds[0] == 'skeleton' or cmds[0] == 'SKELETON':
+
+                _cmds = ['', '25', '0.02', '1']
+
+
+                fClose = False
+                if cmds[0] == 'SKELETON':
+                    fClose = True
+
+                if len(P2) > 1: 
+              
+                    accum = None
+ 
+                    for i, p in enumerate(P2):
+
+                        _meshes, _names = polyline(_cmds, p, fClose, True, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, PaddingOuter, PaddingInner)
+
+                        if i == 0:
+                            accum = copy.deepcopy(_meshes[0])
+                        else:
+                            accum += copy.deepcopy(_meshes[0])
+                      
+                    if len(_meshes) > 0:
+  
+                        update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+  
+                        vis.add_geometry(accum)
+                        meshes.append(accum)
+  
+                        name0 = cmds[0]
+                        name = '%s' % name0
+                        no = 2
+                        while name in names:
+                            name = '%s(%d)' % (name0, no)
+                            no += 1
+                        names.append(name)
+                     
+                        curr = len(meshes) - 1
+                        ctrl.set_front([0.5, 0.25, 0.5])
+                        vis.update_geometry(mesh)
+
+                elif len(Points) > 1:
+
+                   _meshes, _names = polyline(_cmds, Points, fClose, True, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, PaddingOuter, PaddingInner)
+ 
+                
+                   if len(_meshes) > 0:
+   
+                       update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+   
+                       vis.add_geometry(_meshes[0])
+                       meshes.append(_meshes[0])
+   
+                       name0 = cmds[0]
+                       name = '%s' % name0
+                       no = 2
+                       while name in names:
+                           name = '%s(%d)' % (name0, no)
+                           no += 1
+                       names.append(name)
+                      
+                       curr = len(meshes) - 1
+                       ctrl.set_front([0.5, 0.25, 0.5])
+                       vis.update_geometry(mesh)
+
+                else:
+                    print('no points or insufficient points to draw skeleton')
 
             elif cmds[0] == 'distribute':
 
@@ -1706,8 +2002,12 @@ def main():
 
                 _points = getDrawingPoints(width, height, mode)
                    
-                if _points is not None: 
+                if _points is not None:
+                    Points.clear()
                     Points = _points.tolist()
+
+                    fPdisp = True
+                    displayMarker(vis, Pmarker, Points, fPdisp)
 
             elif cmds[0] == 'img2mesh':
 
