@@ -52,6 +52,12 @@ def usagePolyline(cmds):
         print('%s ' % cmds[i], end="")
     print()
 
+def usageStar(cmds):
+    print('star size [depth]')
+    for i in range(len(cmds)):
+        print('%s ' % cmds[i], end="")
+    print()
+
 #
 # api
 #
@@ -243,6 +249,58 @@ def polyline(cmds, Points, fClose, fPadding = False, SurfaceOuter = (128,128,255
         usagePolyline(cmds)
 
     return meshes, names
+
+def star(cmds, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner):
+
+    _meshes = []
+    _names = []
+
+    size = -1
+
+    if len(cmds) > 1:
+        fResult, value = Eval(cmds[1])
+    
+        if fResult:
+           size = value
+    
+        else:
+            usageStar(cmds)
+            return _meshes, _names
+    else:
+        usageStar(cmds)
+        return _meshes, _names   
+ 
+    depth = size / 2
+    
+    if len(cmds) > 2:
+
+        fResult, value = Eval(cmds[2])
+    
+        if fResult:
+           depth = value
+    
+        else:
+            usageStar(cmds)
+            return _meshes, _names
+ 
+    red = 230
+    green = 255
+    blue = 64
+
+    values = (red, green, blue)
+
+    if len(cmds) > 5:
+
+        fResult, values = Evals(cmds[3:], 3)
+    
+        if not fResult:
+            usageStar(cmds)
+            return _meshes, _names
+ 
+    _meshes = _star(size, depth, values)   
+    _names.append('star')
+
+    return _meshes, _names 
 
 #
 # implementation
@@ -563,3 +621,95 @@ def _polyline(size, nr_divs, ratio, fClose, fPadding, start, end, points, Surfac
             meshes.append(accum)
 
     return meshes
+
+def _star(size, depth, rgb):
+
+    _meshes = []
+
+    # calculate outer pentagon's vertices
+    p0 = []
+    angle = np.pi * 2 / 5
+    y0 = -size
+    z0 = 0
+
+    for i in range(5):
+        a = angle * i + angle / 2
+        y = np.cos(a) * y0 - np.sin(a) * z0
+        z = np.sin(a) * y0 + np.cos(a) * z0
+        p0.append((0, y, z))
+
+    # calculate inner pentagon's vertices
+    p1 = []
+    p2 = []
+    angle = -np.pi * 2 / 10
+    scale = np.cos(np.pi * 2/5) / np.cos(np.pi * 2/10)
+
+    for i in range(5):
+        y = np.cos(angle) * p0[i][1] - np.sin(angle) * p0[i][2]
+        z = np.sin(angle) * p0[i][1] + np.cos(angle) * p0[i][2]
+        p1.append((depth/4, y * scale, z * scale))
+        p2.append((-depth/4, y * scale, z * scale))
+
+    p3 = []
+    p3.append((depth/2, 0.0, 0.0)) # 15
+    p3.append((-depth/2, 0.0, 0.0)) # 16
+
+    points = np.array(p0 + p1 + p2 + p3)
+
+    triangles1 = []
+    triangles2 = []
+    triangles3 = []
+    triangles4 = []
+    triangles5 = []
+    triangles6 = []
+
+    for i in range(5):
+
+        idx0 = i
+        idx1 = i + 5
+        idx2 = (i + 1) % 5 + 5
+
+        idx3 = i + 10
+        idx4 = (i + 1) % 5 + 10
+
+        triangles1.append((idx0, 15, idx1))
+        triangles2.append((idx2, 15, idx0))
+
+        triangles3.append((idx0, idx3, 16))
+        triangles4.append((idx4, idx0, 16))
+    
+        triangles5.append((idx0, idx1, idx3))
+        triangles6.append((idx0, idx4, idx2))
+
+    trianglesFront = np.array(triangles1 + triangles2)    
+    trianglesBack  = np.array(triangles3 + triangles4)    
+    trianglesSide  = np.array(triangles5 + triangles6)   
+ 
+    rgb = np.array(rgb).astype(np.float64) / 255.0
+    outerColors = np.tile(rgb, (points.shape[0], 1))
+
+    meshFront = o3d.geometry.TriangleMesh()
+    meshFront.vertices = o3d.utility.Vector3dVector(points)
+    meshFront.triangles = o3d.utility.Vector3iVector(trianglesFront)
+    meshFront.vertex_colors = o3d.utility.Vector3dVector(outerColors)
+
+    meshBack = o3d.geometry.TriangleMesh()
+    meshBack.vertices = o3d.utility.Vector3dVector(points)
+    meshBack.triangles = o3d.utility.Vector3iVector(trianglesBack)
+    meshBack.vertex_colors = o3d.utility.Vector3dVector(outerColors)
+
+    meshSide = o3d.geometry.TriangleMesh()
+    meshSide.vertices = o3d.utility.Vector3dVector(points)
+    meshSide.triangles = o3d.utility.Vector3iVector(trianglesSide)
+    meshSide.vertex_colors = o3d.utility.Vector3dVector(outerColors)
+
+    mesh = meshFront + meshBack + meshSide
+
+    _meshes.append(mesh)
+
+    meshContour = o3d.geometry.TriangleMesh()
+    meshContour.vertices = o3d.utility.Vector3dVector(points[:5])
+
+    _meshes.append(meshContour)
+
+    return _meshes 

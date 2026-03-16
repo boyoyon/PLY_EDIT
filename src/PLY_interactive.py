@@ -3,7 +3,7 @@ import numpy as np
 import threading
 import queue
 import copy, io, os, subprocess, sys
-from polygon import polygon, polyline, get_rotation_to_vector
+from polygon import polygon, polyline, get_rotation_to_vector, star
 from sphere import sphere
 from getValues import Eval, Evals
 from draw import getDrawingPoints
@@ -77,7 +77,9 @@ def displayMarker(vis, marker, Points, flag):
                 accum += copy.deepcopy(_marker)
 
         Marker = copy.deepcopy(accum)
-        vis.add_geometry(Marker)
+        
+        if Marker is not None:
+            vis.add_geometry(Marker)
 
     ctrl.set_front([0.5, 0.25, 0.5])
 
@@ -686,7 +688,20 @@ def main():
                     elif ext == '.npy':
 
                         Points.clear()
-                        Points = np.load(cmds[1]).tolist()
+                        data = np.load(cmds[1])
+                        order = len(data.shape)                        
+
+                        if order == 2:
+                            Points = data.tolist()
+
+                        elif order == 3:
+                            P2.clear()
+                            P2 = data.tolist()
+                            Points = data[0].tolist() 
+
+                        else:
+                            print('unknown format .npy shape:', data.shape)
+                            continue
 
                         fPdisp = True 
                         displayMarker(vis, Pmarker, Points, fPdisp)
@@ -1170,6 +1185,35 @@ def main():
                     ctrl.set_front([0.5, 0.25, 0.5])
                     vis.update_geometry(mesh)
     
+            elif cmds[0] == 'star':
+
+                _meshes = []
+                _names = []
+
+                _meshes, _names = star(cmds, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+
+                if len(_meshes) > 0:
+
+                    update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+                    
+                    vis.add_geometry(_meshes[0])
+                    meshes.append(_meshes[0])
+
+                    name0 = _names[0]
+                    name = '%s' % name0
+                    no = 2
+                    while name in names:
+                        name = '%s(%d)' % (name0, no)
+                        no += 1
+                    names.append(name)
+                    
+                    curr = len(meshes) - 1
+                    ctrl.set_front([0.5, 0.25, 0.5])
+                    vis.update_geometry(mesh)
+  
+                    Points.clear() 
+                    Points = np.asarray(_meshes[1].vertices).tolist()
+
             elif cmds[0] == 'u':
     
                 if len(undo_mesh) > 0:
@@ -1309,7 +1353,8 @@ def main():
                                 _points = np.asarray(_meshes[0].vertices).tolist() 
                             else:
                                 _points = np.asarray(_meshes[0].vertices).tolist()[::2]
-                            Points = _points[:nr_points]
+                            #Points = _points[:nr_points]
+                            Points = _points
 
                     elif cmds[1] == 'curve':
 
@@ -1565,6 +1610,38 @@ def main():
                             print('Points[] is empty')
                         
 
+                    elif cmds[1] == 'push':
+
+                        if len(Points) > 0:
+                            P2.append(copy.deepcopy(Points))
+
+                            print('Points is copied to P2[%d]:' % (len(P2) - 1))
+
+                    elif cmds[1] == 'pop':
+
+                        if len(P2) > 0:
+
+                            idx = -1
+
+                            if len(cmds) > 2:
+
+                                fResult, value = Eval(cmds[2])
+
+                                if fResult:
+                                    idx = value
+
+                                if idx >= len(P2):
+                                    print('len(P2):', len(P2))
+                                    continue
+
+                            Points.clear()
+                            Points = copy.deepcopy(P2[idx])
+                            print('P2[%d] is copied to Points' % idx)
+     
+                        else:
+                            print('P2 is empty')
+
+
                     elif len(cmds)== 4:
 
                         fResult, values = Evals(cmds[1:], 3)
@@ -1577,8 +1654,36 @@ def main():
 
             elif cmds[0] == 'p2':
 
-                print('P2[]=', P2) 
-                print(len(P2))
+                if len(cmds) < 2:
+ 
+                    print('P2[]=', P2) 
+                    print(len(P2))
+
+                else:
+
+                    if cmds[1] == 'save':
+
+                        if len(P2) > 0:
+
+                            filename = 'P2'
+
+                            if len(cmds) > 2:
+                                filename = os.path.splitext(cmds[2])[0]
+
+                            dst_path = '%s.npy' % filename
+
+                            no = 2
+                            while os.path.exists(dst_path):
+
+                                dst_path = '%s_%d.npy' % (filename, no)
+                                no += 1 
+
+                            np.save(dst_path, np.array(P2))
+                            print('save %s' % dst_path)
+
+                        else:
+                            print('P2[] is empty')
+                        
 
             elif cmds[0] == 'surface':
 
@@ -1609,10 +1714,11 @@ def main():
                                 break
 
                         _meshes, _ = surface(P2, i, j, fPathClose, 0, LateralOuter, LateralInner)
-                        if i == 0:
-                            accum = copy.deepcopy(_meshes[0])
-                        else:
-                            accum += copy.deepcopy(_meshes[0])
+                        if len(_meshes) > 0:
+                            if i == 0:
+                                accum = copy.deepcopy(_meshes[0])
+                            else:
+                                accum += copy.deepcopy(_meshes[0])
                        
                     if len(_meshes) > 0:
   
