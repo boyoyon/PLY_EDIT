@@ -3,7 +3,7 @@ import numpy as np
 import threading
 import queue
 import copy, io, os, subprocess, sys
-from polygon import polygon, polyline, get_rotation_to_vector, star
+from polygon import *
 from sphere import sphere
 from getValues import Eval, Evals
 from draw import getDrawingPoints
@@ -60,6 +60,8 @@ def displayMarker(vis, marker, Points, flag):
 
     global Marker
 
+    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
+
     if Marker is not None:
         vis.remove_geometry(Marker)
 
@@ -81,7 +83,7 @@ def displayMarker(vis, marker, Points, flag):
         if Marker is not None:
             vis.add_geometry(Marker)
 
-    ctrl.set_front([0.5, 0.25, 0.5])
+    ctrl.convert_from_pinhole_camera_parameters(_EyePos)
 
 def usageP():
       print('p: display current points')
@@ -654,11 +656,13 @@ def main():
                     ext = os.path.splitext(cmds[1])[1]
                
                     if ext == '.ply':
+                
+                        _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
     
                         mesh = o3d.io.read_triangle_mesh(cmds[1])           
          
                         vis.add_geometry(mesh)
-                        ctrl.set_front([0.5, 0.25, 0.5])
+                        ctrl.convert_from_pinhole_camera_parameters(_EyePos)
         
                         meshes.append(mesh)
                         base = os.path.basename(cmds[1])
@@ -672,7 +676,7 @@ def main():
 
                         curr = len(meshes) - 1
         
-                        vis.update_geometry(mesh)
+                        #vis.update_geometry(mesh)
     
                     elif ext == '.txt':
     
@@ -808,6 +812,8 @@ def main():
                 print('Current Setting:', PaddingInner)
 
             elif cmds[0] == 'selected':
+                
+                _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
     
                 print(names[curr])
     
@@ -830,7 +836,7 @@ def main():
                         if not fSelectedOnly:
                             vis.add_geometry(meshes[i])
 
-                ctrl.set_front([0.5, 0.25, 0.5])
+                ctrl.convert_from_pinhole_camera_parameters(_EyePos)
     
             elif cmds[0] == 'select':
     
@@ -847,6 +853,8 @@ def main():
             elif cmds[0] == 'merge':
 
                 if len(meshes) > 1:
+                
+                    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
 
                     accum = copy.deepcopy(meshes[1])
                     vis.remove_geometry(meshes[1])
@@ -869,11 +877,13 @@ def main():
                     undo_mesh.clear()
                     undo_name.clear()
  
-                ctrl.set_front([0.5, 0.25, 0.5])
+                    ctrl.convert_from_pinhole_camera_parameters(_EyePos)
     
             elif cmds[0] == 'd':
                 
                 if len(meshes) > 1:
+                
+                    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
 
                     if len(cmds) > 1 and cmds[1] == 'all':
 
@@ -899,7 +909,7 @@ def main():
                         names.pop(curr)
                         curr = len(meshes) - 1
     
-                    ctrl.set_front([0.5, 0.25, 0.5])
+                    ctrl.convert_from_pinhole_camera_parameters(_EyePos)
                     
                 else:
                     print('unable to delete')
@@ -913,6 +923,8 @@ def main():
                 R = getRotateMatrix(cmds[1:])
 
                 if R is not None:
+                
+                    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
 
                     count = 0
 
@@ -940,7 +952,7 @@ def main():
                         meshes[curr] = copy.deepcopy(accum)
 
                     refresh(vis, meshes, fAxis)
-                    ctrl.set_front([0.5, 0.25, 0.5])
+                    ctrl.convert_from_pinhole_camera_parameters(_EyePos)
      
             elif cmds[0] == 's':
    
@@ -951,6 +963,8 @@ def main():
                 S = getScaleMatrix(cmds[1:])
 
                 if S is not None:
+                
+                    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
  
                     count = 0
     
@@ -977,7 +991,7 @@ def main():
                         meshes[curr] = copy.deepcopy(accum)
     
                     refresh(vis, meshes, fAxis)
-                    ctrl.set_front([0.5, 0.25, 0.5])
+                    ctrl.convert_from_pinhole_camera_parameters(_EyePos)
     
             elif cmds[0] == 't':
     
@@ -988,6 +1002,8 @@ def main():
                 T = getTranslateMatrix(cmds[1:])
                  
                 if T is not None:
+                
+                    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
 
                     count = 0
     
@@ -1015,7 +1031,7 @@ def main():
                         meshes[curr] = copy.deepcopy(accum)
     
                     refresh(vis, meshes, fAxis)
-                    ctrl.set_front([0.5, 0.25, 0.5])
+                    ctrl.convert_from_pinhole_camera_parameters(_EyePos)
     
             elif cmds[0] == 'g':
     
@@ -1052,10 +1068,11 @@ def main():
                             accum += copy.deepcopy(meshes[curr])
                         
                         if accum is not None:
+                            _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
                             meshes[curr] = copy.deepcopy(accum)
     
                             refresh(vis, meshes, fAxis)
-                            ctrl.set_front([0.5, 0.25, 0.5])
+                            ctrl.convert_from_pinhole_camera_parameters(_EyePos)
 
                         else:
                             print('no meshes added')
@@ -1065,6 +1082,8 @@ def main():
                 _meshes, _names = polygon(cmds, False, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner) # lowercase --> separate mode
     
                 if len(_meshes) > 0:
+                
+                    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
     
                     update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
 
@@ -1083,14 +1102,16 @@ def main():
                         names.append(name)
 
                     curr = len(meshes) - 1
-                    ctrl.set_front([0.5, 0.25, 0.5])
-                    vis.update_geometry(mesh)
+                    ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+                    #vis.update_geometry(mesh)
     
             elif cmds[0] == 'POLYGON':
     
                 _meshes, _names = polygon(cmds, True, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner) # uppercase --> integrate mode
     
                 if len(_meshes) > 0:
+                
+                    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
     
                     update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
                     
@@ -1106,8 +1127,33 @@ def main():
                     names.append(name)
     
                     curr = len(meshes) - 1
-                    ctrl.set_front([0.5, 0.25, 0.5])
-                    vis.update_geometry(mesh)
+                    ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+                    #vis.update_geometry(mesh)
+
+            elif cmds[0] == 'polygon_border':
+    
+                _meshes, _names = polygon_border(cmds, SurfaceOuter, SurfaceInner)
+    
+                if len(_meshes) > 0:
+   
+                    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
+    
+                    update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+                    
+                    vis.add_geometry(_meshes[0])
+                    meshes.append(_meshes[0])
+
+                    name0 = _names[0]
+                    name = '%s' % name0
+                    no = 2
+                    while name in names:
+                        name = '%s(%d)' % (name0, no)
+                        no += 1
+                    names.append(name)
+    
+                    curr = len(meshes) - 1
+                    ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+                    #vis.update_geometry(mesh)
 
             elif cmds[0] == 'polyline' or cmds[0] == 'POLYLINE': 
 
@@ -1118,6 +1164,8 @@ def main():
                     _meshes, _names = polyline(cmds, Points, True, True, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, PaddingOuter, PaddingInner)
 
                 if len(_meshes) > 0:
+                
+                    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
 
                     update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
 
@@ -1133,8 +1181,8 @@ def main():
                     names.append(name)
                    
                     curr = len(meshes) - 1
-                    ctrl.set_front([0.5, 0.25, 0.5])
-                    vis.update_geometry(mesh)
+                    ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+                    #vis.update_geometry(mesh)
 
             elif cmds[0] == 'poly-line' or cmds[0] == 'POLY-LINE': 
 
@@ -1145,6 +1193,8 @@ def main():
                     _meshes, _names = polyline(cmds, Points, True, False, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
 
                 if len(_meshes) > 0:
+                
+                    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
 
                     update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
 
@@ -1160,13 +1210,16 @@ def main():
                     names.append(name)
                    
                     curr = len(meshes) - 1
-                    ctrl.set_front([0.5, 0.25, 0.5])
-                    vis.update_geometry(mesh)
+                    ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+                    #vis.update_geometry(mesh)
+
             elif cmds[0] == 'sphere':
 
                 _meshes, _names = sphere(cmds, LateralOuter, LateralInner)
 
                 if len(_meshes) > 0:
+                
+                    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
 
                     update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
                     
@@ -1182,8 +1235,8 @@ def main():
                     names.append(name)
                     
                     curr = len(meshes) - 1
-                    ctrl.set_front([0.5, 0.25, 0.5])
-                    vis.update_geometry(mesh)
+                    ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+                    #vis.update_geometry(mesh)
     
             elif cmds[0] == 'star':
 
@@ -1193,6 +1246,8 @@ def main():
                 _meshes, _names = star(cmds, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
 
                 if len(_meshes) > 0:
+                
+                    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
 
                     update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
                     
@@ -1208,8 +1263,8 @@ def main():
                     names.append(name)
                     
                     curr = len(meshes) - 1
-                    ctrl.set_front([0.5, 0.25, 0.5])
-                    vis.update_geometry(mesh)
+                    ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+                    #vis.update_geometry(mesh)
   
                     Points.clear() 
                     Points = np.asarray(_meshes[1].vertices).tolist()
@@ -1217,6 +1272,8 @@ def main():
             elif cmds[0] == 'u':
     
                 if len(undo_mesh) > 0:
+                
+                    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
     
                     idx = undo_idx.pop()
                     if idx < len(meshes):
@@ -1239,7 +1296,7 @@ def main():
 
                     vis.update_geometry(meshes[idx])
                     refresh(vis, meshes, fAxis)
-                    ctrl.set_front([0.5, 0.25, 0.5])
+                    ctrl.convert_from_pinhole_camera_parameters(_EyePos)
     
                 else:
                     print('undo buffer is empty')
@@ -1721,6 +1778,8 @@ def main():
                                 accum += copy.deepcopy(_meshes[0])
                        
                     if len(_meshes) > 0:
+                
+                        _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
   
                         update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
                         vis.add_geometry(accum)
@@ -1735,8 +1794,8 @@ def main():
                         names.append(name)
                      
                         curr = len(meshes) - 1
-                        ctrl.set_front([0.5, 0.25, 0.5])
-                        vis.update_geometry(mesh)
+                        ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+                        #vis.update_geometry(mesh)
 
                 else:
                     print('insufficient data to span surface')
@@ -1764,6 +1823,8 @@ def main():
                             accum += copy.deepcopy(_meshes[0])
                       
                     if len(_meshes) > 0:
+                
+                        _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
   
                         update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
   
@@ -1779,8 +1840,8 @@ def main():
                         names.append(name)
                      
                         curr = len(meshes) - 1
-                        ctrl.set_front([0.5, 0.25, 0.5])
-                        vis.update_geometry(mesh)
+                        ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+                        #vis.update_geometry(mesh)
 
                 elif len(Points) > 1:
 
@@ -1789,6 +1850,8 @@ def main():
                 
                    if len(_meshes) > 0:
    
+                       _EyePos = ctrl.convert_to_pinhole_camera_parameters()
+ 
                        update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
    
                        vis.add_geometry(_meshes[0])
@@ -1803,8 +1866,7 @@ def main():
                        names.append(name)
                       
                        curr = len(meshes) - 1
-                       ctrl.set_front([0.5, 0.25, 0.5])
-                       vis.update_geometry(mesh)
+                       ctrl.convert_from_pinhole_camera_parameters(_EyePos)
 
                 else:
                     print('no points or insufficient points to draw skeleton')
@@ -1819,6 +1881,8 @@ def main():
                     mesh = None
                     accum = None
                     mode = 0
+
+                    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
 
                     if cmds[1].endswith('.ply'):
                         mesh = o3d.io.read_triangle_mesh(cmds[1])           
@@ -1880,7 +1944,7 @@ def main():
                     names.append(name)
                     curr = len(meshes) - 1
                     vis.add_geometry(meshes[curr])
-                    ctrl.set_front([0.5, 0.25, 0.5])
+                    ctrl.convert_from_pinhole_camera_parameters(_EyePos)
 
                 else:
                     print('distribute <ply>')

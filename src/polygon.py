@@ -46,6 +46,12 @@ def usagePolygon(cmds):
         print('%s ' % cmds[i], end="")
     print()
 
+def usagePolygonBorder(cmds):
+    print('polygon_border <nr_of_edges(>=3)> [<size> <width>]')
+    for i in range(len(cmds)):
+        print('%s ' % cmds[i], end="")
+    print()
+
 def usagePolyline(cmds):
     print('polyline [<nr_of_edges(>=3)> <size> <ratio> <start> <end>]')
     for i in range(len(cmds)):
@@ -167,6 +173,80 @@ def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,
     
             if len(meshes) > 2:
                 names.append('polygon%d_bottom' % nr_divs)
+
+    return meshes, names
+
+def polygon_border(cmds, SurfaceOuter = (128,128,255), SurfaceInner = (200,200,255)):
+
+    meshes = []
+    names = []
+
+    if len(cmds) < 4:
+        usagePolygonBorder(cmds)
+        return meshes, names
+
+    else:
+        if not cmds[1].isdecimal():
+            usagePolygonBorder(cmds)
+            return meshes, names
+        
+        else:
+            nr_divs = int(cmds[1])
+        
+        if nr_divs < 3:
+            usagePolygonBorder(cmds)
+            return meshes, names
+
+        size = 1.0
+
+        if len(cmds) > 2:
+
+            fResult, value = Eval(cmds[2])
+
+            if fResult:
+                size = value
+            else:
+                usagePolygonBorder(cmds)
+                return meshes, names
+
+        width = 0
+        
+        if len(cmds) > 3:
+
+            fResult, value = Eval(cmds[3])
+
+            if fResult:
+                width = value
+            else:
+                usagePolygonBorder(cmds)
+       
+        front_color = SurfaceOuter
+        back_color = SurfaceInner
+
+        if len(cmds) > 6:
+            fRsult, values = Evals(cmds[4:], 3)
+
+            if fResult:
+                front_color = copy.deepcopy(values)
+
+                if len(cmds) > 9:
+                    fResult, values = Evals(cmds[7:],3)
+                    
+                    if fResult:
+                        back_color = copy.deepcopy(values)
+
+        _meshes = _polygon_border(nr_divs, size, width, front_color, back_color)
+
+        accum = None
+        for i in range(len(_meshes)):
+            
+            if i == 0:
+                accum = copy.deepcopy(_meshes[i])
+            else:
+                accum += copy.deepcopy(_meshes[i])
+
+        meshes.append(accum)
+        names.append('polygon_border%d' % nr_divs)
 
     return meshes, names
 
@@ -440,6 +520,84 @@ def _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, Lat
     
             meshes.append(meshBottom)
 
+    return meshes
+
+def _polygon_border(nr_divs, size, width, SurfaceOuter, SurfaceInner):
+
+    x0 = size
+    y0 = 0.0
+    z0 = 0.0
+
+    stepAngle = np.pi * 2 / nr_divs
+    startAngle = stepAngle / 2
+
+    meshes = []
+
+    # create polygon_border vertices
+
+    vertLarge = []
+    vertSmall = []
+
+    x0Large = size
+    x0Small = size - width
+    y0 = 0.0
+    z0 = 0.0
+
+    stepAngle = np.pi * 2 / nr_divs
+    startAngle = stepAngle / 2
+
+    for i in range(nr_divs):
+
+        angle = stepAngle * i + startAngle
+        xLarge, zLarge = rot2D(x0Large, z0, angle)
+        vertLarge.append([xLarge, y0, zLarge])
+        
+        xSmall, zSmall = rot2D(x0Small, z0, angle)
+        vertSmall.append([xSmall, y0, zSmall])
+
+    vertices = np.array(vertLarge + vertSmall)
+
+    # create Meshes
+
+    trianglesFront = []
+    trianglesBack = []
+    
+    for i in range(nr_divs):
+   
+        j = (i + 1) % nr_divs
+ 
+        idx0 = i
+        idx1 = j
+        idx2 = idx0 + nr_divs
+        idx3 = idx1 + nr_divs
+ 
+        trianglesFront.append([idx0, idx2, idx1])   
+        trianglesFront.append([idx2, idx3, idx1])   
+    
+        trianglesBack.append([idx0, idx1, idx2])   
+        trianglesBack.append([idx2, idx1, idx3])   
+  
+    trianglesFront = np.array(trianglesFront)
+    trianglesBack = np.array(trianglesBack)
+ 
+    fgc = np.array(SurfaceOuter).astype(np.float64) / 255.0
+    bgc = np.array(SurfaceInner).astype(np.float64) / 255.0
+ 
+    colorsFront = np.tile(fgc, (nr_divs * 2, 1))
+    colorsBack = np.tile(bgc, (nr_divs * 2, 1))
+
+    meshFront = o3d.geometry.TriangleMesh()
+    meshFront.vertices = o3d.utility.Vector3dVector(vertices)
+    meshFront.triangles = o3d.utility.Vector3iVector(trianglesFront)
+    meshFront.vertex_colors = o3d.utility.Vector3dVector(colorsFront)
+    
+    meshBack = o3d.geometry.TriangleMesh()
+    meshBack.vertices = o3d.utility.Vector3dVector(vertices)
+    meshBack.triangles = o3d.utility.Vector3iVector(trianglesBack)
+    meshBack.vertex_colors = o3d.utility.Vector3dVector(colorsBack)
+  
+    meshes.append(meshFront + meshBack)
+    
     return meshes
 
 def _polyline(size, nr_divs, ratio, fClose, fPadding, start, end, points, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, PaddingOuter, PaddingInner):
