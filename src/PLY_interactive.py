@@ -1266,9 +1266,6 @@ def main():
                     ctrl.convert_from_pinhole_camera_parameters(_EyePos)
                     #vis.update_geometry(mesh)
   
-                    Points.clear() 
-                    Points = np.asarray(_meshes[1].vertices).tolist()
-
             elif cmds[0] == 'u':
     
                 if len(undo_mesh) > 0:
@@ -2029,6 +2026,7 @@ def main():
                         Points.clear()
 
                     Points += points
+                    displayMarker(vis, Pmarker, Points, fPdisp)
 
                 else:
                     print('no mesh')
