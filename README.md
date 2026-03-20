@@ -56,6 +56,16 @@
 　押し出し方向の最後と最初を接続する際、indexの同じ点ではなく、距離の近い点を接続する。<br>
 　(例)<br>
 　　裏と表がつながるような場合に使用する。<br>
+　　l　data\cline.npy　･･･　クラインの壺の頂点列をロード<br>
+　　surface　Eclose　0　10　･･･　P2(Pointsの履歴)の 0～10 をメッシュ化<br>
+　　p2　transpose　･･･　P2 (Points の履歴)を転置(後述)<br>
+　　p　pop　0　･･･　転置した履歴の 0番目 (断面)　を Points に読み込む<br>
+　　LateralOuter　255　128　255　･･･　側面色をピンクに設定<br>
+　　polyline　25　0.06　･･･　断片をピンクの折れ線でメッシュ化<br>
+　　p　pop　11　･･･　もう一方の断面(indexが1個ずれる･･･)をPointsに読み込む<br>
+　　LateralOuter　255　200　64　･･･　側面色をオレンジに設定<br>
+　　polyline　255　0.06　･･･　もう一方の断面をオレンジの折れ線でメッシュ化<br>
+    save　cline_cut_model.ply　･･･　メッシュをセーブ<br>
 <img src="images/Eclose.svg"><br>
 </p>
 
