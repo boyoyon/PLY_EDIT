@@ -28,7 +28,7 @@
 　(例) 指の骨格データ取り込み<br>
 <br>
 　　python　src\PLY_interactive.ply<br>
-　　python　src\img2fingers.py　images\2hands.png　･･･　画像から指の抽出<br>
+　　python　src\img2fingers.py　images\2hands.jpg　･･･　画像から指の抽出<br>
 　　l　2hands_hand_1_fingers.npy　･･･　指の骨格座標をロード<br>
 　　skeleton　･･･　座標をパイプで接続<br>
 　　normals　･･･　法線算出<br>
@@ -50,6 +50,34 @@
 　(例) フェイスメッシュデータ取り込み<br>
 　　python　src/img2facemesh.py　(画像ファイル)<br>
 </p>
+<br>
+<p>
+　<strong>surfaceコマンド：パラメータ　Eclose</strong><br>
+　押し出し方向の最後と最初を接続する際、indexの同じ点ではなく、距離の近い点を接続する。<br>
+　(例)<br>
+　　裏と表がつながるような場合に使用する。<br>
+<img src="images/Eclose.svg"><br>
+</p>
+
+<p>
+　<strong>surfaceコマンド：パラメータ　start　end</strong><br></p>
+　　表面の生成を開始、終了する path 方向の index を指定できるようにした。<br>
+　　上の、クラインの壺の内部を表示する場合などに利用できる。<br>
+</p>
+<p>
+　<strong>p2コマンド：パラメータ　transpose</strong><br></p>
+　　path 方向と extrusion 方向を入れ替える。<br>
+　　start, endパラメータを使ってカットモデルを作成した場合の断面表示などで利用できる。<br>
+<img src="images/transpose.svg"><br>
+<img src="images/surface6.svg"><br>
+
+</p>
+
+<p>
+　<strong>p2コマンド：パラメータ　reverse　(p/e)</strong><br></p>
+　　path方向、extrusion方向のindexを逆順に付け替える、<br>
+<img src="images/reverse.svg"><br>
+</p>　　
 <h3>使い方</h3>
 
 <h4>起動・終了</h4>
