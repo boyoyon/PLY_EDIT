@@ -1,7 +1,7 @@
 import numpy as np
 import open3d as o3d
 
-def surface(p2, layer1, layer2, fClose, mode, outer, inner):
+def surface(p2, layer1, layer2, fPathClose, fNearest, start, end, outer, inner):
 
     _meshes = []
     _names = []
@@ -17,22 +17,24 @@ def surface(p2, layer1, layer2, fClose, mode, outer, inner):
         print('layer has no point')
         return _meshes, _names
 
-    nr = np.min((nr1, nr2))
+    if end < 0:
+        end += (nr1 + 1)
+    else:
+        end += 1
 
     _triangles = []
     points = np.array(p2[layer1] + p2[layer2])
+  
+    if not fNearest: # connect points with the same index
 
-    if mode == 0: # connect points with the same index
+        #for i in range(nr1):
+        for i in range(start, end):
 
-        for i in range(nr):
+            j = (i + 1) % nr1
 
-            j = i + 1
-
-            if i == nr - 1:
-                if not fClose:
-                    break
-                else:
-                    j = 0
+            #if not fPathClose and i == end - 1:
+            if not fPathClose and i == nr1 - 1:
+                break
 
             idx0 = i
             idx1 = i + nr1
@@ -42,9 +44,35 @@ def surface(p2, layer1, layer2, fClose, mode, outer, inner):
             _triangles.append((idx0, idx2, idx1))
             _triangles.append((idx1, idx2, idx3))
  
-    elif mode == 1: # connect point with the nearest point
+    else: # connect point with the nearest point
 
-        pass
+        _nearest = []
+  
+        #for i in range(start, end):
+        for i in range(nr1):
+
+            _work = []
+
+            for j in range(nr2):
+
+                _p1 = np.array(p2[layer1][i])
+                _p2 = np.array(p2[layer2][j])
+                _work.append(np.linalg.norm(_p1 - _p2))
+
+            _nearest.append(np.argmin(np.array(_work)))
+        
+        #for i in range(start, end):
+        for i in range(nr1):
+
+            j = (i + 1) % nr1
+
+            idx0 = i
+            idx1 = _nearest[i] + nr1
+            idx2 = j
+            idx3 = _nearest[j] + nr1
+
+            _triangles.append((idx0, idx2, idx1))
+            _triangles.append((idx1, idx2, idx3))
 
     if len(_triangles) > 0:
 
