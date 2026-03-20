@@ -41,8 +41,8 @@ def surface(p2, layer1, layer2, fPathClose, fNearest, start, end, outer, inner):
             idx2 = j
             idx3 = j + nr1
 
-            _triangles.append((idx0, idx2, idx1))
-            _triangles.append((idx1, idx2, idx3))
+            _triangles.append((idx0, idx1, idx2))
+            _triangles.append((idx1, idx3, idx2))
  
     else: # connect point with the nearest point
 
@@ -71,8 +71,8 @@ def surface(p2, layer1, layer2, fPathClose, fNearest, start, end, outer, inner):
             idx2 = j
             idx3 = _nearest[j] + nr1
 
-            _triangles.append((idx0, idx2, idx1))
-            _triangles.append((idx1, idx2, idx3))
+            _triangles.append((idx0, idx1, idx2))
+            _triangles.append((idx1, idx3, idx2))
 
     if len(_triangles) > 0:
 
@@ -89,7 +89,7 @@ def surface(p2, layer1, layer2, fPathClose, fNearest, start, end, outer, inner):
         _triangles_inner = _triangles[:,[0,2,1]]
     
         inner = np.array(inner).astype(np.float64) / 255.0
-        INNER = np.tile(outer, (nr1+nr2, 1))
+        INNER = np.tile(inner, (nr1+nr2, 1))
     
         _meshInner = o3d.geometry.TriangleMesh()
         _meshInner.vertices = o3d.utility.Vector3dVector(points)

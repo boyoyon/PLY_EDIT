@@ -1491,7 +1491,7 @@ def main():
 
                             Points.clear()
                             P2.clear()
-                            if len(cmds) < 5:
+                            if len(cmds) < 5 or (len(cmds) > 4 and cmds[4] == '0'):
                                 _points = np.asarray(_meshes[0].vertices).tolist() 
                             else:
                                 _points = np.asarray(_meshes[0].vertices).tolist()[::2]
@@ -1922,8 +1922,13 @@ def main():
 
                         if len(P2) > 0:
 
-                            _data = np.array(P2)[::-1]
-                            P2 = _data.tolist()
+                            if len(cmds) <= 2 or 'p' in cmds[2]: # path 方向
+                                _data = np.array(P2)[:,::-1,:]
+                                P2 = _data.tolist()
+
+                            if len(cmds) > 2 and 'e' in cmds[2]: # extrusion 方向
+                                _data = np.array(P2)[::-1,:,:]
+                                P2 = _data.tolist()
 
                             Points = copy.deepcopy(P2[-1])
 
