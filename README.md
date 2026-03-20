@@ -40,7 +40,7 @@
 
 　(例) 全身の骨格データ取り込み<br>
 　　python　src/img2pose_keypoints　data/pose.png　･･･　全身のキーポイント抽出<br>
-　　python　src/keiypoints2parts.py　(pose_keypoints.npy)　･･･　キーポイントからパーツをメッシュ化するスクリプトを作成<br>
+　　python　src/keypoints2parts.py　(pose_keypoints.npy)　･･･　キーポイントからパーツをメッシュ化するスクリプトを作成<br>
 　　l　skeleton.txt　･･･　スクリプトをロード<br>
 　　(エンターキー押下)　･･･　スクリプト実行<br>
 　　s　1　1　1/2　･･･　z方向に出っ張っているでのz方向だけ1/2にスケーリング<br>
