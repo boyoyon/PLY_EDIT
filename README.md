@@ -28,7 +28,7 @@
 　(例) 指の骨格データ取り込み<br>
 <br>
 　　python　src\PLY_interactive.ply<br>
-　　python　src\img2fingers.py　images\2hands.jpg　･･･　画像から指の抽出<br>
+　　python　src\img2fingers.py　images\2hands.png　･･･　画像から指の抽出<br>
 　　l　2hands_hand_1_fingers.npy　･･･　指の骨格座標をロード<br>
 　　skeleton　･･･　座標をパイプで接続<br>
 　　normals　･･･　法線算出<br>
