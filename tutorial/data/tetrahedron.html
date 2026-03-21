@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/vs.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+        <meta charset="utf-8" />
+        <title>正四面体</title>
+        <style type="text/css">
+            p
+            {
+                padding-left: 2em;
+            }
+           .margin-abstract {
+               margin-left: 60px; /* 左マージンを広くする */
+               margin-right: 60px; /* 右マージンを広くする */
+           }
+        </style>
+    <style>
+        .styleRef { 
+            text-indent: -40px; /* 最初の行の字下げを逆方向に */
+            margin-left: 10px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 40px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+    <style>
+        .styleBullet { 
+            text-indent: -20px; /* 最初の行の字下げを逆方向に */
+            margin-left: 30px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 20px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+<style>
+.container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.column {
+  flex: 0 25%; /* 幅を25%に設定して4列に */
+  box-sizing: border-box;
+  padding: 10px;
+}
+</style>
+</head>
+<body>
+
+<h1><center>正四面体</center></h1>
+
+<p>
+[1] 正三角形を作る
+</p>
+<p style="padding-left:4em;">
+<code>
+polygon  3  1　# 正三角形, サイズ(外接円半径):1<br>
+</code>
+<img src="images/tetrahedron_1.png">
+<p>
+[2] 一辺が z 軸に乗るように移動する
+</p>
+<p style="padding-left:4em;">
+<code>
+t -np.cos(np.deg2rad(60)) 0 0 # x軸のマイナス方向にcos 60°移動<br>
+</code>
+<img src="images/tetrahedron_2.png">
+<p>
+[3] z 軸周りに回転して正三角形を起こす。<br>
+　　後で 3 枚の正三角形を並べた時にすき間なくつながるための角度は正四面体の二面角(70.53°)<br>
+　　座標系の向きの都合上, -(180-70.53) を指定する<br>
+</p>
+<p style="padding-left:4em;">
+<code>
+r 0 0 -(180-70.53) # z 軸周りに 70.53°回転<br>
+</code>
+<img src="images/tetrahedron_3.png">
+<p>
+[4] y 軸周りに回転した時に底面に正三角形ができるように原点から離れる。<br>
+</p>
+<code style="padding-left:4em;">
+t -np.cos(np.deg2rad(60)) 0 0 # x軸のマイナス方向にcos 60°移動<br>
+</code>
+<img src="images/tetrahedron_4.png">
+<p>
+[5] y 軸周りに 120°回転し, 正三角形を3枚にする。<br>
+　　(わかりにくいので上から見たワイヤーフレーム表示を右に置く)
+</p>
+<code style="padding-left:4em;">
+r 0 120 0 3 # y 軸周りに120°回転して 3 枚にする<br>
+</code>
+</p>
+<img src="images/tetrahedron_5.png">
+<p>
+[6] 底面の三角形を作る。<br>
+　　(この方向からは見えないので下側をのぞく)<br>
+</p>
+<p style="padding-left:4em;">
+<code>
+polygon 3 1<br>
+r 0 180 0 # y 軸周りに 180°回転(x 軸方向に頂点が来るようにする)<br>
+</code>
+</p>
+<img src="images/tetrahedron_7.png">
+<h2>その他</h2>
+
+<p>
+[1] で作る三角形を枠だけにするとワイヤーフレーム版の正四面体になる。
+</p>
+<p style="padding-left:4em;">
+<code>
+polygon 3 1 -0.01 # 正三角形, サイズ(外接円半径):1, 高さ:0.01 (マイナスは天板, 底面不要のための指定)<br>
+</code>
+</p>
+<img src="images/tetrahedron_6.png">
+<p>
+[2] 以降は上と同じ。([6]で作る正三角形も枠だけにする)
+</p>
+<img src="images/tetrahedron.png">
+</body>
+
+</html>
