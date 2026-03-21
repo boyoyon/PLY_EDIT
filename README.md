@@ -89,7 +89,7 @@
 <img src="images/reverse.svg"><br>
 </p>　　
 <h3>使い方</h3>
-
+チュートリアルは <a href="https://boyoyon.github.io/PLY_EDIT/tutorial/tutorial.html">こちら</a>
 <h4>起動・終了</h4>
 <p><strong>起動</strong><br>
 <br>
