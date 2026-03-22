@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+        <meta charset="utf-8" />
+        <title>クラインの壺っぽいもの</title>
+        <style type="text/css">
+            p
+            {
+                padding-left: 2em;
+            }
+           .margin-abstract {
+               margin-left: 60px; /* 左マージンを広くする */
+               margin-right: 60px; /* 右マージンを広くする */
+           }
+        </style>
+    <style>
+        .styleRef { 
+            text-indent: -40px; /* 最初の行の字下げを逆方向に */
+            margin-left: 10px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 40px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+    <style>
+        .styleBullet { 
+            text-indent: -20px; /* 最初の行の字下げを逆方向に */
+            margin-left: 30px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 40px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+<style>
+.container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.column {
+  flex: 0.50%; /* 幅を50%に設定して2列に */
+  box-sizing: border-box;
+  padding: 10px;
+}
+</style>
+
+    </head>
+    <body>
+        <h1><center>クラインの壺っぽいもの</center></h1>
+
+<p>
+足りない機能は即席ツールを作りながらモデルを作ってみる。
+</p>
+
+<h3>STEP1: キャップと 2 本の曲げたパイプをつないでクラインの壺っぽいものを作る</h3>
+
+<p>
+[0] 部品構成<br>
+・下図のような cap, 曲げたパイプ(pipe1), 細らせて曲げたパイプ(pipe2) を作成してつなげる。<br>
+</p>
+
+<center><img src="images/KleinBottle01.svg"></center>
+
+<p>
+・パイプを細らせたり, 曲げたりは PLY_interactive.py では思ったようにできなかったので、即席の外部ツールで対応する。
+</p>
+
+<p>
+[1] キャップを作る<br>
+　　・キャップの断面の座標を手入力し、回転させてキャップを作る。　　
+</p>
+
+<center><img src="images/KleinBottle02.svg"></center>
+
+<p>
+　　p　clear　　　 ･･･　Poinst[ ]を空にする<br>
+　　p　1　　0　　0 ･･･　Poinst[ ]に点 (1,   0,　 0)を追加<br>
+　　p　0.9　0.2　0 ･･･　Poinst[ ]に点 (0.9, 0.2, 0)を追加<br>
+　　p　0.8　0.3　0 ･･･　Poinst[ ]に点 (0.8, 0.3, 0)を追加<br>
+　　p　0.7　0.3　0 ･･･　Poinst[ ]に点 (0.7, 0.3 ,0)を追加<br>
+　　p　0.6　0.2　0 ･･･　Poinst[ ]に点 (0.6, 0.2, 0)を追加<br>
+　　p　0.5　0　　0 ･･･　Poinst[ ]に点 (0.5, 0,   0)を追加<br>
+<br>
+　　p　r　0　360/30　0　30　･･･ Points[ ]内の点に回転を30回適用<br>
+　　　　　　　　　　　　　　　　⇒ 履歴が P2[ ] に格納される<br>
+　　　　　　　　　　　　　　　　　 P2[ ] の内容は表示されない<br>
+　　surface　eclose　　　　 ･･･ P2[ ]の内容を可視化する<br>
+　　p2　save　cap.npy　　　 ･･･ P2[ ]の内容を cap.npy として保存する
+</p>
+
+<center><img src="images/KleinBottle04.svg"></center>
+
+<p>
+[2] パイプ 1 を作る<br>
+　　cap.npy を読み込んで path 方向と extrusion 方向を入れ替える。<br>
+　　※ path 方向, extrusion 方向はテキトーにつけた名称。u, v の方が良かったかも。<br>
+
+<br>
+　　l　cap.npy　　･･･　cap.npy をロードする<br>
+　　p2　transpose ･･･　path 方向と extrusion 方向を入れ替える<br>
+　　　　　　　　　　　 P2[ ] の最後の要素が Points[ ] にコピーされる<br>
+　　p2　save　cap_transposed.npy　･･･　転置した cap.npy をセーブ
+</p>
+
+<center><img src="images/KleinBottle05.svg"></center>
+
+<p>
+　　Points[ ] を y 軸下方向に伸ばしてパイプ 1 を作る。<br>
+　　p　t　0　-0.2　0　10　･･･　y 軸方向に -0.2 平行移動を 10 回繰り返す<br>
+　　surface　　　　　　　 ･･･　P2[ ] の内容を可視化<br>
+　　p2　save　pipe1.npy　 ･･･　P2[ ] の内容を pipe1.npy にセーブ
+</p>
+
+<center><img src="images/KleinBottle06.svg"></center>
+
+<p>
+　　即席のツール (bend.py) で .npy を曲げる<br>
+　　python　bend.py　(.npy)　(曲げ角度)<br>
+　　※ パイプ状のものが y 軸に沿って伸びていることしか想定していない即席ツール。<br>
+<br>
+　　python　bend.py　pipe1.npy　90<br>
+<br>
+　　結果を表示する。<br>
+　　l　pipe1_bended.npy<br>
+　　surface　pclose<br>
+</p>
+
+<center><img src="images/KleinBottle07.svg"></center>
+
+<p>
+[3] パイプ 2 を作る<br>
+　　転置した cap.npy をロード ⇒ transpose ⇒ 外側の円環を選び, y 軸下方向に伸ばす。<br>
+<br>
+　　l　cap_transposed.npy　･･･　転置した cap.npy をロードする<br>
+　　p　pop　0　　　　　　　･･･　P2[0] を Points[ ] にコピーする<br>
+　　p　t　0　-0,2　0　30　･･･　Points[ ] をy軸方向に -0.2 移動を 30 回繰り返す<br>
+　　surface　pclose　　　　･･･　P2[ ] を可視化する<br>
+　　p2　save　pipe2.npy　　･･･　P2[ ] を pipe2.npy としてセーブする<br>
+</p>
+
+<center><img src="images/KleinBottle08.svg"></center>
+
+<p>
+　　即席ツールでパイプを細らせる。<br>
+　　python　thinning.py　(.npy)　(最終スケール)<br>
+　　※ パイプ状のものが y 軸に沿って伸びていることしか想定していない即席ツール。<br>
+<br>
+　　python　thinning.py　pipe2.npy　0.5<br>
+<br>
+<p>
+　　即席のツール (bend.py) で .npy を曲げる<br>
+　　python　bend.py　pipe2_thinned.npy　270<br>
+</p>
+<center><img src="images/KleinBottle09.svg"></center>
+
+<p>
+[4] 部品の配置を決める
+　　作成した部品をロードし, surface コマンドでメッシュ化<br>
+　　t　(x オフセット)　(y オフセット) (z オフセット)　･･･　部品の配置を調整する<br>
+<br>
+　　l　cap_transposed.npy　　　　･･･　キャップをロード<br>
+　　surface　pclose　　　　　　　･･･　メッシュ化<br>
+　　t　0　5　0　　　　　　　　　･･･　y軸方向に 5 持ち上げる<br>
+<br>
+　　l　pipe1_bended.npy　　　　　･･･　曲げた pipe1 をロード<br>
+　　surface　pclose　　　　　　　･･･　メッシュ化<br>
+　　t　0　3　0　　　　　　　　　　･･･　y軸方向に 5 持ち上げる<br>
+<br>
+　　l　pipe2_thinned_bended.npy　･･･　細らせて曲げた pipe2 をロード<br>
+　　surface　pclose　　　　　　　･･･　メッシュ化<br>
+　　
+</p>
+
+<center><img src="images/KleinBottle10.svg"></center>
+
+<p>
+　　メッシュで調整した配置をそのまま .npy に書き出せないので(^^;)<br>
+　　即席ツールで npy を平行移動する。<br>
+<br>
+　　python　translate.py　cap_transposed.npy　0　5　0<br>
+　　python　translate.py　pipe1_bended.npy　0　3　0<br>
+</p>
+
+<p>
+[5] 部品をつなぐ<br>
+<br>
+　　pipe1 と pipe2 はオモテとウラの接続になるので, surfaceコマンドに任せたい。<br>
+　　⇒ pipe1 と pipe2 の間が始点、終点となるように .npy を(即席ツールで)連結する。<br>
+<br>
+　　python　cat_npy.py　pipe1_bended_translated.npy　cap_transposed_translated.npy　pipe2_thinned_bended.npy<br>
+<br>
+　　連結した .npy をロードして表示する。<br>
+　　l　stacked.npy<br>
+　　surface　pclose
+</p>
+
+<center><img src="images/KleinBottle11.svg"></center>
+
+<p>
+　　pipe1 の 終端(end)と cap の 始端(start) をつなぐので, こうなった。<br>
+　　pipe1 の始端と終端を入れ替える。<br>
+　　l　pipe1_bended_translated.npy<br>
+　　p2　reverse　e　･･･　押し出し方向の順番を逆順にする<br>
+　　p2　save　_pipe1.npy
+</p>
+
+<center><img src="images/KleinBottle12.svg"></center>
+
+<p>
+　　頂点の並びが変わり、法線の向きが変わるため, 表示のウラとオモテが反対になる。<br>
+　　が,気にせず進める。<br>
+<br>
+　　cap.npy も始端と終端を入れ替える。<br>
+　　l　cap_transposed_translated.npy<br>
+　　p2　reverse　e<br>
+　　p2　save　_cap.npy<br>
+<br>
+　　連結しなおす。<br>
+　　python　cat_npy.py　_pipe1.npy　_cap.npy　pipe2_thinned_bended.npy<br>
+</p>
+
+<center><img src="images/KleinBottle13.svg"></center>
+
+<h3>STEP2: pipe1 がふさがらないように穴をあける</h3>
+
+<p>
+つづく(か?)
+</p>
+    </body>
+</html>
