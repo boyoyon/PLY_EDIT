@@ -228,10 +228,64 @@
 
 <center><img src="images/KleinBottle13.svg"></center>
 
+<br>
+
 <h3>STEP2: pipe1 がふさがらないように穴をあける</h3>
 
+<center><img src="images/Boolean00.svg"></center>
+
 <p>
-つづく(か?)
+面と面の交線を求めて穴をあけるのも大変そうなので、manifold3d のブーリアン演算をありがたく使わせておう。
 </p>
+
+<center><img src="images/Boolean01.svg"></center>
+<p>
+Open3D で作ったシリンダー(*)同士だと、簡単にブーリアン演算できたが、自前のメッシュだとなぜかブーリアン演算に失敗する･･･<br>
+* o3d.geometry.TriangleMesh.create_cylinder で作ったシリンダーのこと。<br>
+<br>
+
+
+
+[1] Open3D で作ったシリンダーを使って、切り口を求める。<br>
+<br>
+　　l　_pipe1.npy　　･･･　パイプ 1 データをロード<br>
+　　surface　pclose　･･･　可視化(メッシュ化)<br>
+　　p　pop　0　　　･･･　始端の切り口を Points[ ]にコピーする。(終端の場合は、p　pop　-1 )<br>
+</p>
+
+<center><img src="images/Boolean02.svg"></center>
+
+<p>
+　　p　i　　　　　　 ･･･　Points[ ]の情報を表示<br>
+<br>
+　 (例)<br>
+　　x　　1.000000　　-0.500000　-　　0.500000　･･･　半径 0.5<br>
+　　y　　0.994522　　1.508217　 -　　2.502739<br>
+　　z　　0.000000　　0.994522　 -　　0.994522<br>
+
+<br>
+　　cylinder　(半径)　(高さ)　[(解像度 ･･･ 天板, 底面の円周上の点の数)]<br>
+<br>
+　　cylinder　0.5　3　･･･　半径 0.5, 高さ 3 のシリンダーを作る<br>
+　　t　0　2　0　　　　･･･　y 軸方向に 1.5 持ち上げる<br>
+　　save　yoko.ply　　･･･　セーブする<br>
+</p>
+
+<p>
+　　cylinder 1　3　　･･･　半径 1, 高さ 3 のシリンダーを作る<br>
+　　r 90　0　0　　　･･･　x 軸周りに90°回転する<br>
+　　t　0　1.5　0　　･･･　y 軸方向に 1.5 持ち上げる<br>
+　　save　tate.ply　･･･　セーブする<br>
+</p>
+<center><img src="images/Boolean03.svg"></center>
+
+<p>
+　　即席ツールで tate.ply － yoko.ply のブール演算を行う。<br>
+　　python　boolean.py　tate.ply　yoko.ply
+</p>
+
+<center><img src="images/Boolean04.svg"></center>
+
+<strong>つづく･･･</strong>
     </body>
 </html>
