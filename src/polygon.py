@@ -386,7 +386,7 @@ def star(cmds, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner):
 # implementation
 #
 
-def _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, finalSize, side):
+def _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, finalSize, side = 'both'):
 
     fgc = np.array(SurfaceOuter)
     bgc = np.array(SurfaceInner)

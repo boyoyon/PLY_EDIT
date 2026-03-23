@@ -113,7 +113,7 @@ def sphere(cmds, LateralOuter=(128,128,255), LateralInner=(200,200,255), side = 
 # Implementation
 #
 
-def _sphere(size, elevations, azimuths, color_outer, color_inner, side):
+def _sphere(size, elevations, azimuths, color_outer, color_inner, side = 'both'):
 
     elevation_nr_divs = elevations[2]
     azimuth_nr_divs = azimuths[2]
