@@ -1108,9 +1108,15 @@ def main():
                         else:
                             print('no meshes added')
     
-            elif cmds[0] == 'polygon':
-    
-                _meshes, _names = polygon(cmds, False, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner) # lowercase --> separate mode
+            elif cmds[0] == 'polygon' or cmds[0] == 'polygonA' or cmds[0] == 'polygonAA':
+
+                side = 'both'
+                if cmds[0] == 'polygonA':
+                    side = 'sideA'
+                elif cmds[0] == 'polygonAA':
+                    side = 'sideAA'    
+
+                _meshes, _names = polygon(cmds, False, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, side) # lowercase --> separate mode
     
                 if len(_meshes) > 0:
                 
@@ -1140,9 +1146,15 @@ def main():
   
                     #vis.update_geometry(mesh)
     
-            elif cmds[0] == 'POLYGON':
+            elif cmds[0] == 'POLYGON' or cmds[0] == 'POLYGONA' or cmds[0] == 'POLYGONAA':
     
-                _meshes, _names = polygon(cmds, True, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner) # uppercase --> integrate mode
+                side = 'both'
+                if cmds[0] == 'POLYGONA':
+                    side = 'sideA'
+                elif cmds[0] == 'POLYGONAA':
+                    side = 'sideAA'
+
+                _meshes, _names = polygon(cmds, True, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, side) # uppercase --> integrate mode
     
                 if len(_meshes) > 0:
                 
@@ -1264,12 +1276,16 @@ def main():
   
                     #vis.update_geometry(mesh)
 
-            elif cmds[0] == 'sphere':
+            elif cmds[0] == 'sphere' or cmds[0] == 'sphereA' or cmds[0] == 'sphereAA':
 
-                _meshes, _names = sphere(cmds, LateralOuter, LateralInner)
+                side = 'both'
+                if cmds[0] != 'sphere':
+                    side = cmds[0] 
+
+                _meshes, _names = sphere(cmds, LateralOuter, LateralInner, side)
 
                 if len(_meshes) > 0:
-                
+               
                     _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
 
                     update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
@@ -1937,7 +1953,7 @@ def main():
 
                     displayMarker(vis, Pmarker, Points, fPdisp)
 
-            elif cmds[0] == 'surface':
+            elif cmds[0] == 'surface' or cmds[0] == 'sideA' or cmds[0] == 'sideAA':
 
                 fPathClose = False
                 fExtClose = False
@@ -1974,6 +1990,10 @@ def main():
                         print('surface [pclose/eclose/Eclose/... start end]')
                         continue
 
+                side = 'both'
+                if cmds[0] != 'surface':
+                    side = cmds[0]
+
                 if len(P2) > 1:
 
                     nr_layers = len(P2)
@@ -1993,9 +2013,7 @@ def main():
                             else:
                                 break
 
-                        #_meshes, _ = surface(P2, i, j, fPathClose, _fNearestClose, 0, LateralOuter, LateralInner)
-                        
-                        _meshes, _ = surface(P2, i, j, fPathClose, _fNearestClose, start, end, LateralOuter, LateralInner)
+                        _meshes, _ = surface(P2, i, j, fPathClose, _fNearestClose, start, end, LateralOuter, LateralInner, side)
 
                         if len(_meshes) > 0:
                             if accum is None:
@@ -2448,6 +2466,64 @@ def main():
                     cmd += '%s ' % c
 
                 subprocess.run(cmd, shell=True)
+
+            elif cmds[0] == 'cylinder':
+
+                if len(cmds) > 2:
+
+                    fResult, value = Eval(cmds[1])
+                    if fResult:
+                        radius = value
+                    else:
+                        print('cylinder <radius> <height> [<resolution>]')
+                        continue
+
+                    fResult, value = Eval(cmds[2])
+                    if fResult:
+                        height = value
+                    else:
+                        print('cylinder <radius> <height> [<resolution>]')
+                        continue
+
+                    resolution = 30
+                    if len(cmds) > 3:
+                        fResult, value = Eval(cmds[3])
+                        if fResult:
+                            resolution
+                        else:
+                            print('cylinder <radius> <height> [<resolution>]')
+                            continue
+
+                    _mesh = o3d.geometry.TriangleMesh.create_cylinder(
+                        radius, height, resolution)
+                   
+                    update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+ 
+                    if _mesh is not None:
+                        _mesh.compute_vertex_normals()
+                        meshes.append(_mesh)
+                    
+                    no = 2
+                    _r = '%.2f' % radius
+                    if _r.split('.')[1] == '00':
+                        _r = _r.split('.')[0]
+                    _h = '%.2f' % height
+                    if _h.split('.')[1] == '00':
+                        _h = _h.split('.')[0]
+
+                    name = 'c%sx%s' % (_r, _h)
+                    while name in names:
+                        name = 'c%sx%s(%d)' % (_r, _h, no)
+                        no += 1
+    
+                    names.append(name)
+                    curr = len(meshes) - 1
+                    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
+                    vis.add_geometry(meshes[curr])
+                    ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+
+                else:
+                    print('cylinder <radius> <height> [<resolution>]')
 
             elif cmds[0] == 'quit':
                 break

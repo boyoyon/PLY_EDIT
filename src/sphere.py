@@ -24,7 +24,7 @@ def usage(cmds):
 # API
 #
 
-def sphere(cmds, LateralOuter=(128,128,255), LateralInner=(200,200,255)):
+def sphere(cmds, LateralOuter=(128,128,255), LateralInner=(200,200,255), side = 'both'):
 
     meshes = []
     names = []
@@ -105,7 +105,7 @@ def sphere(cmds, LateralOuter=(128,128,255), LateralInner=(200,200,255)):
         azimuths = [np.deg2rad(azimuth_start), 
             np.deg2rad(azimuth_end), azimuth_nr_divs]
 
-        meshes, names = _sphere(size, elevations, azimuths, LateralOuter, LateralInner)
+        meshes, names = _sphere(size, elevations, azimuths, LateralOuter, LateralInner, side)
 
     return meshes, names
 
@@ -113,7 +113,7 @@ def sphere(cmds, LateralOuter=(128,128,255), LateralInner=(200,200,255)):
 # Implementation
 #
 
-def _sphere(size, elevations, azimuths, color_outer, color_inner):
+def _sphere(size, elevations, azimuths, color_outer, color_inner, side):
 
     elevation_nr_divs = elevations[2]
     azimuth_nr_divs = azimuths[2]
@@ -157,22 +157,33 @@ def _sphere(size, elevations, azimuths, color_outer, color_inner):
             faces[IDX]   = [idx0, idx2, idx1]
             faces[IDX+1] = [idx2, idx3, idx1]
 
-    meshFront = o3d.geometry.TriangleMesh()
-    meshFront.vertices = o3d.utility.Vector3dVector(points)
-    meshFront.triangles = o3d.utility.Vector3iVector(faces)
-    meshFront.vertex_colors = o3d.utility.Vector3dVector(Couter)
+    if side == 'both' or side == 'sphereA':
 
-    meshBack = o3d.geometry.TriangleMesh()
-    meshBack.vertices = o3d.utility.Vector3dVector(points)
-    facesBack = copy.deepcopy(faces)
-    facesBack = facesBack[:,[0,2,1]]
-    meshBack.triangles = o3d.utility.Vector3iVector(facesBack)
-    meshBack.vertex_colors = o3d.utility.Vector3dVector(Cinner)
+        meshFront = o3d.geometry.TriangleMesh()
+        meshFront.vertices = o3d.utility.Vector3dVector(points)
+        meshFront.triangles = o3d.utility.Vector3iVector(faces)
+        meshFront.vertex_colors = o3d.utility.Vector3dVector(Couter)
+
+    if side == 'both' or side == 'sphereAA':
+    
+        meshBack = o3d.geometry.TriangleMesh()
+        meshBack.vertices = o3d.utility.Vector3dVector(points)
+        facesBack = copy.deepcopy(faces)
+        facesBack = facesBack[:,[0,2,1]]
+        meshBack.triangles = o3d.utility.Vector3iVector(facesBack)
+        meshBack.vertex_colors = o3d.utility.Vector3dVector(Cinner)
 
     meshes = []
     names = []
 
-    meshes.append(meshFront + meshBack)
+    if side == 'sphereA':
+        meshes.append(meshFront)
+
+    elif side == 'sphereAA':
+        meshes.append(meshBack)
+    else:
+        meshes.append(meshFront + meshBack)
+
     names.append('sphere')
 
     return meshes, names 

@@ -1,7 +1,7 @@
 import numpy as np
 import open3d as o3d
 
-def surface(p2, layer1, layer2, fPathClose, fNearest, start, end, outer, inner):
+def surface(p2, layer1, layer2, fPathClose, fNearest, start, end, outer, inner, surface):
 
     _meshes = []
     _names = []
@@ -80,23 +80,40 @@ def surface(p2, layer1, layer2, fPathClose, fNearest, start, end, outer, inner):
     
         outer = np.array(outer).astype(np.float64) / 255.0
         OUTER = np.tile(outer, (nr1+nr2, 1))
-    
-        _meshOuter = o3d.geometry.TriangleMesh()
-        _meshOuter.vertices = o3d.utility.Vector3dVector(points)
-        _meshOuter.triangles = o3d.utility.Vector3iVector(_triangles)
-        _meshOuter.vertex_colors = o3d.utility.Vector3dVector(OUTER)
-     
-        _triangles_inner = _triangles[:,[0,2,1]]
-    
-        inner = np.array(inner).astype(np.float64) / 255.0
-        INNER = np.tile(inner, (nr1+nr2, 1))
-    
-        _meshInner = o3d.geometry.TriangleMesh()
-        _meshInner.vertices = o3d.utility.Vector3dVector(points)
-        _meshInner.triangles = o3d.utility.Vector3iVector(_triangles_inner)
-        _meshInner.vertex_colors = o3d.utility.Vector3dVector(INNER)
 
-        _meshes.append(_meshOuter + _meshInner)
+        _meshOuter = None
+        _meshInner = None
+
+        if surface == 'both' or surface == 'sideA':
+    
+            _triangles_outer = _triangles[:,[0,2,1]]
+
+            _meshOuter = o3d.geometry.TriangleMesh()
+            _meshOuter.vertices = o3d.utility.Vector3dVector(points)
+            _meshOuter.triangles = o3d.utility.Vector3iVector(_triangles)
+            _meshOuter.vertex_colors = o3d.utility.Vector3dVector(OUTER)
+        
+        if surface == 'both' or surface == 'sideAA':
+ 
+            _triangles_inner = _triangles[:,[0,2,1]]
+
+            inner = np.array(inner).astype(np.float64) / 255.0
+            INNER = np.tile(inner, (nr1+nr2, 1))
+    
+            _meshInner = o3d.geometry.TriangleMesh()
+            _meshInner.vertices = o3d.utility.Vector3dVector(points)
+            _meshInner.triangles = o3d.utility.Vector3iVector(_triangles_inner)
+            _meshInner.vertex_colors = o3d.utility.Vector3dVector(INNER)
+
+        if surface == 'sideA': 
+            _meshes.append(_meshOuter)
+
+        elif surface == 'sideAA':
+            _meshes.append(_meshInner)
+
+        else: # surface == 'both': 
+            _meshes.append(_meshOuter + _meshInner)
+
         _names.append('ring_%d_%d' % (layer1, layer2))
 
     return _meshes, _names

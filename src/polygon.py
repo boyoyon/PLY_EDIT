@@ -68,7 +68,7 @@ def usageStar(cmds):
 # api
 #
 
-def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,200,255), LateralOuter = (128, 128, 255) , LateralInner = (200,200,255)):
+def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,200,255), LateralOuter = (128, 128, 255) , LateralInner = (200,200,255), side = 'both'):
 
     meshes = []
     names = []
@@ -144,7 +144,7 @@ def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,
 
         if fIntegrate:
 
-            _meshes = _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, finalSize)
+            _meshes = _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, finalSize, side)
 
             for i in range(len(_meshes)):
                 
@@ -158,7 +158,7 @@ def polygon(cmds, fIntegrate, SurfaceOuter = (128,128,255), SurfaceInner = (200,
 
         else:
 
-            meshes = _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, finalSize)
+            meshes = _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, finalSize, side)
     
             names = []
     
@@ -386,7 +386,7 @@ def star(cmds, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner):
 # implementation
 #
 
-def _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, finalSize):
+def _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, finalSize, side):
 
     fgc = np.array(SurfaceOuter)
     bgc = np.array(SurfaceInner)
@@ -469,8 +469,15 @@ def _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, Lat
         meshSideBack.vertices = o3d.utility.Vector3dVector(vertSide)
         meshSideBack.triangles = o3d.utility.Vector3iVector(faceSideBack)
         meshSideBack.vertex_colors = o3d.utility.Vector3dVector(colSideBack)
-    
-        meshSide = meshSideFront + meshSideBack
+   
+        if side == 'sideA': 
+            meshSide = meshSideFront
+
+        elif side == 'sideAA':
+            meshSide = meshSideBack
+
+        else:
+            meshSide = meshSideFront + meshSideBack
     
         meshes.append(meshSide)
     
@@ -498,8 +505,15 @@ def _polygon(nr_divs, size, width, delta, count, SurfaceOuter, SurfaceInner, Lat
         meshTopBack.vertices = o3d.utility.Vector3dVector(vertTop)
         meshTopBack.triangles = o3d.utility.Vector3iVector(faceTopBack)
         meshTopBack.vertex_colors = o3d.utility.Vector3dVector(colTopBack)
-    
-        meshTop = meshTopFront + meshTopBack
+   
+        if side == 'sideA': 
+            meshTop = meshTopFront
+
+        elif side == 'sideAA':
+            meshTop = meshTopBack
+
+        else:
+            meshTop = meshTopFront + meshTopBack
     
         meshes.append(meshTop)
 
