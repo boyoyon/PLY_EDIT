@@ -17,7 +17,7 @@
 　pip install Open3D<br>
 　pip install mapbox_earcut　･･･　img2mesh で使用<br>
 　pip install imageio　　　　･･･　img2gif.py で使用<br>
-　pip install mediapipe==0.10.14　･･･　img2facemesh.py, img2fingers.py, img2skeleton.pyで使用
+　pip install mediapipe==0.10.14　･･･　img2facemesh.py, img2fingers.py, img2skeleton.pyで使用<br>
 　pip install manifold3d　　 ･･･　Boolean.py で使用<br>
 <p>
 
