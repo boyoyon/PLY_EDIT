@@ -19,6 +19,7 @@
 　pip install imageio　　　　･･･　img2gif.py で使用<br>
 　pip install mediapipe==0.10.14　･･･　img2facemesh.py, img2fingers.py, img2skeleton.pyで使用<br>
 　pip install manifold3d　　 ･･･　Boolean.py で使用<br>
+　pip install plyfile　　　　･･･　ply2skeleton.py で使用<br>
 <p>
 
 <h3>更新項目</h3>
@@ -41,7 +42,17 @@
 
 <img src="images/Boolean01.svg">
 
-<br>
+<p>
+　<strong>skeleton コマンド：　fast パラメータ</strong><br>
+　　指の表示では今の画数(25), 太さ(0.02)がほしいが、データが大きくて処理が重いので、<br>
+　　第二引数で fast を指定した場合、画数(5),太さ(0.001)として細くて軽量処理になるようにした。<br>
+　　(例)<br>
+　　　python　src\ply2skeleton.py　yoko_minus_tate.ply　･･･　ブーリアン演算結果の ply <br>
+　　　l　yoko_minus_tate_skeleton.npy　･･･　skeleton化したデータをロード<br>
+　　　skeleton　fast<br>
+</p>
+
+<img src="images/ply2skeleton.png">
 
 <p>
 　<strong>surfaceコマンド派生：　sideA コマンド, サイドAA コマンド</strong><br>
