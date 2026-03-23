@@ -18,9 +18,58 @@
 　pip install mapbox_earcut　･･･　img2mesh で使用<br>
 　pip install imageio　　　　･･･　img2gif.py で使用<br>
 　pip install mediapipe==0.10.14　･･･　img2facemesh.py, img2fingers.py, img2skeleton.pyで使用
+　pip install manifold3d　　 ･･･　Boolean.py で使用<br>
 <p>
 
 <h3>更新項目</h3>
+
+<p>
+　<strong>cylinderコマンド</strong><br>
+　・o3d.geometry.TriangleMesh.create_cylinder で円筒形のメッシュを作成する。<br>
+　　cylinder　(半径)　(高さ)　[(解像度 ･･･ 天板、底面の円周上の点の数)]<br>
+<br>
+　　manifold3d によるブール演算が、なぜか自前で作ったメッシュでは失敗するため、追加した。<br>
+　　(例)<br>
+　　cylinder　0.5　1　･･･　半径 0.5, 高さ 1 の円筒形を作る<br>
+　　save　yoko.ply　　･･･　yoko.ply でセーブ <br>
+　　d　　　　　　　　 ･･･　表示を消す<br>
+　　cylinder　0.25　3 ･･･　半径 0.25, 高さ 3 の円筒形を作る<br>
+　　r　90　0　0　　　 ･･･　x 軸周りに 90°回転<br>
+　　save　tate.ply　　･･･　tate.ply でセーブ<br>
+　　python　src\Boolean.py　yoko.ply　tate.ply　･･･　ブーリアン(引き算)を実施<br>
+</p>
+
+<img src="images/Boolean01.svg">
+
+<br>
+
+<p>
+　<strong>surfaceコマンド派生：　sideA コマンド, サイドAA コマンド</strong><br>
+　・surface コマンド ･･･ 面の法線方向によらずメッシュ化する<br>
+　・sideAA コマンド　･･･ 面の法線が視点方向のもののみメッシュ化する<br>
+　・sideA コマンド　･･･　面の法線が視点方向と反対方向のもののみメッシュ化する<br>
+　※ 頂点の index の振り方によって変わるので, sidaA / sideAA コマンドを試して確認する必要あり。<br>
+　(例)<br>
+　　l　data/KleinBottle.npy　<br>
+　　sideAA　pEclose
+</p>
+<img src="images/KleinBottle.gif">
+
+<p>
+　<strong>sphereコマンド派生：　sphereAA コマンド</strong><br>
+　・法線が視点方向の球面のみを表示する。<br>
+　　(例)<br>
+　　sphereAA　0.75　100<br>
+　　normals<br>
+　　polygon　100　0.74　-0.02<br>
+　　r　0　0　90<br>
+　　polygon　100　0.74　-0.02<br>
+　　r　90　0　0<br>
+　　polygon　100　0.74　-0.02<br>
+　　※ Visualizer で ＠キーを押して画角を狭めた方が効果的。<br>
+</p>
+
+<img src="images/sphereAA.png">
 
 <p>
 　<strong>顔, 指、全身の骨格データの取り込み</strong><br>
