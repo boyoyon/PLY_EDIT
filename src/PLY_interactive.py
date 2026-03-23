@@ -2052,8 +2052,10 @@ def main():
 
             elif cmds[0] == 'skeleton' or cmds[0] == 'SKELETON':
 
-                _cmds = ['', '25', '0.02', '1', '-', 'sphere']
-
+                if len(cmds) > 1 and cmds[1] == 'fast':
+                    _cmds = ['', '5', '0.001', '1', '-', 'sphere']
+                else:
+                    _cmds = ['', '25', '0.02', '1', '-', 'sphere']
 
                 fClose = False
                 if cmds[0] == 'SKELETON':
