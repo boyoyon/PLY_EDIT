@@ -1,0 +1,76 @@
+LateralOuter　255　 64　128　
+LateralInner　255　200　200
+
+p　polygon　100　1　-0
+p　s　1　1　0.5
+p　t　0　0　0.6
+p　r　0　0　90
+p　r　0　-5　0　72
+
+p2　save　apple.npy
+
+p2 transpose
+p2 reverse e
+
+surface　eclose　0　0
+surface　eclose　2　2
+surface　eclose　4　4
+surface　eclose　6　6
+surface　eclose　8　8
+
+surface　eclose　10　10
+surface　eclose　12　12
+surface　eclose　14　14
+surface　eclose　16　16
+surface　eclose　18　18
+
+surface　eclose　20　20
+surface　eclose　22　22
+surface　eclose　24　24
+surface　eclose　26　26
+surface　eclose　28　28
+
+surface　eclose　30　30
+surface　eclose　32　32
+surface　eclose　34　34
+surface　eclose　36　36
+surface　eclose　38　38
+
+surface　eclose　40　40
+surface　eclose　42　42
+surface　eclose　44　44
+surface　eclose　46　46
+surface　eclose　48　48
+
+surface　eclose　50　50
+surface　eclose　52　52
+surface　eclose　54　54
+surface　eclose　56　56
+surface　eclose　58　58
+
+surface　eclose　60　60
+surface　eclose　62　62
+surface　eclose　64　64
+surface　eclose　66　66
+surface　eclose　68　68
+
+surface　eclose　70　70
+surface　eclose　72　72
+surface　eclose　74　74
+surface　eclose　76　76
+surface　eclose　78　78
+
+surface　eclose　80　80
+surface　eclose　82　82
+surface　eclose　84　84
+surface　eclose　86　86
+surface　eclose　88　88
+
+surface　eclose　90　90
+surface　eclose　92　92
+surface　eclose　94　94
+surface　eclose　96　96
+surface　eclose　98　98
+
+LateralOuter　128　128　255
+LateralInner　200　200　255
