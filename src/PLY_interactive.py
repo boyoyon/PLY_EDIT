@@ -2052,8 +2052,33 @@ def main():
 
             elif cmds[0] == 'skeleton' or cmds[0] == 'SKELETON':
 
-                if len(cmds) > 1 and cmds[1] == 'fast':
-                    _cmds = ['', '5', '0.001', '1', '-', 'sphere']
+                _cmds = ''
+
+                if len(cmds) > 1:
+
+                    if cmds[1] == 'fast':
+                        _cmds = ['', '5', '0.001', '1']
+
+                    else:
+                        fResult, value = Eval(cmds[1])
+                        if not fResult or not cmds[1].isdecimal():
+                            print('skeleton [fast / nr_divs(int) radius(float)]')
+                            continue
+
+                        else: # cmds[1] valid
+
+                            if len(cmds) > 2:
+                                fResult, value = Eval(cmds[2])
+                                if not fResult:
+                                    print('skeleton [fast / nr_divs(int) radius(float)]')
+                                    continue
+
+                                else: # cmds[2] valid
+                                    _cmds = ['', cmds[1], cmds[2], '1']
+
+                            else: # cmds[2] not specified
+                                _cmds = ['', cmds[1], '0.001', '1']
+ 
                 else:
                     _cmds = ['', '25', '0.02', '1', '-', 'sphere']
 
@@ -2529,7 +2554,11 @@ def main():
 
             elif cmds[0] == 'quit':
                 break
-    
+   
+            else:
+                print('unknow command')
+                print()
+ 
         except queue.Empty:
             pass
     
