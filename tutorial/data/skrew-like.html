@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+        <meta charset="utf-8" />
+        <title>スクリューっぽい</title>
+        <style type="text/css">
+            p
+            {
+                padding-left: 2em;
+            }
+           .margin-abstract {
+               margin-left: 60px; /* 左マージンを広くする */
+               margin-right: 60px; /* 右マージンを広くする */
+           }
+        </style>
+    <style>
+        .styleRef { 
+            text-indent: -40px; /* 最初の行の字下げを逆方向に */
+            margin-left: 10px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 40px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+    <style>
+        .styleBullet { 
+            text-indent: -20px; /* 最初の行の字下げを逆方向に */
+            margin-left: 30px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 40px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+<style>
+.container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.column {
+  flex: 0.50%; /* 幅を50%に設定して2列に */
+  box-sizing: border-box;
+  padding: 10px;
+}
+</style>
+
+    </head>
+    <body>
+        <h1><center>スクリューっぽい</center></h1>
+<center><img src="images/skrew-like.gif"></center>
+<p>
+[1] 媒介変数を使って螺旋を作る<br>
+　　p　curve　np.linspace(-1,1,100)　np.sin(T*np.pi)　np.cos(T*np.pi)　T
+</p>
+<center><img src="images/skrew-like1.png"></center>
+<p>
+[2] 180°回転したコピーを作成する<br>
+　　p r 0 0 180 2
+</p>
+<center><img src="images/skrew-like2.png"></center>
+<p>
+[3]　P2 を転置し、棒が回転するような軌跡を作る<br>
+　　p2　transpose<br>
+　　p2　skeleton　fast<br>
+　　d　･･･　目視確認したら消す
+</p>
+<center><img src="images/skrew-like4.png"></center>
+<p>
+[4] 棒が回転するような軌跡で面を張る<br>
+　　surface
+</p>
+</p>
+<center><img src="images/skrew-like5.png"></center>
+<p>
+    </body>
+</html>
