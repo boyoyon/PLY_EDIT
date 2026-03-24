@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+        <meta charset="utf-8" />
+        <title>りんごっぽいもの</title>
+        <style type="text/css">
+            p
+            {
+                padding-left: 2em;
+            }
+           .margin-abstract {
+               margin-left: 60px; /* 左マージンを広くする */
+               margin-right: 60px; /* 右マージンを広くする */
+           }
+        </style>
+    <style>
+        .styleRef { 
+            text-indent: -40px; /* 最初の行の字下げを逆方向に */
+            margin-left: 10px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 40px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+    <style>
+        .styleBullet { 
+            text-indent: -20px; /* 最初の行の字下げを逆方向に */
+            margin-left: 30px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 40px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+<style>
+.container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.column {
+  flex: 0.50%; /* 幅を50%に設定して2列に */
+  box-sizing: border-box;
+  padding: 10px;
+}
+</style>
+
+    </head>
+    <body>
+        <h1><center>りんごっぽいもの</center></h1>
+
+<center><img src="images/apple.svg"></center>
+<p>
+[1] 色の設定<br>
+　　オモテの色, ウラの色を設定する。<br>
+　　(例)<br>
+　　LateralOuter　255　 64　128　<br>
+　　LateralInner　255　200　200
+</p>
+
+<p>
+[2] 円環状の点をスケーリング, 平行移動, 回転させて, りんごっぽい形状を作る<br>
+　　p　polygon　100　1　-0　･･･　半径 1 円周上に 100 個のデータを作成。厚みは 0<br>
+　　p　s　1　1　0.5　　　　･･･　z 方向を 1/2 にスケーリング<br>
+　　p　t　0　0　0.6　　　　･･･　z 方向に 0.6 平行移動<br>
+　　p　r　0　0　90　　　　　･･･　z 軸周りに 90°回転<br>
+　　p　r　0　-5　0　72　　　･･･　y 軸周り -5°回転を72回繰り返す<br>
+</p>
+
+<center><img src="images/apple2.svg"></center>
+
+<p>
+[3] 横縞, 縦縞の設定<br>
+　　横縞の場合は, 何もせず[4]に進む。<br>
+　　縦縞の場合は、P2 を転置する。<br>
+　　p2　transpose
+</p>
+
+<p>
+[4] 点の軌跡を部分的にメッシュ化<br>
+<br>
+　　surface　eclose　0　0　･･･　0層目をメッシュ化<br>
+　　surface　eclose　2　2　･･･　2層目をメッシュ化<br>
+　　surface　eclose　4　4　･･･　(以下同様)<br>
+　　surface　eclose　6　6<br>
+　　surface　eclose　8　8<br>
+　　　：
+</p>
+
+<center><img src="images/apple3.svg"></center>
+
+<p>
+※ スクリプトはいかにある。<br>
+　　data/apple_yoko.txt<br>
+　　data/apple_tate.txt<br>
+<br>
+※ メッシュ化したものを消す場合は<br>
+　　d　　　 ･･･　直前にメッシュ化したものだけを消す<br>
+　　d　all　･･･　すべてのメッシュを消す<br>
+<br>
+※ ウラとオモテを入れ替えたい場合は<br>
+　　p2　reverse　e　･･･　押し出し方向の並びを逆順にする<br>
+　　とする。
+</p>
+
+<p>
+[5] その他<br>
+<br>
+　　p　disp　off　　　　　 ･･･　Points[ ] のマーカーを消す<br>
+　　p　disp　on　　　　　  ･･･　Points[ ] のマーカーを表示させる<br>
+　　axis　　　　　　　　　 ･･･　座標軸を表示する/消す<br>
+　　save　(.plyファイル名)　･･･　メッシュ化したものをセーブする<br>
+　　p2　save　(.npyファイル)･･･　メッシュ化前の P2データをセーブする
+
+</p>
+
+    </body>
+</html>
