@@ -1,6 +1,6 @@
 import numpy as np
 
-def Eval(cmd, T=None):
+def Eval(cmd, T=None, x=None, z=None):
 
     fResult = True
     value = None
@@ -15,6 +15,9 @@ def Eval(cmd, T=None):
         fResult = False
     except TypeError:
         print('Type Error: %s' % cmd)
+        fResult = False
+    except AttributeError:
+        print('Attribute Error: %s' % cmd)
         fResult = False
 
     return fResult, value

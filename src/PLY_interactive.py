@@ -91,6 +91,7 @@ def usageP():
       print('p xx xx xx: append the point to points')
       print('p polygon: append polygon vertices to points')
       print('p curve (range T) (eq.X with T) (eq.Y with T) (eq.Z with T): append cueve to points')
+      print('p surface (range x) (range z) (eq. with x and z)')
       print('p centering: centering points')
       print('p r xx xx xx : rotate points')
       print('p s xx xx xx : scale points')
@@ -1557,6 +1558,45 @@ def main():
                             Points.clear()
                             P2.clear()
                             Points = list(zip(X,Y,Z))
+
+                    elif cmds[1] == 'surface':
+
+                        if len(cmds) < 4:
+                            usageP()
+                            continue
+
+                        else:
+
+                            fResult, value = Eval(cmds[2])
+
+                            if fResult:
+                                xx = value
+                            else:
+                                usageP()
+                                continue
+
+                            fResult, value = Eval(cmds[3])
+
+                            if fResult:
+                                zz = value
+                            else:
+                                usageP()
+                                continue
+
+                            x, z = np.meshgrid(xx, zz)
+
+                            fResult, value = Eval(cmds[4],None, x, z)
+
+                            if fResult:
+                                y = value
+                            else:
+                                usageP()
+                                continue
+
+                            Points.clear()
+                            P2.clear()
+                            P2 = np.transpose(np.array((x,y,z)),(1,2,0)).tolist()
+                            Points = P2[-1]
 
                     elif cmds[1] == 'centering':
 
