@@ -25,6 +25,17 @@
 <h3>更新項目</h3>
 
 <p>
+　<strong>pコマンド:　surface オプション</strong><br>
+　　p　surface　(xの範囲)　(zの範囲)　(y=f(x,z)の式)<br>
+　(例)<br>
+　　p　surface　np.linspace(-1,1,100)　np.linspace(-1,1,100)　0.1*np.sin(np.sqrt(x**2+z**2)*np.pi*2)<br>
+　(例)<br>
+　　p　surface　np.linspace(-1,1,100)　np.linspace(-1,1,100)　0.3*np.random.rand(100,100)<br>
+</p>
+
+<img src="images/p_surface.svg">
+
+<p>
 　<strong>cylinderコマンド</strong><br>
 　・o3d.geometry.TriangleMesh.create_cylinder で円筒形のメッシュを作成する。<br>
 　　cylinder　(半径)　(高さ)　[(解像度 ･･･ 天板、底面の円周上の点の数)]<br>
