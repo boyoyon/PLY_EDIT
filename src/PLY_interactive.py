@@ -2406,7 +2406,7 @@ def main():
                        
                         if len(cmds) > 3:
 
-                            fresult, value = Eval(cmds[3])
+                            fResult, value = Eval(cmds[3])
 
                             if fResult:
                                 translation_step = value
