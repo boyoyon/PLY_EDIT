@@ -1998,7 +1998,7 @@ def main():
                                 
                                     for i in range(1, len(_after)):
                                 
-                                        start = _after[-1]
+                                        start = _after2[-1]
                                         end = _after[i]
                                 
                                         l = np.linalg.norm(end - start)
