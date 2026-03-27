@@ -69,6 +69,14 @@
 <img src="images/p_surface.svg">
 
 <p>
+・p surface → surface　コマンドでメッシュ化 → 五角形や三角形に剪定<br>
+・正 12 面体や正 20 面体を作成するスクリプトで p polygon の代わりに<br>
+　剪定した メッシュをロードすると･･･
+</p>
+
+<img src="tutorial/data/images/scrubbing_brush.png">
+
+<p>
 　<strong>cylinderコマンド</strong><br>
 　・o3d.geometry.TriangleMesh.create_cylinder で円筒形のメッシュを作成する。<br>
 　　cylinder　(半径)　(高さ)　[(解像度 ･･･ 天板、底面の円周上の点の数)]<br>
