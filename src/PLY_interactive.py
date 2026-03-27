@@ -20,7 +20,7 @@ KEY_RIGHT = 262
 KEY_UP    = 265
 KEY_DOWN  = 264
 
-MIN_VALUE = 0.0000001
+MIN_VALUE = 1e-6
 
 angle_step = np.pi / 180
 translation_step = 0.01
@@ -1427,11 +1427,12 @@ def main():
 
                 if len(meshes) > 1:
                     vertices = np.array(meshes[curr].vertices)
+                    
                     xmin = np.min(vertices[:,0])
                     xmax = np.max(vertices[:,0])
                     xwidth = xmax - xmin
 
-                    print('axis, width, tmin - tmax')
+                    print('axis, range, min - max')
                     print('x\t%f\t%f\t-\t%f' % (xwidth, xmin, xmax))
 
                     ymin = np.min(vertices[:,1])
@@ -1475,7 +1476,7 @@ def main():
                             xmax = np.max(vertices[:,0])
                             xwidth = xmax - xmin
         
-                            print('axis, width, tmin - tmax')
+                            print('axis, range, min, max')
                             print('x\t%f\t%f\t-\t%f' % (xwidth, xmin, xmax))
         
                             ymin = np.min(vertices[:,1])
@@ -1489,7 +1490,17 @@ def main():
                             zwidth = zmax - zmin
         
                             print('z\t%f\t%f\t-\t%f' % (zwidth, zmin, zmax))
-        
+
+                            _L = []
+                            for i in range(1, len(Points)):
+                        
+                                start = np.array(Points[i-1])
+                                end = np.array(Points[i])
+                                _l = np.linalg.norm(end - start)
+                                _L.append(_l)
+                        
+                            print('length between adjacent points: %f - %f' % (np.min(_L), np.max(_L)))
+ 
                         else:
                             print('no meshes')
 
@@ -1802,7 +1813,7 @@ def main():
                                 no += 1 
 
                             np.save(dst_path, np.array(Points))
-                            print('save %s' % dst_path)
+                            print('save %s' % dst_path, np.array(Points).shape)
 
                         else:
                             print('Points[] is empty')
@@ -1878,17 +1889,36 @@ def main():
 
                     elif cmds[1] == 'connect':
 
-                        if len(cmds) == 4:
+                        if len(cmds) >= 4:
 
                             fResult, value = Eval(cmds[2])
                             if fResult:
                                 start = int(value)
 
+                            if start < -len(Points) or start >= len(Points):
+                                print('p connect <start idx> <end idx> [<nr_divs> <radius>]')
+                                print('idx: %d ～ %d' % (-len(Points), len(Points) - 1))
+                                continue
+
                             fResult, value = Eval(cmds[3])
                             if fResult:
                                 end = int(value)
 
-                            _cmds = ['polyline','25', '0.01']
+                            if end < -len(Points) or end >= len(Points):
+                                print('p connect <start idx> <end idx> [<nr_divs> <radius>]')
+                                print('idx: %d ～ %d' % (-len(Points), len(Points) - 1))
+                                continue
+
+                            nr_divs = '25'
+                            r = '0.01'
+
+                            if len(cmds) > 4:
+                                nr_divs = cmds[4]
+
+                                if len(cmds) > 5:
+                                    r = cmds[5]
+
+                            _cmds = ['polyline', nr_divs, r]
 
                             _meshes, _ = polyline(_cmds, (Points[start], Points[end]), False)
 
@@ -1900,7 +1930,7 @@ def main():
           
                                 vis.add_geometry(_meshes[0])
                                 meshes.append(_meshes[0])
-          
+
                                 name0 = 'connect'
                                 name = '%s' % name0
                                 no = 2
@@ -1916,8 +1946,157 @@ def main():
                                     ctrl.convert_from_pinhole_camera_parameters(_EyePos)
                         else:
                             print('p connect <start idx> <end idx>')
+                            if len(Points) > 1:
+                                print('idx: %d ～ %d' % (-len(Points), len(Points) - 1))
 
-                    elif len(cmds)== 4:
+                    elif cmds[1] == 'subdiv' or cmds[1] == 'SUBDIV':
+
+                        if len(Points) > 0:
+
+                            if len(cmds) > 2:
+
+                                fResult, length = Eval(cmds[2])
+                                if fResult:
+
+                                    _before = np.array(Points)
+                                    _after = []
+                                    _after.append(_before[0])
+                                    accum = 0.0
+
+                                    nr_points = _before.shape[0]
+                                    if cmds[1] == 'SUBDIV':
+                                        nr_points += 1
+
+                                    for i in range(1, nr_points):
+                                
+                                        if i == _before.shape[0]:
+                                            end = _before[0]
+                                        else:
+                                            end = _before[i]
+                                
+                                        while True:
+                                            start = _after[-1]
+                                
+                                            if np.array_equal(start, end):
+                                                break
+                                
+                                            l = np.linalg.norm(end - start)
+                                
+                                            if l < length - accum:
+                                                _after.append(end)
+                                                accum += l
+                                                break
+                                
+                                            d = (end - start) / l # direction
+                                            subdiv = start + d * (length - accum)
+                                            _after.append(subdiv)
+                                            accum = 0
+
+                                    # filtering out too close point 
+                                    _after2 = []
+                                    _after2.append(_after[0])
+                                
+                                    for i in range(1, len(_after)):
+                                
+                                        start = _after[-1]
+                                        end = _after[i]
+                                
+                                        l = np.linalg.norm(end - start)
+                                        if l > MIN_VALUE:
+                                            _after2.append(end)
+
+                                    if np.linalg.norm(_after2[-1] - _before[-1]) < MIN_VALUE:
+                                        _after2[-1] = _before[-1]
+                                    else:
+                                        _after2.append(_before[-1]) 
+
+                                    _after2 = np.array(_after2).tolist()
+
+                                    Points = _after2
+
+                                else: # not fResult:
+                                    print('p subdiv <length>')
+                                    print('Hit any key')
+                                    LINES.append('p i')
+
+                            else: # len(cmds) <= 2:
+                                print('p subdiv <length>')
+                                print('Hit any key')
+                                LINES.append('p i')
+
+
+                        else: # len(Points) == 0
+                            print('no points')
+
+                    elif cmds[1] == 'twist':
+
+                        if len(Points) > 0:
+
+                            if len(cmds) > 3:
+
+                                _points = np.array(Points)
+
+                                R = np.eye(3)
+                                if cmds[2] == 'x':
+                                    R = o3d.geometry.get_rotation_matrix_from_xyz((0, 0, np.pi))
+
+                                elif cmds[2] == 'z':
+                                    R = o3d.geometry.get_rotation_matrix_from_xyz((-np.pi, 0, 0))
+
+                                elif cmds[2] == 'y':
+                                    pass
+
+                                else:
+                                    print('p twist <x/y/z> <angle>')
+                                    continue
+
+                                _points = _points @ R.T
+
+                                fResult, angle = Eval(cmds[3])
+                                if fResult:
+
+                                    centroid = np.mean(_points, axis=0)
+                                    _points -= centroid
+                                    
+                                    _min = np.min(_points[:,1])
+                                    _max = np.max(_points[:,1])
+                                    _width = _max - _min
+                                    
+                                    twisted = []
+                                    
+                                    for p in _points:
+                                    
+                                        x = p[0]
+                                        y = p[1]
+                                        z = p[2]
+                                    
+                                        scale = (y - _min) / _width
+                                        a = np.deg2rad(angle) * scale
+                                    
+                                        xx = np.cos(a) * x - np.sin(a) * z
+                                        zz = np.sin(a) * x + np.cos(a) * z
+                                    
+                                        p[0] = xx
+                                        p[2] = zz
+                                    
+                                        twisted.append((p[0],p[1],p[2]))
+
+                                    twisted = np.array(twisted)
+
+                                    twisted = (twisted + centroid) @ R
+
+                                    Points = twisted.tolist()
+
+                                else: # not fResult:
+                                    print('p twist <x/y/z> <angle>')
+
+                            else: # len(cmds) <= 3:
+                                print('p twist <x/y/z> <angle>')
+
+                        else: # len(Points) == 0
+                            print('no points')
+
+                    elif len(cmds)== 4: # direct input of 3D coordinates
 
                         fResult, values = Evals(cmds[1:], 3)
 
