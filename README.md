@@ -25,6 +25,39 @@
 <h3>更新項目</h3>
 
 <p>
+　<strong>pコマンド:　subdiv オプション</strong><br>
+　　点と点の間を細分化する。あとの twist オプションなどで必要になる。<br>
+　　p　subdiv　(細分化の長さ)　･･･　最後の点と最初の点の間は細分化しない<br>
+　　p　SUBDIV　(細分化の長さ)　･･･　最後の点と最初の点の間は細分化する
+</p>
+
+<img src="images/subdiv.svg">
+<p>
+　(細分化の長さ) を決めるための参考情報<br>
+　(例)<br>
+　　l　data/f.txt　　　　　　　･･･　「F」字の頂点データをロード<br>
+　　(エンターキー押下)　　　　 ･･･　スクリプト実行<br>
+　　p　i　　　　　　　　　　　 ･･･　3D 座標データの情報表示<br>
+<br>
+　　x　0.600000　0.000000　-　0.600000<br>
+　　y　0.900000　0.000000　-　0.900000<br>
+　　z　0.000000　0.000000　-　0.000000<br>
+　　length between adjacent points: 0.200000 - 0.900000　･･･　細分化前の点と点の間隔は最小 0.2<br>
+
+</p>
+<br>
+<p>
+　<strong>pコマンド:　twist オプション</strong><br>
+　　p　twist　(x/z/z)　(ねじる角度)<br>
+</p>
+<img src="images/twist.svg">
+<p>
+　(twist オプションの利用例) ツイストする雷門<br>
+</p>
+
+<img src="images/twisted_raimon.gif"><br>
+
+<p>
 　<strong>pコマンド:　surface オプション</strong><br>
 　　p　surface　(xの範囲)　(zの範囲)　(y=f(x,z)の式)<br>
 　(例)<br>
