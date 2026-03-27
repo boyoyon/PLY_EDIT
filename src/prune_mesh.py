@@ -1,0 +1,103 @@
+import numpy as np
+import open3d as o3d
+from plyfile import PlyData
+import os, sys
+
+def is_inside_regular_polygon(x, y, nr_edges = 5, radius = 1):
+    
+    for k in range(nr_edges):
+        theta = 2 * np.pi * k / nr_edges
+        # 各辺の内側（原点側）に点があるかチェック
+        if x * np.cos(theta) + y * np.sin(theta) > 1:
+            return False  # 一つでも外側にあればアウト
+    return True  # すべての条件を満たせば内部
+
+def save_ply(ply_path, X, Y, Z, triangles):
+
+    with open(ply_path, mode='w') as f:
+
+        line = 'ply\n'
+        f.write(line)
+
+        line = 'format ascii 1.0\n'
+        f.write(line)
+
+        line = 'element vertex %d\n' % X.shape[0]
+        f.write(line)
+
+        line = 'property float x\n'
+        f.write(line)
+
+        line = 'property float y\n'
+        f.write(line)
+
+        line = 'property float z\n'
+        f.write(line)
+
+        line = 'element face %d\n' % len(triangles)
+        f.write(line)
+
+        line = 'property list uchar int vertex_indices\n'
+        f.write(line)
+
+        line = 'end_header\n'
+        f.write(line)
+
+        for i in range(X.shape[0]):
+            line = '%f %f %f \n' % (X[i], Y[i], Z[i])
+            f.write(line)
+
+        for i in range(len(triangles)):
+            idx0 = triangles[i][0]
+            idx1 = triangles[i][1]
+            idx2 = triangles[i][2]
+            
+            line = '3 %d %d %d\n' % (idx0, idx1, idx2)
+            f.write(line)
+
+argv = sys.argv
+argc = len(argv)
+
+print('%s prunes triangls overflows regular polygon' % argv[0])
+print('[usage] python %s <.ply> <nr_edges> <radius>' % argv[0])
+
+if argc < 4:
+    quit()
+
+plyData = PlyData.read(argv[1])
+nr_edges = int(argv[2])
+r = float(argv[3])
+
+X = plyData['vertex']['x']
+Y = plyData['vertex']['y']
+Z = plyData['vertex']['z']
+
+faces = plyData['face'].data['vertex_indices']
+
+triangles = []
+
+for face in faces:
+
+    if face.shape[0] != 3:
+        continue
+
+    idx = face[0]
+    if not is_inside_regular_polygon(X[idx], Z[idx], nr_edges, r):
+        continue
+    
+    idx = face[1]
+    if not is_inside_regular_polygon(X[idx], Z[idx], nr_edges, r):
+        continue
+    
+    idx = face[2]
+    if not is_inside_regular_polygon(X[idx], Z[idx], nr_edges, r):
+        continue
+    
+    triangles.append(face)
+
+base = os.path.basename(argv[1])
+filename = os.path.splitext(base)[0]
+dst_path = '%s_pruned.ply' % filename
+
+save_ply(dst_path, X, Y, Z, triangles)
+print('save %s' % dst_path)
