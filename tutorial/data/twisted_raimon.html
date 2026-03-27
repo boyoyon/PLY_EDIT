@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+        <meta charset="utf-8" />
+        <title>ツイストする雷紋</title>
+        <style type="text/css">
+            p
+            {
+                padding-left: 2em;
+            }
+           .margin-abstract {
+               margin-left: 60px; /* 左マージンを広くする */
+               margin-right: 60px; /* 右マージンを広くする */
+           }
+        </style>
+    <style>
+        .styleRef { 
+            text-indent: -40px; /* 最初の行の字下げを逆方向に */
+            margin-left: 10px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 40px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+    <style>
+        .styleBullet { 
+            text-indent: -20px; /* 最初の行の字下げを逆方向に */
+            margin-left: 30px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 40px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+<style>
+.container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.column {
+  flex: 0.50%; /* 幅を50%に設定して2列に */
+  box-sizing: border-box;
+  padding: 10px;
+}
+</style>
+
+    </head>
+    <body>
+        <h1><center>ツイストする雷紋</center></h1>
+
+<center><img src="images/twisted_raimon.gif"></center>
+
+<p style="padding-left:1em;">
+[1] 雷紋の頂点データの読み込み(＋前処理)
+</p>
+<p>
+l　data\raimon.txt　　　　　　　･･･　雷紋の頂点データを読み込む<br>
+(エンターキー押下)　　　　　　　･･･　スクリプトを実行<br>
+p　r　0　0　90　　　　　　　　　･･･　z 軸周りに 90°回転する<br>
+　　　　　　　　　　　　　　　　　　 ※ ツールの都合上, 長手方向が　y 軸になるようにする
+</p>
+
+<center><img src="images/twist_load_data.png"></center>
+
+<p style="padding-left:1em;">
+[2] 雷紋の頂点データを細分化してねじる
+</p>
+<p>
+p　i　　　　　　　　　　　　　　･･･　頂点データの情報を表示<br>
+(例)<br>
+x　0.333333  -0.166667  -  0.166667<br>
+y　0.944444　-0.444444　-　0.500000<br>
+z　0.000000   0.000000  -  0.000000<br>
+length between adjacent points: 0.111111 - 0.472222<br>
+<br>
+点と点の間が最小 0.11･･･なのでその約半分(0.05)に細分化してみる<br>
+p　subdiv　0.05　 　　　　　　　　　　･･･　細分化<br>
+p　twist　y　90　　　　　　　　　　　 ･･･　y 軸に沿って90°ねじる<br>
+p　r　0　0　-90　　　　　　　　　　　 ･･･　z 軸周りに -90°回転<br>
+</p>
+
+<center><img src="images/subdiv_twist.png"></center>
+
+<p style="padding-left:1em;">
+[3] メッシュ化, 着色
+</p>
+<p>
+ねじった 3D 座標に沿ってメッシュ化する<br>
+polyline　25　0.04　1　sphere　spher　･･･　メッシュ化<br>
+　　　　　　　　　　　　　　　　　　　　　 パイプ画数 25<br>
+　　　　　　　　　　　　　　　　　　　　　 パイプ半径 0.04<br>
+　　　　　　　　　　　　　　　　　　　　　 パイプの被覆率 1 (100%)<br>
+　　　　　　　　　　　　　　　　　　　　　 先端と末端に半球をつける<br>
+着色する<br>
+c　255　0　0　　　　　　　　　　　　　･･･　赤でペイント<br>
+save　twisted_raimon.ply　　　　　　　･･･　メッシュをセーブ
+</p>
+
+<center><img src="images/surface_paint.png"></center>
+
+<p style="padding-left:1em;">
+[4] 配置
+</p>
+<p>
+<br>
+配置する<br>
+t　1.2　0　0　　　　　　　　　　　　　･･･　x 方向に 1.2 移動<br>
+l　twisted_raimon.ply　　　　　　　　 ･･･　メッシュをロード<br>
+r　90　0　0　　　　　　　　　　　　　 ･･･　x 軸周りに 90°回転<br>
+merge　　　　　　　　　　　　　　　　 ･･･　前のメッシュとマージ<br>
+t　1.2　0　0　　 　　　　　　　　　　 ･･･　x 方向に 1.2 移動<br>
+l　twisted_raimon.ply　　　　　　　　 ･･･　メッシュをロード。今回は回転しない<br>
+merge　　　　　　　　　　　　　　　　 ･･･　前のメッシュとマージ<br>
+t　1.2　0　0　　 　　　　　　　　　　 ･･･　x 方向に 1.2 移動<br>
+l　twisted_raimon.ply　　　　　　　　 ･･･　メッシュをロード<br>
+r　90　0　0　　　　　　　　　　　　　 ･･･　x 軸周りに 90°回転<br>
+merge　　　　　　　　　　　　　　　　 ･･･　前のメッシュとマージ<br>
+centering　　　　　　　　　　　　　　 ･･･　全体をセンタリングする<br>
+save　twinsted_raimonx4.ply　　　　　 ･･･　全体のメッシュをセーブ
+</p>
+
+<center><img src="images/twist_layout.svg"></center>
+    </body>
+</html>
