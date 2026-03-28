@@ -20,7 +20,12 @@
 　pip install mediapipe==0.10.14　･･･　img2facemesh.py, img2fingers.py, img2skeleton.pyで使用<br>
 　pip install manifold3d　　 ･･･　Boolean.py で使用<br>
 　pip install plyfile　　　　･･･　ply2skeleton.py で使用<br>
+</p>
+
+<h3>チュートリアル</h3>
 <p>
+　チュートリアルは <a href="https://boyoyon.github.io/PLY_EDIT/tutorial/tutorial.html">こちら</a>
+</p>
 
 <h3>更新項目</h3>
 
@@ -201,7 +206,7 @@
 <img src="images/reverse.svg"><br>
 </p>　　
 <h3>使い方</h3>
-チュートリアルは <a href="https://boyoyon.github.io/PLY_EDIT/tutorial/tutorial.html">こちら</a>
+
 <h4>起動・終了</h4>
 <p><strong>起動</strong><br>
 <br>
