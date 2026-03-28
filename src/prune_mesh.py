@@ -1,59 +1,18 @@
 import numpy as np
 import open3d as o3d
-from plyfile import PlyData
+from plyfile import PlyData, PlyElement
 import os, sys
 
 def is_inside_regular_polygon(x, y, nr_edges = 5, radius = 1):
-    
+
+    th = radius * np.cos(np.pi / nr_edges)
+ 
     for k in range(nr_edges):
         theta = 2 * np.pi * k / nr_edges
         # 各辺の内側（原点側）に点があるかチェック
-        if x * np.cos(theta) + y * np.sin(theta) > 1:
+        if x * np.cos(theta) + y * np.sin(theta) > th:
             return False  # 一つでも外側にあればアウト
     return True  # すべての条件を満たせば内部
-
-def save_ply(ply_path, X, Y, Z, triangles):
-
-    with open(ply_path, mode='w') as f:
-
-        line = 'ply\n'
-        f.write(line)
-
-        line = 'format ascii 1.0\n'
-        f.write(line)
-
-        line = 'element vertex %d\n' % X.shape[0]
-        f.write(line)
-
-        line = 'property float x\n'
-        f.write(line)
-
-        line = 'property float y\n'
-        f.write(line)
-
-        line = 'property float z\n'
-        f.write(line)
-
-        line = 'element face %d\n' % len(triangles)
-        f.write(line)
-
-        line = 'property list uchar int vertex_indices\n'
-        f.write(line)
-
-        line = 'end_header\n'
-        f.write(line)
-
-        for i in range(X.shape[0]):
-            line = '%f %f %f \n' % (X[i], Y[i], Z[i])
-            f.write(line)
-
-        for i in range(len(triangles)):
-            idx0 = triangles[i][0]
-            idx1 = triangles[i][1]
-            idx2 = triangles[i][2]
-            
-            line = '3 %d %d %d\n' % (idx0, idx1, idx2)
-            f.write(line)
 
 argv = sys.argv
 argc = len(argv)
@@ -67,6 +26,8 @@ if argc < 4:
 plyData = PlyData.read(argv[1])
 nr_edges = int(argv[2])
 r = float(argv[3])
+
+vertex_element = plyData['vertex']
 
 X = plyData['vertex']['x']
 Y = plyData['vertex']['y']
@@ -95,9 +56,18 @@ for face in faces:
     
     triangles.append(face)
 
+triangles = np.array(triangles)
+
+face_dtype = [('vertex_indices', 'i4', (3,))] 
+structured_faces = np.empty(triangles.shape[0], dtype=face_dtype)
+structured_faces['vertex_indices'] = triangles
+pruned_face_element = PlyElement.describe(structured_faces, 'face')
+
+pruned_plyData = PlyData([vertex_element, pruned_face_element], text=False)
+
 base = os.path.basename(argv[1])
 filename = os.path.splitext(base)[0]
 dst_path = '%s_pruned.ply' % filename
 
-save_ply(dst_path, X, Y, Z, triangles)
+pruned_plyData.write(dst_path)
 print('save %s' % dst_path)
