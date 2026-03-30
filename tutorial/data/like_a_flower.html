@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+        <meta charset="utf-8" />
+        <title>花･･･のようなもの</title>
+        <style type="text/css">
+            p
+            {
+                padding-left: 2em;
+            }
+           .margin-abstract {
+               margin-left: 60px; /* 左マージンを広くする */
+               margin-right: 60px; /* 右マージンを広くする */
+           }
+        </style>
+    <style>
+        .styleRef { 
+            text-indent: -40px; /* 最初の行の字下げを逆方向に */
+            margin-left: 10px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 40px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+    <style>
+        .styleBullet { 
+            text-indent: -20px; /* 最初の行の字下げを逆方向に */
+            margin-left: 30px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 40px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+<style>
+.container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.column {
+  flex: 0.50%; /* 幅を50%に設定して2列に */
+  box-sizing: border-box;
+  padding: 10px;
+}
+</style>
+
+    </head>
+    <body>
+        <h1><center>花･･･のようなもの</center></h1>
+
+<center><img src="images/like_a_flower.png"></center><br>
+
+スクリプトは data/lile_a_flower.txt,　data/lile_a_flower2.txt にある。
+
+<h3>AIモードによれば･･･</h3>
+<p style="padding-left:1em;">
+
+</p>
+
+<p>
+花の形を近似する数式として最も有名なのは、「バラ曲線（Rose Curve）」です。極座標系 \((r,θ)\) を用いて以下のシンプルな式で表されます。 
+
+\[
+r=a\cos(nθ)\quad または\quad r=a\sin(nθ)
+\]
+
+・\(a\)：花びらの長さを決める。<br>
+・\(n\)：花びらの数を決める。<br>
+<br>
+
+サクラの花びらを再現するには、バラ曲線をベースに, 先端の「切り込み」
+を表現する工夫が必要。<br>
+最も有名な近似式の一つに、以下の極座標方程式がある。
+
+\[
+r=a(1+\sin(5θ)+0.5\cos(10θ))
+\]
+
+・\(\sin(5θ)\)：サクラの基本である <strong>5枚の花びら</strong> を作る。<br>
+・\(0.5\cos(10θ)\)：花びらの先端をへこませ、サクラ特有の「切り込み」を表現する。<br>
+・\(a\)：全体の大きさを調整する。
+</p>
+
+<h3>作り方</h3>
+
+<p>
+[1] 面の色をピンクに設定する。<br>
+　　LateralOuter　255　128　255<br>
+<br>
+[2] 花びらの輪郭の点を生成する。<br>
+　　p　curve　np.linspace(-np.pi,np.pi,300)　(1+np.sin(5*T)+0.5*np.cos(10*T))*np.sin(T)　(1+np.sin(5*T)+0.5*np.cos(10*T))*np.cos(T)　[0]*len(T)<br>
+<br>
+[3] 輪郭だけでは寂しいので,　縮小しつつ、回転しつつ、持ち上げてみる。<br>
+　　p　g　s　0.9　0.9　0.9　r　0　0　10　t　0　0　1/36　36<br>
+<br>
+[4] 輪郭を変換した軌跡で面を張る。<br>
+　　surface<br>
+<br>
+[5] 面の色を元に戻す。<br>
+　　LateralOuter　128　128　255
+</p>
+    </body>
+</html>
