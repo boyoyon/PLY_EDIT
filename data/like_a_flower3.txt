@@ -1,0 +1,18 @@
+LateralOuter 255　128　255
+PaddingOuter 255　128　255
+
+p　curve　np.linspace(-np.pi,np.pi,300)　(1+np.sin(5*T)+0.35*np.cos(10*T))*np.sin(T)　(1+np.sin(5*T)+0.35*np.cos(10*T))*np.cos(T)　[0]*len(T)
+
+polyline 25　0.04
+
+p t 0 0 0.04
+p g s 0.9 0.9 0.9 r 0 0 10 t 0 0 1/36 36
+
+
+surface
+
+merge
+normals
+
+LateralOuter 128 128　255
+PaddingOuter 128 128　255
