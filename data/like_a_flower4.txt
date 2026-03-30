@@ -1,0 +1,3 @@
+p　curve　np.linspace(-np.pi,np.pi,300)　(1+0.2*np.cos(5*T)-0.2*np.cos(10*T))*np.sin(T)　(1+0.2*np.cos(5*T)-0.2*np.cos(10*T))*np.cos(T)　[0]*len(T)
+
+p g s 0.9 0.9 0.9 r 0 0 5 t 0 0 0.5/36 36
