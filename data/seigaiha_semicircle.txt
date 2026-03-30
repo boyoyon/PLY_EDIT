@@ -1,0 +1,46 @@
+d all
+
+LateralOuter 100 168 195
+p clear
+p 0.6 0 0
+p 0.5 0 0
+p r 0 180/60 0 61
+surface
+
+LateralOuter 255 255 255
+p clear
+p 0.5 0 0
+p 0.4 0 0
+p r 0 180/60 0 61
+surface
+
+LateralOuter 100 168 195
+p clear
+p 0.4 0 0
+p 0.3 0 0
+p r 0 180/60 0 61
+surface
+
+LateralOuter 255 255 255
+p clear
+p 0.3 0 0
+p 0.2 0 0
+p r 0 180/60 0 61
+surface
+
+LateralOuter 100 168 195
+p clear
+p 0.2 0 0
+p 0.1 0 0
+p r 0 180/60 0 61
+surface
+
+LateralOuter 255 255 255
+p clear
+p 0.1 0 0
+p 0 0 0
+p r 0 180/60 0 61
+surface
+
+merge
+save seigaiha_semicircle.ply
