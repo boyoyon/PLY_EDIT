@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+        <meta charset="utf-8" />
+        <title>唐草っぽい</title>
+        <style type="text/css">
+            p
+            {
+                padding-left: 2em;
+            }
+           .margin-abstract {
+               margin-left: 60px; /* 左マージンを広くする */
+               margin-right: 60px; /* 右マージンを広くする */
+           }
+        </style>
+    <style>
+        .styleRef { 
+            text-indent: -40px; /* 最初の行の字下げを逆方向に */
+            margin-left: 10px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 40px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+    <style>
+        .styleBullet { 
+            text-indent: -20px; /* 最初の行の字下げを逆方向に */
+            margin-left: 30px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 40px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+<style>
+.container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.column {
+  flex: 0.50%; /* 幅を50%に設定して2列に */
+  box-sizing: border-box;
+  padding: 10px;
+}
+</style>
+
+    </head>
+    <body>
+        <h1><center>唐草っぽい</center></h1>
+
+<center><img src="images/karakusa.png"></center><br>
+スクリプトは data/karakusa.txt
+<h3>作り方</h3>
+
+<p>
+(AIモードによれば･･･)<br>
+唐草模様の最も基本的なパーツは「渦巻き」は等角螺旋（ベルヌーイの螺旋）として表されることが多い。
+
+\[
+r = a e^{bθ}
+\]
+
+・r　 ：中心からの距離<br>
+・θ　：回転角<br>
+・a, b：渦の広がり方を決める定数
+</p>
+
+<p style="padding-left:1em;">
+[1] 螺旋をつくる
+</p>
+
+<p>
+a = 0.1,　b = 0.15 として螺旋状の点を生成する。<br>
+p　curve　np.linspace(0,3.5*np.pi,100)　0.1*np.exp(0.15*T)*np.cos(T)　0.1*np.exp(0.15*T)*np.sin(T)　[0]*len(T)<br>
+<br>
+螺旋状の 3D 座標をセーブする<br>
+p　save　spiral.npy<br>
+<br>
+メッシュ化(パイプ化)する<br>
+polyline　25　0.03　1　sphere　sphere<br>
+※ パイプの画数：25,　半径：0.03<br>
+※ 被覆率：1 (=100%)<br>
+※ 始端(内側), 終端(外側) にキャップをはめる
+</p>
+
+<center><img src="images/karakusa01.svg"></center><br>
+
+<p style="padding-left:1em;">
+[2] もう１個、螺旋をつくって、裏返して縮小して位置合わせする
+</p>
+
+<p>
+螺旋の 3D 座標をロードする<br>
+※ [1] に引き続き実施する場合、3D 座標は保持されているのでロードはスキップ可能<br>
+l　spiral.npy<br>
+<br>
+
+裏返す<br>
+p　r　0　180　0<br>
+<br>
+
+縮小する<br>
+p　s　1/3　1/3　1/3<br>
+<br>
+
+位置合わせする<br>
+p　t　0　0.5　0<br>
+<br>
+
+メッシュ化(パイプ化)する<br>
+polyline　25　0.02　1　sphere　<br>
+※ ちょっと細くしてみた(0.03 → 0.02)<br>
+※ 終端は埋もれるのでキャップをつけない
+</p>
+
+<center><img src="images/karakusa02.svg"></center><br>
+
+    </body>
+</html>
