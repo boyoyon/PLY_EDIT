@@ -86,19 +86,34 @@ def displayMarker(vis, marker, Points, flag):
     ctrl.convert_from_pinhole_camera_parameters(_EyePos)
 
 def usageP():
-      print('p: display current points')
-      print('p clear: clear points')
-      print('p xx xx xx: append the point to points')
-      print('p polygon: append polygon vertices to points')
-      print('p curve (range T) (eq.X with T) (eq.Y with T) (eq.Z with T): append cueve to points')
-      print('p surface (range x) (range z) (eq. with x and z)')
-      print('p centering: centering points')
-      print('p r xx xx xx : rotate points')
-      print('p s xx xx xx : scale points')
-      print('p t xx xx xx : translate points')
-      print('p g (array of r/s/t commands) : apply group operation to points')
-      print('l xxxx.npy: load points into Points[]')
-      print()
+    print('p: display current points')
+    print('p clear: clear points')
+    print('p xx xx xx: append the point to points')
+    print('p polygon: append polygon vertices to points')
+    print('p curve (range T) (eq.X with T) (eq.Y with T) (eq.Z with T): append cueve to points')
+    print('p surface (range x) (range z) (eq. with x and z)')
+    print('p centering: centering points')
+    print('p r xx xx xx : rotate points')
+    print('p s xx xx xx : scale points')
+    print('p t xx xx xx : translate points')
+    print('p g (array of r/s/t commands) : apply group operation to points')
+    print('l xxxx.npy: load points into Points[]')
+    print()
+
+def usageC():
+    print('c (red:0-255) (green:0-255) (blue:0-255): paint current mesh with the specified color')
+    print('c default:  set Surface/Lateral/Padding color to the default color')
+    print('c red:      set Surface/Lateral/Radding color to red')
+    print('c green:    set Surface/Lateral/Radding color to green')
+    print('c blue:     set Surface/Lateral/Radding color to blue')
+    print('c pink:     set Surface/Lateral/Radding color to pink')
+    print('c orange:   set Surface/Lateral/Radding color to orange')
+    print('c cyan:     set Surface/Lateral/Radding color to cyan')
+    print('c white:    set Surface/Lateral/Radding color to white')
+    print('c gray:     set Surface/Lateral/Radding color to gray')
+    print('c black:    set Surface/Lateral/Radding color to black')
+    print('c push:     push current Surface/Lateral/Padding color to ColorStack')
+    print('c pop (idx):pop Surface/Lateral/Padding color from ColorStack')
 
 def key_callback_d(vis, action, mod):
     pass # supress depth capture
@@ -539,6 +554,8 @@ def main():
     PaddingOuter = [128,128,255]
     PaddingInner = [200,200,255]
 
+    ColorStack = []
+
     Points = [] # 点の配列
     P2 = []     # 点の配列の配列
  
@@ -739,24 +756,157 @@ def main():
                 ctrl.set_front([0.5, 0.25, 0.5])
     
             elif cmds[0] == 'c':
-  
-                if len(meshes) < 2:
-                    print('no meshes')
-                    continue
  
-                if len(cmds) > 3 and cmds[1].isdecimal() and cmds[2].isdecimal() and cmds[3].isdecimal():
-                    red = int(cmds[1]) / 255
-                    green = int(cmds[2]) / 255
-                    blue = int(cmds[3]) / 255
-    
-                    update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
- 
-                    meshes[curr].paint_uniform_color([red, green, blue])
-                    vis.update_geometry(meshes[curr])
+                if len(cmds) > 1:
 
-                else:
-                    print('specify red(0-255) green(0-255) blue(0-255)')
-                        
+                    if cmds[1] == 'default':
+                        SurfaceOuter = [128,128,255]
+                        SurfaceInner = [200,200,255]
+                        LateralOuter = [128,128,255]
+                        LateralInner = [200,200,255]
+                        PaddingOuter = [128,128,255]
+                        PaddingInner = [200,200,255]
+                    
+                    elif cmds[1] == 'red':
+                        SurfaceOuter = [255, 64, 64]
+                        SurfaceInner = [255,200,200]
+                        LateralOuter = [255, 64, 64]
+                        LateralInner = [255,200,200]
+                        PaddingOuter = [255, 64, 64]
+                        PaddingInner = [255,200,200]
+
+                    elif cmds[1] == 'green':
+                        SurfaceOuter = [ 64,200, 64]
+                        SurfaceInner = [200,255,200]
+                        LateralOuter = [ 64,200, 64]
+                        LateralInner = [200,255,200]
+                        PaddingOuter = [ 64,200, 64]
+                        PaddingInner = [200,255,200]
+
+                    elif cmds[1] == 'blue':
+                        SurfaceOuter = [ 64, 64,255]
+                        SurfaceInner = [200,200,255]
+                        LateralOuter = [ 64, 64,255]
+                        LateralInner = [200,200,255]
+                        PaddingOuter = [ 64, 64,255]
+                        PaddingInner = [200,200,255]
+
+                    elif cmds[1] == 'pink' or cmds[1] == 'magenta':
+                        SurfaceOuter = [255,128,255]
+                        SurfaceInner = [255,200,255]
+                        LateralOuter = [255,128,255]
+                        LateralInner = [255,200,255]
+                        PaddingOuter = [255,128,255]
+                        PaddingInner = [255,200,255]
+
+                    elif cmds[1] == 'orange':
+                        SurfaceOuter = [255,128, 64]
+                        SurfaceInner = [255,200,128]
+                        LateralOuter = [255,128, 64]
+                        LateralInner = [255,200,128]
+                        PaddingOuter = [255,128, 64]
+                        PaddingInner = [255,200,128]
+
+                    elif cmds[1] == 'cyan':
+                        SurfaceOuter = [ 64,230,230]
+                        SurfaceInner = [168,255,255]
+                        LateralOuter = [ 64,230,230]
+                        LateralInner = [168,255,255]
+                        PaddingOuter = [ 64,230,230]
+                        PaddingInner = [168,255,255]
+
+                    elif cmds[1] == 'white':
+                        SurfaceOuter = [200,200,200]
+                        SurfaceInner = [230,230,230]
+                        LateralOuter = [200,200,200]
+                        LateralInner = [230,230,230]
+                        PaddingOuter = [200,200,200]
+                        PaddingInner = [230,230,230]
+
+                    elif cmds[1] == 'gray':
+                        SurfaceOuter = [168,168,168]
+                        SurfaceInner = [200,200,200]
+                        LateralOuter = [168,168,168]
+                        LateralInner = [200,200,200]
+                        PaddingOuter = [168,168,168]
+                        PaddingInner = [200,200,200]
+
+                    elif cmds[1] == 'black':
+                        SurfaceOuter = [ 64, 64, 64]
+                        SurfaceInner = [128,128,128]
+                        LateralOuter = [ 64, 64, 64]
+                        LateralInner = [128,128,128]
+                        PaddingOuter = [ 64, 64, 64]
+                        PaddingInner = [128,128,128]
+
+                    elif cmds[1] == 'push':
+                        ColorStack.append([SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, PaddingOuter, PaddingInner])
+                        print('SurfaceOuter:', SurfaceOuter)
+                        print('SurfaceInner:', SurfaceInner)
+                        print('LateralOuter:', LateralOuter)
+                        print('LateralInner:', LateralInner)
+                        print('PaddingOuter:', PaddingOuter)
+                        print('paddingInner:', PaddingInner)
+
+                        _nr = len(ColorStack)
+                        print('current color is pushed as %d' % (_nr - 1))
+
+                    elif cmds[1] == 'pop':
+
+                        if len(ColorStack) > 0:
+
+                            idx = -1
+
+                            if len(cmds) > 2:
+                                fResult, value = Eval(cmds[2])
+
+                                if fResult:
+                                    idx = int(value)
+
+                                    if idx >= len(ColorStack):
+                                        print('c pop 0 - %d' % (len(ColorStack) - 1))
+                                        continue
+                                else:
+                                    usageC()
+                                    continue 
+
+                            SurfaceOuter = ColorStack[idx][0]
+                            SurfaceInner = ColorStack[idx][1]
+                            LateralOuter = ColorStack[idx][2]
+                            LateralInner = ColorStack[idx][3]
+                            PaddingOuter = ColorStack[idx][4]
+                            PaddingInner = ColorStack[idx][5]
+
+                            print('SurfaceOuter:', SurfaceOuter)
+                            print('SurfaceInner:', SurfaceInner)
+                            print('LateralOuter:', LateralOuter)
+                            print('LateralInner:', LateralInner)
+                            print('PaddingOuter:', PaddingOuter)
+                            print('paddingInner:', PaddingInner)
+                            print('ColorStack is poped')
+
+                        else:
+                            print('ColorStack is empty')
+ 
+                    elif len(cmds) > 3 and cmds[1].isdecimal() and cmds[2].isdecimal() and cmds[3].isdecimal():
+                        if len(meshes) < 2:
+                            print('no meshes')
+                            continue
+
+                        red = int(cmds[1]) / 255
+                        green = int(cmds[2]) / 255
+                        blue = int(cmds[3]) / 255
+    
+                        update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+ 
+                        meshes[curr].paint_uniform_color([red, green, blue])
+                        vis.update_geometry(meshes[curr])
+
+                    else: # unknown cmds[1]
+                        usageC()
+
+                else: # len(cmds) == 1:
+                    usageC()
     
             elif cmds[0] == 'SurfaceOuter':
     
@@ -946,8 +1096,9 @@ def main():
 
                     if len(cmds) > 4:
 
-                        if cmds[4].isdecimal(): 
-                            count = int(cmds[4])
+                        fResult, value = Eval(cmds[4])
+                        if fResult: 
+                            count = int(value)
                         else:
                             usageRotate()
                             continue
@@ -990,8 +1141,9 @@ def main():
     
                     if len(cmds) > 4:
 
-                        if cmds[4].isdecimal():
-                            count = int(cmds[4])
+                        fResult, value = Eval(cmds[4])
+                        if fResult: 
+                            count = int(value)
                         else:
                             usageScale()
                             continue
@@ -1033,8 +1185,9 @@ def main():
     
                     if len(cmds) > 4:
 
-                        if cmds[4].isdecimal():
-                            count = int(cmds[4])
+                        fResult, value = Eval(cmds[4])
+                        if fResult: 
+                            count = int(value)
                         else:
                             usageTranslate()
                             continue     
@@ -1076,8 +1229,9 @@ def main():
     
                     if fRemain:
 
-                        if cmds[-1].isdecimal(): 
-                            count = int(cmds[-1])
+                        fResult, value = Eval(cmds[-1])
+                        if fResult: 
+                            count = int(value)
                         else:
                             usageGroup()
                             continue 
@@ -1633,8 +1787,9 @@ def main():
 
                                 count = 1
                                 if len(cmds) > 5:
-                                    if cmds[5].isdecimal():
-                                        count = int(cmds[5])
+                                    fResult, value = Eval(cmds[5])
+                                    if fResult: 
+                                        count = int(value)
                                
                                         P2.clear()
                                         M = np.eye(3)
@@ -1675,8 +1830,9 @@ def main():
                                  
                                 count = 1
                                 if len(cmds) > 5:
-                                    if cmds[5].isdecimal():
-                                        count = int(cmds[5])
+                                    fResult, value = Eval(cmds[5])
+                                    if fResult: 
+                                        count = int(value)
 
                                         P2.clear()
                                         M = np.eye(3)
@@ -1717,8 +1873,9 @@ def main():
                                  
                                 count = 1
                                 if len(cmds) > 5:
-                                    if cmds[5].isdecimal():
-                                        count = int(cmds[5])
+                                    fResult, value = Eval(cmds[5])
+                                    if fResult: 
+                                        count = int(value)
 
                                         P2.clear()
                                         M = np.array([0.0, 0.0, 0.0])
@@ -1760,8 +1917,9 @@ def main():
                                 count = 1
                                 if fRemain:
 
-                                    if cmds[-1].isdecimal():
-                                        count = int(cmds[-1])
+                                    fResult, value = Eval(cmds[-1])
+                                    if fResult: 
+                                        count = int(value)
 
                                         P2.clear()
                                         M = np.eye(4)
@@ -2170,6 +2328,22 @@ def main():
                         else:
                             print('P2[] is empty')
 
+                    elif cmds[1] == 'p2p':
+
+                        if len(P2) > 0:
+                            p2numpy = np.array(P2)
+                            n = p2numpy.shape[0]
+                            m = p2numpy.shape[1]
+                            _p = p2numpy.reshape((n*m, 3))
+                            Points = _p.tolist()
+                            P2.clear()
+                            print('P2-->Points')
+                            print('Points:', _p.shape)
+                            print('P2 is cleared')
+
+                        else:
+                            print('P2[] is empty')
+
                     displayMarker(vis, Pmarker, Points, fPdisp)
 
             elif cmds[0] == 'surface' or cmds[0] == 'sideA' or cmds[0] == 'sideAA':
@@ -2313,12 +2487,14 @@ def main():
 
                         _meshes, _names = polyline(_cmds, p, fClose, True, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner, PaddingOuter, PaddingInner)
 
-                        if i == 0:
-                            accum = copy.deepcopy(_meshes[0])
-                        else:
-                            accum += copy.deepcopy(_meshes[0])
+                        if len(_meshes) > 0:
+                            if i == 0:
+                                accum = copy.deepcopy(_meshes[0])
+                            else:
+                                accum += copy.deepcopy(_meshes[0])
                       
-                    if len(_meshes) > 0:
+                    #if len(_meshes) > 0:
+                    if len(meshes) > 0 and accum is not None:
                 
                         _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
   
@@ -2775,7 +2951,7 @@ def main():
                 break
    
             else:
-                print('unknow command')
+                print('unknown command')
                 print()
  
         except queue.Empty:
