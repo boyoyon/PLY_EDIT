@@ -106,5 +106,23 @@ r=a(1+\sin(5θ)+0.5\cos(10θ))
 [5] 面の色を元に戻す。<br>
 　　LateralOuter　128　128　255
 </p>
+
+<h3>曲線サンプル</h3>
+
+<p>
+p　curve　np.linspace(-np.pi,np.pi,300)　(1+np.sin(5*T)+0.5*np.cos(10*T))*np.sin(T)　(1+np.sin(5*T)+0.5*np.cos(10*T))*np.cos(T)　[0]*len(T)
+</p>
+<center><img src="images/like_a_flower_01.png"></center>
+
+<p>
+p　curve　np.linspace(-np.pi,np.pi,300)　(1+0.6*np.sin(5*T)+0.2*np.abs(np.cos(10*T)))*np.sin(T)　 (1+0.6*np.sin(5*T)+0.2*np.abs(np.cos(10*T)))*np.cos(T)　[0]*len(T)
+</p>
+<center><img src="images/like_a_flower_02.png"></center>
+
+<p>
+p　curve np.linspace(-np.pi,np.pi,100)　np.abs(np.cos(2.5*T))**0.7*np.cos(T)　np.abs(np.cos(2.5*T))**0.7*np.sin(T)　[0]*len(T)
+</p>
+<center><img src="images/like_a_flower_05.png"></center>
+
     </body>
 </html>

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+        <meta charset="utf-8" />
+        <title>虚数解</title>
+        <style type="text/css">
+            p
+            {
+                padding-left: 2em;
+            }
+           .margin-abstract {
+               margin-left: 60px; /* 左マージンを広くする */
+               margin-right: 60px; /* 右マージンを広くする */
+           }
+        </style>
+    <style>
+        .styleRef { 
+            text-indent: -40px; /* 最初の行の字下げを逆方向に */
+            margin-left: 10px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 40px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+    <style>
+        .styleBullet { 
+            text-indent: -20px; /* 最初の行の字下げを逆方向に */
+            margin-left: 30px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 40px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+<style>
+.container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.column {
+  flex: 0.50%; /* 幅を50%に設定して2列に */
+  box-sizing: border-box;
+  padding: 10px;
+}
+</style>
+
+    </head>
+    <body>
+        <h1><center>\(y=(x+iz)^2+1\) の 虚数解</center></h1>
+
+<center><img src="images/imaginary_solutions.gif"></center><br>
+
+判りにくいが<br>
+・ピンク　：\(y=(x+iz)^2+1\) の実部<br>
+・オレンジ：\(y=(x+iz)^2+1\) の虚数部<br>
+・灰色　　：\(y=0\) 平面<br>
+・青い球　：\(y=(x+iz)^2+1=0\) となる点(=虚数解)
+
+<h3>作り方</h3>
+
+<p style="padding-left:1em;">
+[1] 実数部曲面を作成する
+</p>
+
+<p>
+・c　pink　･･･　色をピンクに設定<br>
+・p　surface　np.linspace(-1.5,1.5,30)　np.linspace(-1.5,1.5,20)　((x+1j*z)**2+1).real<br>
+　※ numpy では虚数単位は 1j , 実数部は ().real と記す。<br>
+・surface
+</p>
+
+<p style="padding-left:1em;">
+[2] 虚数部曲面を作成する
+</p>
+
+<p>
+・c　orange　･･･　色をオレンジ色に設定<br>
+・p　surface　np.linspace(-1.5,1.5,30)　np.linspace(-1.5,1.5,20)　((x+1j*z)**2+1).imag<br>
+　※ numpy では虚数部は ().imag と記す。<br>
+・surface
+</p>
+
+<p style="padding-left:1em;">
+[3] \(y=0\) 平面を作成する
+</p>
+
+<p>
+・c　white　･･･　色を白(灰色)に設定<br>
+・polygon　4　4/np.sqrt(2)　0<br>
+</p>
+
+<p style="padding-left:1em;">
+[4] 虚数解に球を置く
+</p>
+
+<p>
+・c　blue　･･･　色を青に設定<br>
+・p　clear<br>
+・p　0　0　1<br>
+・p　0　0　-1<br>
+・distribute　sphere　0.15
+</p>
+
+    </body>
+</html>
