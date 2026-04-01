@@ -15,6 +15,9 @@ mesh = o3d.io.read_triangle_mesh(argv[1])
 triangles = np.array(mesh.triangles)
 mesh.triangles = o3d.utility.Vector3iVector(triangles[:,[0,2,1]])
 
+colors = np.asarray(mesh.vertex_colors)
+mesh.vertex_colors = o3d.utility.Vector3dVector(colors*0.4)
+
 base = os.path.basename(argv[1])
 filename = os.path.splitext(base)[0]
 dst_path = '%s_back_face.ply' % filename
