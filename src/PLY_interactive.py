@@ -1997,8 +1997,8 @@ def main():
                                 if fResult:
                                     idx = int(value)
 
-                                if idx >= len(P2):
-                                    print('len(P2):', len(P2))
+                                if idx >= len(P2) or idx < -len(P2):
+                                    print('p pop (%d ~ %d)' % (-len(P2),len(P2)-1))
                                     continue
 
                             Points.clear()
@@ -2252,6 +2252,41 @@ def main():
                                 print('p twist <x/y/z> <angle>')
 
                         else: # len(Points) == 0
+                            print('no points')
+
+                    elif cmds[1] == 'p2p':
+
+                        if len(Points) > 0:
+
+                            if len(cmds) > 2:
+
+                                fResult, value = Eval(cmds[2])
+
+                                if fResult:
+
+                                    _n = int(value)
+                                    _m = len(Points) // _n
+                                    
+                                    if len(Points) == _n * _m:
+                                        pnumpy = np.array(Points)
+                                        _p2 = pnumpy.reshape((_n, _m, 3))
+                                        P2 = _p2.tolist()
+                                        Points = _p2[-1].tolist()
+                                        print('Points --> P2')
+                                        print('P2:', _p2.shape)
+
+                                    else:
+                                        print('%d is not a divisor of numer of Poinst[](%d)' % (_n, len(Points)))
+                                        continue
+
+                                else:
+                                    print('%s is not a valid number' % cmds[2])
+                                    continue
+
+                            else: # cmds[2] is not specified
+                                print('p p2p <num>')
+
+                        else:
                             print('no points')
 
                     elif len(cmds)== 4: # direct input of 3D coordinates
