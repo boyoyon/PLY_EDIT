@@ -30,6 +30,22 @@
 <h3>更新項目</h3>
 
 <p>
+　人工物に飽きたら･･･(猫(などの自然画像)に癒される)
+</p>
+<img src="images/neko.gif">
+
+<p>
+作り方<br>
+　① <a href="https://huggingface.co/spaces/depth-anything/Depth-Anything-V2">DepthAnything V2 デモ</a> で画像から深度画像を作る
+</p>
+<img src="images/DepthAnythingV2.svg">
+<p>
+　② 画像, 深度画像 → 点群 → メッシュ
+</p>
+
+<img src="images/WorkflowImg2Mesh.svg">
+
+<p>
 　<strong>r/s/t/gコマンド,　pコマンドの r/s/t/g オプション</strong><br>
 　　count の指定に式を使えるようにした。<br>
 　　(例)<br>
