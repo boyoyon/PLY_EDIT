@@ -86,7 +86,12 @@
 <img src="images/p2p1.svg"><br>
 
 <br>
-
+<p>
+　<strong>pコマンド: p2pオプション　(num)</strong><br>
+　　Points[ ] を (num) 個のシーケンスに分割して P2[ ]に移動する。<br>
+　　Points[ ] にはシーケンスの最後の点が格納される。
+</p>
+<img src="images/p2p4.svg"><br>
 <p>
 　<strong>cコマンド</strong><br>
 　<strong>　default/red/green/blue/pink/orange/cyan/white/gray/black オプション</strong><br>
