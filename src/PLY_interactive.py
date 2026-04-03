@@ -9,6 +9,7 @@ from getValues import Eval, Evals
 from draw import getDrawingPoints
 from RST import *
 from surface import *
+from Cat import Cat
 
 LINES = []
 input_queue = None
@@ -26,6 +27,10 @@ angle_step = np.pi / 180
 translation_step = 0.01
 scale_up = 1.01
 scale_down = 0.99
+
+CatCursor = None
+Cursor = None
+CatLastPos = None
 
 def input_thread():
 
@@ -85,6 +90,55 @@ def displayMarker(vis, marker, Points, flag):
 
     ctrl.convert_from_pinhole_camera_parameters(_EyePos)
 
+def updateCursor(vis, fUpdate, fPath, cats, cat_idx):
+
+    global Cursor, CatLastPos
+
+    if fUpdate:
+
+        _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
+
+        if Cursor is not None:
+            vis.remove_geometry(Cursor)
+ 
+        Cursor = copy.deepcopy(CatCursor)
+        Cursor.rotate(cats[cat_idx].R)
+
+        pos = cats[cat_idx].getPos()
+
+        T = np.eye(4)
+        T[0][3] = pos[0]
+        T[1][3] = pos[1]
+        T[2][3] = pos[2]
+       
+        Cursor.transform(T) 
+        
+        if fPath and cats[cat_idx].isPenDown:
+
+            if CatLastPos is not None and not np.array_equal(CatLastPos, pos):
+                _cmd = 'line %f %f %f %f %f %f' % (CatLastPos[0], CatLastPos[1], CatLastPos[2], pos[0], pos[1], pos[2])
+                LINES.append(_cmd) 
+
+            CatLastPos = copy.deepcopy(pos)
+
+        else:
+            CatLatsPos = None
+        vis.add_geometry(Cursor)
+
+        ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+
+def deleteCursor(vis):
+
+    global CatCursor, Cursor, CatLastPos
+            
+    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
+    vis.remove_geometry(Cursor)
+    ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+ 
+    CatCursor = None
+    Cursor = None
+    CatLastPos = None
+
 def usageP():
     print('p: display current points')
     print('p clear: clear points')
@@ -114,6 +168,20 @@ def usageC():
     print('c black:    set Surface/Lateral/Radding color to black')
     print('c push:     push current Surface/Lateral/Padding color to ColorStack')
     print('c pop (idx):pop Surface/Lateral/Padding color from ColorStack')
+
+def usageCat():
+    print('cat create [pos(x y z) head(x y z)')
+    print('cat select (cat no.): select cat')
+    print('cat f (length: unit 0.1): forward cat')
+    print('cat up    [(angle:degree)]:  turn up cat direction')
+    print('cat down  [(angle:degree)]:  turn down cat direction')
+    print('cat left  [(angle:degree)]:  turn left cat direction')
+    print('cat right [(angle:degree)]:  turn right cat direction')
+    print('cat rollup [(angle:degree)]: roll cat direction')
+    print('cat turn pitch yaw roll:     turn cat direction')
+    print('cat pen (up/down)')
+    print('cat path on/off: enable/disable cat trajectory path')
+    print('cat d: delete cat')
 
 def key_callback_d(vis, action, mod):
     pass # supress depth capture
@@ -517,7 +585,7 @@ def update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh):
 
 def main():
 
-    global input_queue, LINES, ctrl, angle_step, translation_step
+    global input_queue, LINES, ctrl, angle_step, translation_step, CatCursor
                
     argv = sys.argv
     argc = len(argv)
@@ -602,6 +670,8 @@ def main():
     
     Pmarker = o3d.io.read_triangle_mesh(os.path.join(os.path.dirname(__file__), 'Pmarker.ply'))
 
+    CatCursor = o3d.io.read_triangle_mesh(os.path.join(os.path.dirname(__file__), 'cursor.ply'))
+
     ctrl = vis.get_view_control()
     ctrl.set_front([0.5, 0.25, 0.5])
     EyePos0 = ctrl.convert_to_pinhole_camera_parameters() 
@@ -615,6 +685,10 @@ def main():
     fInLoop = False
 
     fPdisp = True
+
+    cats = []
+    cat_idx = -1
+    fPath = False
 
     while True:
    
@@ -1430,6 +1504,72 @@ def main():
                         ctrl.convert_from_pinhole_camera_parameters(_EyePos)
   
                     #vis.update_geometry(mesh)
+
+            elif cmds[0] == 'line': 
+
+                if len(cmds) > 6:
+                    _points = []
+                    
+                    fResult, values = Evals(cmds[1:], 6)
+                    if fResult:
+                        _points.append((values[0], values[1], values[2]))
+                        _points.append((values[3], values[4], values[5])) 
+                    else:
+                        print('line start_x start_y start_z end_x end_y end_z [nr_divs r coverage start_cap end_cap]')
+                        continue
+
+                    fClose = False
+                    fPadding = True
+
+                    _nr_divs = '5'
+                    if len(cmds) > 7:
+                        _nr_divs = cmds[7]
+
+                    _r = '0.04'
+                    if len(cmds) > 8:
+                        _r = cmds[8]
+
+                    _coverage = '1'
+                    if len(cmds) > 9:
+                        _coverage = cmds[9]
+
+                    _start = '-'
+                    if len(cmds) > 10:
+                        _start = cmds[10]
+
+                    _end = '-'
+                    if len(cmds) > 11:
+                        _end = cmds[11]
+
+                    _cmds = ['polyline', _nr_divs, _r, _coverage, _start, _end]  
+
+                    _meshes, _names = polyline(_cmds, _points, fClose, fPadding, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+
+                    if len(_meshes) > 0:
+                
+                        _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
+
+                        update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+
+                        vis.add_geometry(_meshes[0])
+                        meshes.append(_meshes[0])
+
+                        name0 = _names[0]
+                        name = '%s' % name0
+                        no = 2
+                        while name in names:
+                            name = '%s(%d)' % (name0, no)
+                            no += 1
+                        names.append(name)
+                   
+                        curr = len(meshes) - 1
+                        if len(meshes) < 3 and not fAxis:
+                            ctrl.convert_from_pinhole_camera_parameters(EyePos0)
+                        else:
+                            ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+
+                else:
+                    print('line start_x start_y start_z end_x end_y end_z [nr_divs r coverage start_cap end_cap]')
 
             elif cmds[0] == 'sphere' or cmds[0] == 'sphereA' or cmds[0] == 'sphereAA':
 
@@ -2981,6 +3121,216 @@ def main():
 
                 else:
                     print('cylinder <radius> <height> [<resolution>]')
+
+            elif cmds[0] == 'cat':
+
+                _fUpdate = False
+
+                if len(cmds) > 1:
+
+                    if cmds[1] == 'create':
+                         
+                        pen = True
+
+                        pos = (0.0, 0.0, 0.0)
+                        if len(cmds) > 4:
+                            fResult, values = Evals(cmds[2:],3)
+                            if fResult:
+                                pos = (values[0], values[1], values[2])
+                            else:
+                                usageCat()
+                                continue
+
+                        head = (0.0, 0.0, 1.0)
+                        if len(cmds) > 7:
+                            fResult, values = Evals(cmds[5:],3)
+                            if fResult:
+                                head = (values[0], values[1], values[2])
+                            else:
+                                usageCat()
+                                continue
+
+                        cats.append(Cat(pen, pos, head, Points))
+                        print('cat %d is created' % (len(cats) - 1))
+                        _fUpdate = True
+
+                    elif cmds[1] == 'select':
+                        if len(cmds) > 2:
+                            fResult, value = Eval(cmds[2])
+                            if fResult and value >= 0 and value < len(cats):
+                               cat_idx = int(value)
+   
+                            else:
+                                print('cat select %d - %d' % (0, (len(cats)-1)))
+                        else:
+                            print('cat select %d - %d' % (0, (len(cats)-1)))
+
+                    elif cmds[1] == 'pen':
+
+                        if len(cmds) > 2:
+                            _pen = None
+                            if cmds[2] == 'up':
+                                _pen = False # up: False
+                            elif cmds[2] == 'down':
+                                _pen = True # down: True
+                            else:
+                                print('cat pen up/down')
+                                continue
+
+                            if len(cats) > 0:
+                                cats[cat_idx].pen = _pen
+                            else:
+                                print('no cat')
+                        else:
+                            print('cat pen up/down')
+
+                    elif cmds[1] == 'f':
+
+                        length = 1
+                        if len(cmds) > 2:
+                            fResult, value = Eval(cmds[2])
+                            if fResult:
+                                length = value
+                            else:
+                                print('cat f (length)')
+                                continue
+
+                        if len(cats) > 0:
+                                cats[cat_idx].f(length)
+                                _fUpdate = True
+                        else:
+                            print('no cat')
+
+                    elif cmds[1] == 'turn':
+
+                        if len(cmds) > 4:
+                            fResult, values = Evals(cmds[2:], 3)
+
+                            if fResult:
+                                if len(cats) > 0:
+                                    cats[cat_idx].turn(values[0], values[1], values[2])
+                                    _fUpdate = True
+                                else:
+                                    print('no cat')
+                            else:
+                                print('cat turn roll yaw pitch')
+
+                        else:
+                            print('cat turn roll yaw pitch')
+
+                    elif cmds[1] == 'up':
+
+                        pitch = -10
+                        if len(cmds) > 2:
+                            fResult, value = Eval(cmds[2])
+                            if fResult:
+                                pitch = value * -1.0
+                            else:
+                                print('cat up angle(degree)')
+                                continue
+
+                        cats[cat_idx].turn(pitch, 0.0, 0.0)
+                        _fUpdate = True
+
+                    elif cmds[1] == 'down':
+
+                        pitch = 10
+                        if len(cmds) > 2:
+                            fResult, value = Eval(cmds[2])
+                            if fResult:
+                                pitch = value 
+                            else:
+                                print('cat down angle(angle)')
+                                continue
+
+                        cats[cat_idx].turn(pitch, 0.0, 0.0)
+                        _fUpdate = True
+
+                    elif cmds[1] == 'left':
+
+                        yaw = 10
+                        if len(cmds) > 2:
+                            fResult, value = Eval(cmds[2])
+                            if fResult:
+                                yaw = value
+                            else:
+                                print('cat left angle(degree)')
+                                continue
+
+                        cats[cat_idx].turn(0.0, yaw, 0.0)
+                        _fUpdate = True
+
+                    elif cmds[1] == 'right':
+
+                        yaw = -10
+                        if len(cmds) > 2:
+                            fResult, value = Eval(cmds[2])
+                            if fResult:
+                                yaw = value * -1.0
+                            else:
+                                print('cat right angle(degree)')
+                                continue
+
+                        cats[cat_idx].turn(0.0, yaw, 0.0)
+                        _fUpdate = True
+
+                    elif cmds[1] == 'roll':
+
+                        roll = -10
+                        if len(cmds) > 2:
+                            fResult, value = Eval(cmds[2])
+                            if fResult:
+                                roll = value * -1.0
+                            else:
+                                print('cat roll angle(degree)')
+                                continue
+
+                        cats[cat_idx].turn(0.0, 0.0, roll)
+                        _fUpdate = True
+
+                    elif cmds[1] == 'pos':
+
+                        pos = (0.0, 0.0, 0.0)
+                        if len(cmds) > 4:
+                            fResult, values = Evals(cmds[2:], 3)
+                            if fResult:
+                                pos = values
+                            else:
+                                print('cat pos x y z')
+                                continue
+                        cats[cat_idx].setPos(pos)
+                        _fUpdate = True
+                   
+                    elif cmds[1] == 'path':
+
+                        if len(cmds) > 2:
+                            if cmds[2] == 'on':
+                                fPath = True
+                            elif cmds[1] == 'off':
+                                fPath = False
+                            else:
+                                print('cat path [on/off]')
+                        else:
+                            fPath = not fPath
+
+                    elif cmds[1] == 'd':
+                        deleteCursor(vis)
+                        cats.clear()
+                        cat_idx = -1
+                        fUpdate = False
+                        print('no cat')
+
+                    else: 
+                        print('unknown cat option')
+
+                else: # len(cmds) == 1: no arguments
+                    usageCat()
+                    if len(cats) > 0:
+                        print('cat %d - %d' % (0, (len(cats)-1)))
+                    else:
+                        print('no cat')
+
+                updateCursor(vis, _fUpdate, fPath, cats, cat_idx)
 
             elif cmds[0] == 'quit':
                 break
