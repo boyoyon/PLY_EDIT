@@ -1,6 +1,6 @@
-cat roll 180/10
-cat f 0.1
-cat roll -180/10
+#cat roll 180/10
+#cat f 0.1
+#cat roll -180/10
 cat right 360/50
 cat roll 180/10*2
 cat f 0.1
