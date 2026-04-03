@@ -52,18 +52,28 @@
 </p>
 　<img src="images/cat_command.gif">
 <p>
-　　cat　create：ネコを作成する<br>
-　　cat　f　　 ：ネコを前に進める<br>
-　　cat　up/down/right/left：ネコの向きを変える<br>
+　　cat　create　(x　y　z　dx　dy　dz)：ネコを作成する<br>
+　　※ xyz：ネコの位置,　dxdydz：ネコの向き<br>
+　　　 (例) cat　create　1　0　0　0　0　-1<br>
+　　　　　(1,0,0)に z 軸と反対向きのネコが生成される<br>
+
+　　cat　f　(長さ)：ネコを前に進める<br>
+　　cat　up/down/right/left/roll  (角度：degree)：ネコの向きを変える<br>
+　　cat　c2p　：ネコの移動軌跡を P2 にコピー<br>
+　　cat　d　　：ネコ終了<br>
 <br>
-　　軌跡でパイプを作ってみたが、遅い･･･<br>
-　　cat　path　on<br>
-
+　(例)<br>
+　　l　data\mebius1.txt<br>
+　　(エンターキー押下)<br>
+　　(※ ネコが止まるまで待つ)<br>
+　　l　data\mebius2.txt<br>
+<br>
+　※<br>
+　・ねじるところが loop 処理でうまく表現できず(loop変数を参照できるようにしないと･･･)2つのスクリプトに分けた。<br>
+　・mebius1.txt の処理が終わるのを待たないと、loop処理と後処理(mebius2.txt)の順番がぐちゃぐちゃになる。<br>
+　・始点と終点にギャップあり。
 </p>
-　<img src="images/cat_path.png">
-
-
-
+　<img src="images/mebius.png">
 
 <h3>使い方</h3>
 
