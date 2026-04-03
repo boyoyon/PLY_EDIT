@@ -1,0 +1,45 @@
+cat roll 180/10
+cat f 0.1
+cat roll -180/10
+cat right 360/50
+cat roll 180/10*2
+cat f 0.1
+cat roll -180/10*2
+cat right 360/50
+cat roll 180/10*3
+cat f 0.1
+cat roll -180/10*3
+cat right 360/50
+cat roll 180/10*4
+cat f 0.1
+cat roll -180/10*4
+cat right 360/50
+cat roll 180/10*5
+cat f 0.1
+cat roll -180/10*5
+cat right 360/50
+cat roll 180/10*6
+cat f 0.1
+cat roll -180/10*6
+cat right 360/50
+cat roll 180/10*7
+cat f 0.1
+cat roll -180/10*7
+cat right 360/50
+cat roll 180/10*8
+cat f 0.1
+cat roll -180/10*8
+cat right 360/50
+cat roll 180/10*9
+cat f 0.1
+cat roll -180/10*9
+cat right 360/50
+cat roll 180/10*10
+cat f 0.1
+cat c2p
+p2 save mebius.npy
+surface Eclose
+
+
+
+

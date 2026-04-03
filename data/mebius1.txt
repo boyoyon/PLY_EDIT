@@ -1,0 +1,11 @@
+p clear
+p 0 0.1 0
+p 0 -0.1 0
+cat create
+loop start
+cat f 0.1
+cat right 360/40
+loop end 30
+
+
+
