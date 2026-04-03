@@ -3185,7 +3185,7 @@ def main():
 
                     elif cmds[1] == 'f':
 
-                        length = 1
+                        length = 0.1
                         if len(cmds) > 2:
                             fResult, value = Eval(cmds[2])
                             if fResult:
@@ -3318,6 +3318,12 @@ def main():
                         cat_idx = -1
                         fUpdate = False
                         print('no cat')
+
+                    elif cmds[1] == 'c2p':
+                        _p2 = cats[cat_idx].getP2()
+                        if len(_p2) > 0:
+                            P2 = np.array(_p2).tolist()
+                            print('copy cat --> P2')
 
                     else: 
                         print('unknown cat option')

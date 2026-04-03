@@ -2,8 +2,6 @@ import numpy as np
 import open3d as o3d
 import copy
 
-SCALE = 0.1
-
 def _head2R(head):
 
     axisZ = np.array((0.0, 0.0, 1.0))
@@ -32,13 +30,12 @@ class Cat():
         if len(points) > 0:
             _points = np.array(points).astype(np.float64)
 
-            _mean = np.mean(_points)
-            _points += (self.pos - _mean)
-
-            self.points = _points * SCALE # points:(m,3)
+            self.points = _points
+            self.points0 = _points
 
         else:
             self.points = self.pos[np.newaxis,:] # points:(1,3)
+            self.points0 = self.pos[np.newaxis,:] # points:(1,3)
 
         _head = np.array(head) # head:(3,)
         _head_l = np.linalg.norm(_head)
@@ -55,7 +52,7 @@ class Cat():
         self.p3   = []    
  
         if pen:
-            self.p2.append(self.points) # p2:list of (m,3)
+            self.p2.append(copy.deepcopy(self.points)) # p2:list of (m,3)
 
     def isPenDown(self):
         return self.pen
@@ -96,16 +93,17 @@ class Cat():
 
     def f(self, length):
 
-        length *= SCALE
         offset = self.head * length
         self.pos += offset
 
-        OFFSET = np.tile(offset,(self.points.shape[0], 1))       
-        self.points += OFFSET * SCALE
-        #self.points += offset
+        self.points = self.points0 @ self.R.T
+
+        #OFFSET = np.tile(offset,(self.points.shape[0], 1))       
+        #self.points += OFFSET
+        self.points += self.pos
 
         if self.pen:
-            self.p2.append(self.points) # if pen is down, append points to p2
+            self.p2.append(copy.deepcopy(self.points)) # if pen is down, append points to p2
 
     def turn(self, pitch, yaw, roll):
         _radPitch  = np.deg2rad(pitch)
@@ -119,3 +117,6 @@ class Cat():
         
         axisZ = np.array((0.0, 0.0, 1.0))
         self.head = self.R @ axisZ
+
+    def getP2(self):
+        return self.p2
