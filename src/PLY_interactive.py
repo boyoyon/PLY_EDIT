@@ -135,7 +135,6 @@ def deleteCursor(vis):
     vis.remove_geometry(Cursor)
     ctrl.convert_from_pinhole_camera_parameters(_EyePos)
  
-    CatCursor = None
     Cursor = None
     CatLastPos = None
 
