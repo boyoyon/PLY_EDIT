@@ -107,14 +107,15 @@ class Cat():
         if self.pen:
             self.p2.append(self.points) # if pen is down, append points to p2
 
-    def turn(self, roll, yaw, pitch):
-        _radRoll  = np.deg2rad(roll)
+    def turn(self, pitch, yaw, roll):
+        _radPitch  = np.deg2rad(pitch)
         _radYaw   = np.deg2rad(yaw)
-        _radPitch = np.deg2rad(pitch)
+        _radRoll = np.deg2rad(roll)
 
-        _R = o3d.geometry.get_rotation_matrix_from_xyz((_radRoll, _radYaw, _radPitch))
+        _R = o3d.geometry.get_rotation_matrix_from_xyz((_radPitch, _radYaw, _radRoll))
 
-        self.R = _R @ self.R
+        #self.R = _R @ self.R
+        self.R = self.R @ _R
         
         axisZ = np.array((0.0, 0.0, 1.0))
         self.head = self.R @ axisZ
