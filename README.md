@@ -59,7 +59,10 @@
 
 　　cat　f　(長さ)：ネコを前に進める<br>
 　　cat　up/down/right/left/roll  (角度：degree)：ネコの向きを変える<br>
-　　cat　c2p　：ネコの移動軌跡を P2 にコピー<br>
+　　cat　c2p　：Points[] が空または 1 点の状態でネコを作成～移動した場合は, Points[]に移動軌跡をコピー<br>
+　　　　　　　　Points[] が2点以上の状態でネコを作成～移動した場合は, P2[] に移動軌跡をコピー<br>
+　　cat　disp　on/off：ネコ表示をする/しない<br>
+　　　　　　　　　　　 on/off指定なしの場合はトグル<br>
 　　cat　d　　：ネコ終了<br>
 <br>
 　(例)<br>
