@@ -76,7 +76,15 @@
 　・mebius1.txt の処理が終わるのを待たないと、loop処理と後処理(mebius2.txt)の順番がぐちゃぐちゃになる。<br>
 </p>
 　<img src="images/mebius.png">
-
+<p>
+　(例)<br>
+　　l　data/cat_spiral.txt<br>
+　　(エンターキー押下)<br>
+　　(complete scriptと表示されたら)<br>
+　　cat　c2p<br>
+　　polyline
+</p>
+　<img src="images/cat_spiral.png">
 <h3>使い方</h3>
 
 <h4>起動・終了</h4>
