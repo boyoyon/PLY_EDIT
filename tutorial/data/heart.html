@@ -59,16 +59,56 @@
 
 <h3>作り方</h3>
 <p>
-① ハート用曲面をつくる。<br>
+　① ハート用曲面をつくる。<br>
 　　p　surface　np.linspace(-1.5,1.5,100)　np.linspace(-1.5,1.5,100)　np.clip((x**2+z**2-1)**3-(x**2)*(z**3),-0.5,0.5)<br>
 　　※ 周辺の y の値が急激に大きくなるので、クリップする。<br>
 　　c　cyan　<br>
 　　surface<br>
 <br>
-② y = 0 平面をつくる。<br>
+　② y = 0 平面をつくる。<br>
 　　p　surface　np.linspace(-2,2,3)　np.linspace(-2,2,3)　np.zeros((3,3))<br>
 　　c　pink<br>
 　　surface
 </p>
+
+<h3>そのほかのハート曲線</h3>
+
+<p>
+p　surface　np.linspace(-1.5,1.5,100)　np.linspace(-1.5,1.5,100)　(z-np.abs(4*x/5)**(2/3))**2+(4*x/5)**2<br>
+c　cyan<br>
+surface<br>
+<br>
+p　surface　np.linspace(-2,2,3)　np.linspace(-2,2,3)　np.zeros((3,3))<br>
+c　pink<br>
+surface<br>
+t　0　0.7　0
+</p>
+
+<center><img src="images/heart2.png"></center><br>
+
+<br>
+<p>
+p　surface　np.linspace(-1.5,1.5,100)　np.linspace(-1.5,1.5,100)　(4*z/3-np.sqrt(np.abs(x)))**2+x**2<br>
+
+c　cyan<br>
+surface<br>
+<br>
+p　surface　np.linspace(-2,2,3)　np.linspace(-2,2,3)　np.zeros((3,3))<br>
+c　pink<br>
+surface<br>
+t　0　1　0
+</p>
+<center><img src="images/heart3.png"></center><br>
+<br>
+<p>
+p　surface　np.linspace(-1.5,1.5,100)　np.linspace(-1.5,1.5,100)　(x**2+z**2-1)**3-(x**2)*(z**3)<br>
+c　cyan<br>
+surface<br>
+<br>
+p　surface　np.linspace(-2,2,3)　np.linspace(-2,2,3)　np.zeros((3,3))<br>
+c　pink<br>
+surface
+</p>
+<center><img src="images/heart4.png"></center><br>
     </body>
 </html>
