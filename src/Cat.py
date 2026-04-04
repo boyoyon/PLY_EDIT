@@ -30,12 +30,12 @@ class Cat():
         if len(points) > 0:
             _points = np.array(points).astype(np.float64)
 
-            self.points = _points
+            self.points = _points + self.pos
             self.points0 = _points
 
         else:
             self.points = self.pos[np.newaxis,:] # points:(1,3)
-            self.points0 = self.pos[np.newaxis,:] # points:(1,3)
+            self.points0 = np.array((0.0, 0.0, 0.0))[np.newaxis,:] # points:(1,3)
 
         _head = np.array(head) # head:(3,)
         _head_l = np.linalg.norm(_head)
@@ -95,11 +95,7 @@ class Cat():
 
         offset = self.head * length
         self.pos += offset
-
         self.points = self.points0 @ self.R.T
-
-        #OFFSET = np.tile(offset,(self.points.shape[0], 1))       
-        #self.points += OFFSET
         self.points += self.pos
 
         if self.pen:

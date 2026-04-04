@@ -90,7 +90,7 @@ def displayMarker(vis, marker, Points, flag):
 
     ctrl.convert_from_pinhole_camera_parameters(_EyePos)
 
-def updateCursor(vis, fUpdate, fPath, cats, cat_idx):
+def updateCursor(vis, fUpdate, fPath, cats, cat_idx, fCatDisp=True):
 
     global Cursor, CatLastPos
 
@@ -100,30 +100,31 @@ def updateCursor(vis, fUpdate, fPath, cats, cat_idx):
 
         if Cursor is not None:
             vis.remove_geometry(Cursor)
- 
-        Cursor = copy.deepcopy(CatCursor)
-        Cursor.rotate(cats[cat_idx].R)
 
-        pos = cats[cat_idx].getPos()
+        if fCatDisp and len(cats) > 0: 
+            Cursor = copy.deepcopy(CatCursor)
+            Cursor.rotate(cats[cat_idx].R)
 
-        T = np.eye(4)
-        T[0][3] = pos[0]
-        T[1][3] = pos[1]
-        T[2][3] = pos[2]
+            pos = cats[cat_idx].getPos()
+
+            T = np.eye(4)
+            T[0][3] = pos[0]
+            T[1][3] = pos[1]
+            T[2][3] = pos[2]
        
-        Cursor.transform(T) 
+            Cursor.transform(T) 
         
-        if fPath and cats[cat_idx].isPenDown:
+            if fPath and cats[cat_idx].isPenDown:
 
-            if CatLastPos is not None and not np.array_equal(CatLastPos, pos):
-                _cmd = 'line %f %f %f %f %f %f' % (CatLastPos[0], CatLastPos[1], CatLastPos[2], pos[0], pos[1], pos[2])
-                LINES.append(_cmd) 
+                if CatLastPos is not None and not np.array_equal(CatLastPos, pos):
+                    _cmd = 'line %f %f %f %f %f %f' % (CatLastPos[0], CatLastPos[1], CatLastPos[2], pos[0], pos[1], pos[2])
+                    LINES.append(_cmd) 
 
-            CatLastPos = copy.deepcopy(pos)
+                CatLastPos = copy.deepcopy(pos)
 
-        else:
-            CatLatsPos = None
-        vis.add_geometry(Cursor)
+            else:
+                CatLatsPos = None
+            vis.add_geometry(Cursor)
 
         ctrl.convert_from_pinhole_camera_parameters(_EyePos)
 
@@ -688,6 +689,7 @@ def main():
     cats = []
     cat_idx = -1
     fPath = False
+    fCatDisp = True
 
     while True:
    
@@ -2428,6 +2430,19 @@ def main():
                         else:
                             print('no points')
 
+                    elif cmds[1] == 'd':
+
+                        if len(cmds) > 2:
+                            fResult, value = Eval(cmds[2])
+                            if fResult and value >= 0 and value < len(Points):
+                                _p = Points.pop(value)
+                                print('delete ', _p)
+                            else:
+                                print('p d (num: 0 - %d)' % (len(Points)-1))
+
+                        else:
+                            print('p d (num: 0 - %d)' % (len(Points)-1))
+
                     elif len(cmds)== 4: # direct input of 3D coordinates
 
                         fResult, values = Evals(cmds[1:], 3)
@@ -3228,8 +3243,11 @@ def main():
                                 print('cat up angle(degree)')
                                 continue
 
-                        cats[cat_idx].turn(pitch, 0.0, 0.0)
-                        _fUpdate = True
+                        if len(cats) > 0:
+                            cats[cat_idx].turn(pitch, 0.0, 0.0)
+                            _fUpdate = True
+                        else:
+                            print('no cat')
 
                     elif cmds[1] == 'down':
 
@@ -3242,8 +3260,11 @@ def main():
                                 print('cat down angle(angle)')
                                 continue
 
-                        cats[cat_idx].turn(pitch, 0.0, 0.0)
-                        _fUpdate = True
+                        if len(cats) > 0:
+                            cats[cat_idx].turn(pitch, 0.0, 0.0)
+                            _fUpdate = True
+                        else:
+                            print('no cat')
 
                     elif cmds[1] == 'left':
 
@@ -3256,8 +3277,11 @@ def main():
                                 print('cat left angle(degree)')
                                 continue
 
-                        cats[cat_idx].turn(0.0, yaw, 0.0)
-                        _fUpdate = True
+                        if len(cats) > 0:
+                            cats[cat_idx].turn(0.0, yaw, 0.0)
+                            _fUpdate = True
+                        else:
+                            print('no cat')
 
                     elif cmds[1] == 'right':
 
@@ -3270,8 +3294,11 @@ def main():
                                 print('cat right angle(degree)')
                                 continue
 
-                        cats[cat_idx].turn(0.0, yaw, 0.0)
-                        _fUpdate = True
+                        if len(cats) > 0:
+                            cats[cat_idx].turn(0.0, yaw, 0.0)
+                            _fUpdate = True
+                        else:
+                            print('no cat')
 
                     elif cmds[1] == 'roll':
 
@@ -3284,8 +3311,11 @@ def main():
                                 print('cat roll angle(degree)')
                                 continue
 
-                        cats[cat_idx].turn(0.0, 0.0, roll)
-                        _fUpdate = True
+                        if len(cats) > 0:
+                            cats[cat_idx].turn(0.0, 0.0, roll)
+                            _fUpdate = True
+                        else:
+                            print('no cat')
 
                     elif cmds[1] == 'pos':
 
@@ -3297,8 +3327,12 @@ def main():
                             else:
                                 print('cat pos x y z')
                                 continue
-                        cats[cat_idx].setPos(pos)
-                        _fUpdate = True
+
+                        if len(cats)> 0:
+                            cats[cat_idx].setPos(pos)
+                            _fUpdate = True
+                        else:
+                            print('no cat')
                    
                     elif cmds[1] == 'path':
 
@@ -3316,14 +3350,43 @@ def main():
                         deleteCursor(vis)
                         cats.clear()
                         cat_idx = -1
-                        fUpdate = False
+                        _fUpdate = False
                         print('no cat')
 
                     elif cmds[1] == 'c2p':
                         _p2 = cats[cat_idx].getP2()
                         if len(_p2) > 0:
-                            P2 = np.array(_p2).tolist()
-                            print('copy cat --> P2')
+                            _p2 = np.array(_p2)
+                            if _p2.shape[1] == 1:
+                                _p = np.reshape(_p2,(_p2.shape[0],3))
+                                Points = _p.tolist()
+                                print('copy cat --> Points')
+                            else:    
+                                P2 = np.array(_p2).tolist()
+                                print('copy cat --> P2')
+
+                    elif cmds[1] == 'disp':
+
+                        if len(cmds) > 2:
+                            if cmds[2] == 'on':
+                                fCatDisp = True
+                                print('cat disp on')
+                                _fUpdate = True
+                                
+                            elif cmds[2] == 'off':
+                                fCatDisp = False
+                                print('cat disp off')
+                                _fUpdate = True
+
+                            else:
+                                print('cat disp on/off/(toggle)')
+                        else:
+                            fCatDisp = not fCatDisp
+                            if fCatDisp:
+                                print('cat disp on')
+                            else:
+                                print('cat disp off')
+                            _fUpdate = True
 
                     else: 
                         print('unknown cat option')
@@ -3335,7 +3398,7 @@ def main():
                     else:
                         print('no cat')
 
-                updateCursor(vis, _fUpdate, fPath, cats, cat_idx)
+                updateCursor(vis, _fUpdate, fPath, cats, cat_idx, fCatDisp)
 
             elif cmds[0] == 'quit':
                 break
