@@ -1,0 +1,19 @@
+p clear
+cat create 1 0 0
+loop start
+cat f 0.1
+cat right 20
+loop end 9
+loop start
+cat f 0.1
+cat right 10
+loop end 18
+loop start
+cat f 0.1
+cat right 5
+loop end 36
+loop start
+cat f 0.1
+cat right 2.5
+loop end 72
+
