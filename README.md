@@ -44,7 +44,25 @@
 </p>
 <img src="images/implicit_function.svg">
 
+<p>
+　<strong>ハートの立体化</strong>
 <br>
+　python　implicit_function.py　(z-np.abs(4*x/5)**(2/3))**2+(4*x/5)**2+y<br>
+　・ x, y, z を含む式にしないとエラー終了するので +y とした。<br>
+　・ エラー終了しない範囲で矢印キーで level を調整する。<br>
+　・ sキー押下で保存終了 (implicit_function.ply に保存される)<br>
+<br>
+　python　create_back_face_from_front_face.py　implicit_function.ply<br>
+　・ ウラ面が無いのでオモテ面からウラ面をつくる。<br>
+<br>
+　python　PLY_interactive.py<br>
+　l　implicit_function.ply　　　　　　･･･　オモテ面をロード<br>
+　c　255　128　255　　　　　　　　　　･･･　オモテ面を濃いピンクで塗りつぶす<br>
+　l　implicit_function_back_face.ply　･･･　ウラ面をロード<br>
+　c　255　200　255　　　　　　　　　　･･･　ウラ面を薄いピンクで塗りつぶす<br>
+　merge　　　　　　　　　　　　　　　　･･･　オモテ面とウラ面をマージ<br>
+</p>
+<img src="images/heart2.gif">
 
 <p>
 　人工物に飽きたら･･･(猫(などの自然画像)に癒される)
