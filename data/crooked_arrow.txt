@@ -1,0 +1,13 @@
+p　clear
+p　0.5　0　0         # 矢の底辺になる点
+p　0　1　0           # 矢の先になる点
+p　r　0　10　0　36   # 斜線を回転する
+surface　eclose　　　# 面を張ってコーンを作る
+p2　transpose    　  # path ⇔ extrusion。先端と底辺の円が path になる
+p　pop　0            # 底辺の円を Poinst[ ] にコピー
+p　s　1/3　1　1/3　2 # 底辺の円と 1/3 にリサイズした円を作る
+surface　pclose　　　# 面を張る。transpose したので eclose ではなく pclose 
+p　g　t　-1　0　0　r　0　0　-10　t　1　0　0　10 # (1,0,0)を中心に 1/4 円、回転する
+surface　pclose　　　# 面を張る。
+p　g　t　0　-1　0　s　1　0　0　2
+surface　pclose
