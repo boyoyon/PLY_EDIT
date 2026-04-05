@@ -2071,9 +2071,12 @@ def main():
                                                 _p.append((_q[0]/_q[3], _q[1]/_q[3], _q[2]/_q[3]))
                                             P2.append(_p)
                                             M = G @ M
- 
-                                        Points = copy.deepcopy(P2[-1])
-                                        print('apply group operation to points')
+                                        
+                                        if len(P2) > 0: 
+                                            Points = copy.deepcopy(P2[-1])
+                                            print('apply group operation to points')
+                                        else:
+                                            print('P2[] is empty')
 
                                     else: # cmds[5] is not decimal
                                         usageP()
