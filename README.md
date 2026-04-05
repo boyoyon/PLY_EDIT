@@ -20,6 +20,7 @@
 　pip install mediapipe==0.10.14　･･･　img2facemesh.py, img2fingers.py, img2skeleton.pyで使用<br>
 　pip install manifold3d　　 ･･･　Boolean.py で使用<br>
 　pip install plyfile　　　　･･･　ply2skeleton.py で使用<br>
+　pip install scikit-image　 ･･･　implicit_function.py で使用<br>
 </p>
 
 <h3>チュートリアル</h3>
@@ -28,6 +29,22 @@
 </p>
 
 <h3>更新項目</h3>
+
+<p>
+　陰関数によるモデリング<br>
+　<a href="https://www.ssfactory.net/20220117_0220python_unix_math_class/">https://www.ssfactory.net/20220117_0220python_unix_math_class/</a><br>
+　の泡みたいな陰関数をモデル化したくて追加した。<br>
+<br>
+　python　implicit_function.py　(式)<br>
+　(例)<br>
+　python　implicit_function.py　x**2+y**2+z**2+np.sin(4*x)+np.sin(4*y)+np.sin(4*z)<br>
+　・矢印キーで level を増減させる。<br>
+　　↑：+0.5、　→：+0.05、　↓：-0.5、　←：-0.05<br>
+　・sキー押下で implicit_function.ply にセーブされる。<br>
+</p>
+<img src="images/implicit_function.svg">
+
+<br>
 
 <p>
 　人工物に飽きたら･･･(猫(などの自然画像)に癒される)
