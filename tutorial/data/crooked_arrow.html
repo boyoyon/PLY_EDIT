@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+        <meta charset="utf-8" />
+        <title>曲がった矢印</title>
+        <style type="text/css">
+            p
+            {
+                padding-left: 2em;
+            }
+           .margin-abstract {
+               margin-left: 60px; /* 左マージンを広くする */
+               margin-right: 60px; /* 右マージンを広くする */
+           }
+        </style>
+    <style>
+        .styleRef { 
+            text-indent: -40px; /* 最初の行の字下げを逆方向に */
+            margin-left: 10px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 40px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+    <style>
+        .styleBullet { 
+            text-indent: -20px; /* 最初の行の字下げを逆方向に */
+            margin-left: 30px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 40px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+<style>
+.container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.column {
+  flex: 0.50%; /* 幅を50%に設定して2列に */
+  box-sizing: border-box;
+  padding: 10px;
+}
+</style>
+
+    </head>
+    <body>
+        <h1><center>曲がった矢印</center></h1>
+
+<center><img src="images/crooked_arrow.gif"></center><br>
+
+<h3>作り方</h3>
+
+<p style="padding-left:1em;">
+[1]矢じりをつくる
+</p>
+<p>
+①　p　clear　　　　　　　･･･　Points[ ]を空にする<br>
+②　p　0.5　0　0　　　　　･･･　矢の底辺になる点<br>
+③　p　0　1　0　　　　　　･･･　矢の先になる点<br>
+④　p　r　0　10　0　36　　･･･　斜線を回転する<br>
+⑤　surface　eclose　　　　･･･　面を張って矢じり(コーン)を作る<br>
+⑥　p2　transpose　　　　　･･･　path ⇔ extrusion。先端と底辺の円が path になる<br>
+⑦　p　pop　0　　　　　　　･･･　底辺の円を Poinst[ ] にコピー<br>
+⑧　p　s　1/3　1　1/3　2　･･･　底辺の円と 1/3 にリサイズした円を作る<br>
+⑨　surface　pclose　　　　･･･　面を張る。transpose したので eclose ではなく pclose 
+</p>
+
+<center><img src="images/crooked_arrow1.svg"></center>
+
+<p style="padding-left:1em;">
+[2]曲がった柄をつくる
+</p>
+<p>
+⑩　p　g　t　-1　0　0　r　0　0　-10　t　1　0　0　10　･･･　(1,0,0)移動して 1/4 円、回転して元に戻す<br>
+⑪　surface　pclose　　　　･･･　面を張る<br>
+⑫　p　g　t　0　-1　0　s　1　0　0　2　･･･　柄の底を閉じるため半径0の円をつくる<br>
+⑬　surface　pclose　　　　･･･　面を張る
+</p>
+
+<center><img src="images/crooked_arrow2.svg"></center>
+
+<p style="padding-left:1em;">
+</p>
+<p>
+</p>
+
+<p style="padding-left:1em;">
+</p>
+<p>
+</p>
+
+<p style="padding-left:1em;">
+</p>
+<p>
+</p>
+
+<p style="padding-left:1em;">
+</p>
+<p>
+</p>
+
+    </body>
+</html>
