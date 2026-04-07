@@ -99,20 +99,6 @@ def main():
     level = 0
     prevLevel = -1    
 
-    """
-    # マーチングキューブ法でメッシュ化
-    verts, faces, normals, values = measure.marching_cubes(vol, level=0)
-    
-    # 4. Open3Dのメッシュ形式に変換
-    mesh = o3d.geometry.TriangleMesh()
-    mesh.vertices = o3d.utility.Vector3dVector(verts)
-    mesh.triangles = o3d.utility.Vector3iVector(faces)
-    mesh.compute_vertex_normals()
-    
-    # 5. 表示
-    o3d.visualization.draw_geometries([mesh])
-    """
-
     # 可視化の設定
     vis = o3d.visualization.VisualizerWithKeyCallback()
     vis.create_window()
@@ -123,7 +109,10 @@ def main():
     vis.register_key_action_callback(KEY_LEFT, key_callback_down_level)
     vis.register_key_action_callback(ord("S"), key_callback_set_save_flag)
 
-    #ctrl = vis.get_view_control()
+    ctrl = vis.get_view_control()
+
+    color_front = np.array((128/255, 128/255, 255/255))
+    color_back  = np.array((200/255, 200/255, 255/255))
     
     while True:
 
@@ -131,7 +120,7 @@ def main():
  
             prevLevel = level
 
-            #_EyePos = ctrl.convert_to_pinhole_camera_parameters() 
+            _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
 
             if mesh is not None:
                 vis.remove_geometry(mesh)
@@ -139,17 +128,29 @@ def main():
             # マーチングキューブ法でメッシュ化
             verts, faces, normals, values = measure.marching_cubes(vol, level=level)
     
+            colorsFront = np.tile(color_front, (verts.shape[0], 1))
+            colorsBack  = np.tile(color_back, (verts.shape[0], 1))
+
             # Open3Dのメッシュ形式に変換
-            mesh = o3d.geometry.TriangleMesh()
-            mesh.vertices = o3d.utility.Vector3dVector(verts)
-            mesh.triangles = o3d.utility.Vector3iVector(faces)
+            meshFront = o3d.geometry.TriangleMesh()
+            meshFront.vertices = o3d.utility.Vector3dVector(verts)
+            meshFront.triangles = o3d.utility.Vector3iVector(faces)
+            meshFront.vertex_colors = o3d.utility.Vector3dVector(colorsFront)
+
+            meshBack = o3d.geometry.TriangleMesh()
+            meshBack.vertices = o3d.utility.Vector3dVector(verts)
+            meshBack.triangles = o3d.utility.Vector3iVector(faces[:,[0,2,1]])
+            meshBack.vertex_colors = o3d.utility.Vector3dVector(colorsBack)
+
+            mesh = meshFront + meshBack
+
             center = mesh.get_center()
             mesh.translate(-center)
             mesh.compute_vertex_normals()
 
             vis.add_geometry(mesh)
 
-            #ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+            ctrl.convert_from_pinhole_camera_parameters(_EyePos)
 
         if not vis.poll_events():
             break
