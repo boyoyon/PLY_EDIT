@@ -39,7 +39,7 @@
 　　p　push　section　　　　　　　　･･･　Points[] から Section[] にコピー<br>
 　　img2mesh　data\heart.png　　　　･･･　背景黒の二値(っぽい)画像から輪郭抽出<br>
 　　(ESCキー以外を押下)　　　　　　　･･･　結果がセーブされる<br>
-　　p　puccho　　　　　　　　　　　　･･･　輪郭 (Points[]) を断面 (Section[]) で立体化<br>
+　　puccho　　　　　　　　　　　　　･･･　輪郭 (Points[]) を断面 (Section[]) で立体化<br>
 　　surface　pclose　　　　　　　　　･･･　立体化した結果 (P2[]) をメッシュ化<br>
 <br>
 　　ウラ返しになる場合は、<br>
