@@ -31,7 +31,25 @@
 <h3>更新項目</h3>
 
 <p>
-　陰関数によるモデリング<br>
+　<strong>輪郭の立体化</strong>(スケーリング＋平行移動)<br>
+　　※ 輪郭線が細いとうまくいかない。<br>
+　(例)<br>
+　　l　data\section.txt　　　　　　　･･･　断面用の点データ定義スクリプトをロード<br>
+　　(エンターキー押下)　　　　　　　･･･　スクリプト実行<br>
+　　p　push　section　　　　　　　　･･･　Points[] から Section[] にコピー<br>
+　　img2mesh　data\heart.png　　　　･･･　背景黒の二値(っぽい)画像から輪郭抽出<br>
+　　(ESCキー以外を押下)　　　　　　　･･･　結果がセーブされる<br>
+　　p　puccho　　　　　　　　　　　　･･･　輪郭 (Points[]) を断面 (Section[]) で立体化<br>
+　　surface　pclose　　　　　　　　　･･･　立体化した結果 (P2[]) をメッシュ化<br>
+<br>
+　　ウラ返しになる場合は、<br>
+　　d　　　　　　　　　　　　　　　　･･･　メッシュを削除<br>
+　　p2　reverse　p　　　　　　　　　･･･　path方向の順番を逆順にして<br>
+　　surface　pclose　　　　　　　　　･･･　再度メッシュ化
+</p>
+<img src="images/puccho.svg">
+<p>
+　<strong>陰関数によるモデリング</strong><br>
 　<a href="https://www.ssfactory.net/20220117_0220python_unix_math_class/">https://www.ssfactory.net/20220117_0220python_unix_math_class/</a><br>
 　の泡みたいな陰関数をモデル化したくて追加した。<br>
 <br>
@@ -42,8 +60,11 @@
 　　↑：+0.5、　→：+0.05、　↓：-0.5、　←：-0.05<br>
 　・sキー押下で implicit_function.ply にセーブされる。<br>
 </p>
-<img src="images/implicit_function.svg">
-
+<img src="images/implicit_function.gif">
+<p>
+　　　(定義域：xyzの三次元＋値域：一次元 ⇒ level面で切った断面)<br>
+　　　(四次元立体の断面が三次元立体･･･の視覚化)<br>
+</p>
 <p>
 　<strong>ハートの立体化</strong>
 <br>
