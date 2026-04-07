@@ -624,8 +624,9 @@ def main():
 
     ColorStack = []
 
-    Points = [] # 点の配列
-    P2 = []     # 点の配列の配列
+    Points = []  # 点の配列
+    P2 = []      # 点の配列の配列
+    Section = [] # 断面用の点の配列
  
     EyePos = None    
     EyePos0 = None
@@ -1803,6 +1804,7 @@ def main():
                         Points.clear()
                         print('Points[] is cleared')
                         P2.clear()
+                        Section.clear()
 
                     elif cmds[1] == 'polygon':
 
@@ -2124,51 +2126,59 @@ def main():
                     elif cmds[1] == 'push':
 
                         if len(Points) > 0:
-                            P2.append(copy.deepcopy(Points))
-
-                            print('Points is copied to P2[%d]:' % (len(P2) - 1))
-
-                    elif cmds[1] == 'pop':
-
-                        if len(P2) > 0:
-
-                            idx = -1
 
                             if len(cmds) > 2:
 
-                                fResult, value = Eval(cmds[2])
+                                if cmds[2] == 'p2':
+                                    P2.append(copy.deepcopy(Points))
+                                    print('Points are copied to P2[%d]:' % (len(P2) - 1))
+                                elif cmds[2] == 'section':
+                                    Section = copy.deepcopy(Points)
+                                    print('Points are copied to Section[]')
 
-                                if fResult:
-                                    idx = int(value)
+                                else:
+                                    print('p push -/p2/section')
 
-                                if idx >= len(P2) or idx < -len(P2):
-                                    print('p pop (%d ~ %d)' % (-len(P2),len(P2)-1))
-                                    continue
-
-                            Points.clear()
-                            Points = copy.deepcopy(P2[idx])
-                            print('P2[%d] is copied to Points' % idx)
-     
+                            else:
+                                P2.append(copy.deepcopy(Points))
+                                print('Points are copied to P2[%d]:' % (len(P2) - 1))
+                                    
                         else:
-                            print('P2 is empty')
+                            print('no point')
 
-                    elif cmds[1] == 'POP':
+                    elif cmds[1] == 'pop':
 
-                        if len(P2) > 0:
+                        if len(cmds) > 2 and cmds[2] == 'section':
 
-                            Points.clear()
+                            if len(Section) > 0:
+                                Points = copy.deepcopy(Section)
 
-                            for _p2 in P2:
+                            else:
+                                print('Section[] is empty')
 
-                                for _p in _p2:
-
-                                    Points.append(_p)
-                            
-                            P2.clear() 
-                            print('P2 is copied to Points')
-     
                         else:
-                            print('P2 is empty')
+
+                            if len(P2) > 0:
+    
+                                idx = -1
+    
+                                if len(cmds) > 2:
+    
+                                    fResult, value = Eval(cmds[2])
+    
+                                    if fResult:
+                                        idx = int(value)
+    
+                                    if idx >= len(P2) or idx < -len(P2):
+                                        print('p pop (%d ~ %d)' % (-len(P2),len(P2)-1))
+                                        continue
+    
+                                Points.clear()
+                                Points = copy.deepcopy(P2[idx])
+                                print('P2[%d] is copied to Points' % idx)
+         
+                            else:
+                                print('P2 is empty')
 
                     elif cmds[1] == 'decimate':
 
@@ -3073,7 +3083,7 @@ def main():
                  else:
                      print('img2mesh <image file> ... background color shall be black')
 
-            elif cmds[0] == 'python' or cmds[0] == 'dir' or cmds[0] == 'copy' or cmds[0] == 'move' or cmds[0] == 'ren' or cmds[0] == 'del':
+            elif cmds[0] == 'python' or cmds[0] == 'dir' or cmds[0] == 'copy' or cmds[0] == 'move' or cmds[0] == 'ren' or cmds[0] == 'del' or cmds[0] == 'cd':
 
                 cmd = ''
                 for c in cmds:
@@ -3402,6 +3412,37 @@ def main():
                         print('no cat')
 
                 updateCursor(vis, _fUpdate, fPath, cats, cat_idx, fCatDisp)
+
+            elif cmds[0] == 'puccho':
+
+                if len(Points) == 0:
+                    print('no point')
+
+                elif len(Section) == 0:
+                    print('no section')
+
+                else:
+                    P2.clear()
+                    _S = np.array(Section)
+                    _S[:,0] -= np.min(_S[:,0])
+                    _S[:,1] -= np.min(_S[:,1])
+
+                    _S_xmax = np.max(_S[:,0])
+                    _S_ymax = np.max(_S[:,1])
+
+                    _P = np.array(Points)
+                    _P -= np.mean(_P, axis=0)
+
+                    for s in Section:
+                        S = np.eye(3)
+                        scale = s[1]/_S_ymax
+                        S[0][0] = scale
+                        S[1][1] = scale
+
+                        _p = _P @ S + np.array((0, 0, s[0]/_S_xmax*0.4))
+                        P2.append(_p.tolist())
+
+                    print('complete puccho')
 
             elif cmds[0] == 'quit':
                 break

@@ -80,7 +80,7 @@ if contours:
         vertices = np.zeros((nr_points,3),np.float64)
 
         for i, point in enumerate(contour_points):
-            vertices[i] = (point[0]/W, point[1]/H, 0)
+            vertices[i] = (point[0]/W, 1.0 - point[1]/H, 0)
 
         dst_path = '%s_contour.npy' % filename
         np.save(dst_path, vertices)
