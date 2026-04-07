@@ -8,6 +8,13 @@ KEY_RIGHT = 262
 KEY_UP    = 265
 KEY_DOWN  = 264
 
+XMIN = -2
+XMAX =  2
+YMIN = -2
+YMAX =  2
+ZMIN = -2
+ZMAX =  2
+
 level = 0
 dst_path = 'implicit_function.ply'
 mesh = None
@@ -25,8 +32,9 @@ def key_callback_UP_level(vis, action, mod):
 
     global level
 
-    level += 0.5
-    print('level:',level)
+    if action == 0: # on press
+        level += 0.5
+        print('level:',level)
     
     return True
 
@@ -34,8 +42,9 @@ def key_callback_up_level(vis, action, mod):
 
     global level
 
-    level += 0.05
-    print('level:',level)
+    if action == 0: # on press
+        level += 0.05
+        print('level:',level)
     
     return True
 
@@ -43,8 +52,9 @@ def key_callback_DOWN_level(vis, action, mod):
 
     global level
 
-    level -= 0.5
-    print('level:',level)
+    if action == 0: # on press
+        level -= 0.5
+        print('level:',level)
     
     return True
 
@@ -52,8 +62,9 @@ def key_callback_down_level(vis, action, mod):
 
     global level
 
-    level -= 0.05
-    print('level:',level)
+    if action == 0: # on press
+        level -= 0.05
+        print('level:',level)
     
     return True
 
@@ -92,7 +103,8 @@ def main():
  
     # ボクセルの作成
     res = 50  # 解像度
-    x, y, z = np.ogrid[-2:2:res*1j, -2:2:res*1j, -2:2:res*1j]
+    #x, y, z = np.ogrid[-2:2:res*1j, -2:2:res*1j, -2:2:res*1j]
+    x, y, z = np.ogrid[XMIN:XMAX:res*1j, YMIN:YMAX:res*1j, ZMIN:ZMAX:res*1j]
     
     vol = eval(expression)
     
