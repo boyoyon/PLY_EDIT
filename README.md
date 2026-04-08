@@ -31,7 +31,7 @@
 <h3>更新項目</h3>
 
 <p>
-　<strong>implicit_function.py</strong><br>
+　<strong>implicit_function.py</strong>　･･･　PLY_interactive.py とは別の即席の陰関数モデリングツール<br>
 　python　implicit_function.py　(式)<br>
 　・ウラ面追加、面の色追加。<br>
 　・エラー終了しにくくした。<br>
