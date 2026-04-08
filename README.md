@@ -31,116 +31,35 @@
 <h3>更新項目</h3>
 
 <p>
-　<strong>輪郭の立体化</strong>(スケーリング＋平行移動)<br>
-　　※ 輪郭線が細いとうまくいかない。<br>
-　(例)<br>
-　　l　data\section.txt　　　　　　　･･･　断面用の点データ定義スクリプトをロード<br>
-　　(エンターキー押下)　　　　　　　･･･　スクリプト実行<br>
-　　p　push　section　　　　　　　　･･･　Points[] から Section[] にコピー<br>
-　　img2mesh　data\heart.png　　　　･･･　背景黒の二値(っぽい)画像から輪郭抽出<br>
-　　(ESCキー以外を押下)　　　　　　　･･･　結果がセーブされる<br>
-　　puccho　　　　　　　　　　　　　･･･　輪郭 (Points[]) を断面 (Section[]) で立体化<br>
-　　surface　pclose　　　　　　　　　･･･　立体化した結果 (P2[]) をメッシュ化<br>
-<br>
-　　ウラ返しになる場合は、<br>
-　　d　　　　　　　　　　　　　　　　･･･　メッシュを削除<br>
-　　p2　reverse　p　　　　　　　　　･･･　path方向の順番を逆順にして<br>
-　　surface　pclose　　　　　　　　　･･･　再度メッシュ化
-</p>
-<img src="images/puccho.svg">
-<p>
-　<strong>陰関数によるモデリング</strong><br>
-　<a href="https://www.ssfactory.net/20220117_0220python_unix_math_class/">https://www.ssfactory.net/20220117_0220python_unix_math_class/</a><br>
-　の泡みたいな陰関数をモデル化したくて追加した。<br>
-<br>
+　<strong>implicit_function.py</strong><br>
 　python　implicit_function.py　(式)<br>
+　・ウラ面追加、面の色追加。<br>
+　・エラー終了しにくくした。<br>
+　　(式に x,y,z は必須。要らない場合は +0*z などとする)<br>
+　・表示倍率の調整ができていないので、マウスホィールでズームアウトする必要あり。<br>
+　・矢印キーで level(断面を決めるパラメータ)を増減する。<br>
+　・sキー押下で保存、終了。ESCキー押下で保存せずに終了。<br>
 　(例)<br>
-　python　implicit_function.py　x**2+y**2+z**2+np.sin(4*x)+np.sin(4*y)+np.sin(4*z)<br>
-　・矢印キーで level を増減させる。<br>
-　　↑：+0.5、　→：+0.05、　↓：-0.5、　←：-0.05<br>
-　・sキー押下で implicit_function.ply にセーブされる。<br>
+　　python implicit_function.py x+y**2+z**3
 </p>
-<img src="images/implicit_function.gif">
-<p>
-　　　(定義域：xyzの三次元＋値域：一次元 ⇒ level面で切った断面)<br>
-　　　(四次元立体の断面が三次元立体･･･の視覚化)<br>
-</p>
-<p>
-　<strong>ハートの立体化</strong>
-<br>
-　python　implicit_function.py　(z-np.abs(4*x/5)**(2/3))**2+(4*x/5)**2+y<br>
-　・ x, y, z を含む式にしないとエラー終了するので +y とした。<br>
-　・ エラー終了しない範囲で矢印キーで level を調整する。<br>
-　・ sキー押下で保存終了 (implicit_function.ply に保存される)<br>
-<br>
-　python　create_back_face_from_front_face.py　implicit_function.ply<br>
-　・ ウラ面が無いのでオモテ面からウラ面をつくる。<br>
-<br>
-　python　PLY_interactive.py<br>
-　l　implicit_function.ply　　　　　　･･･　オモテ面をロード<br>
-　c　255　128　255　　　　　　　　　　･･･　オモテ面を濃いピンクで塗りつぶす<br>
-　l　implicit_function_back_face.ply　･･･　ウラ面をロード<br>
-　c　255　200　255　　　　　　　　　　･･･　ウラ面を薄いピンクで塗りつぶす<br>
-　merge　　　　　　　　　　　　　　　　･･･　オモテ面とウラ面をマージ<br>
-</p>
-<img src="images/heart2.gif">
+<img src="images/x_plus_y2_plus_z3.gif">
 
 <p>
-　人工物に飽きたら･･･(猫(などの自然画像)に癒される)
+　python implicit_function.py x**3+y**3+z**3-3*x*y-3*y*z-3*z*x
 </p>
-<img src="images/neko.gif">
+<img src="images/x3_y3_z3-3xy-3yz-zx.gif">
+<p>
+　　python implicit_function.py (1-np.sqrt(x**2+y**2))**2-z**2<br>
+　　(トーラスの式の +z**2 を -z**2 に変えてみた)
+</p>
+<img src="images/1_minus_np_sqrt_x2_plus_y2_minus_z2.gif">
 
 <p>
-作り方<br>
-　① <a href="https://huggingface.co/spaces/depth-anything/Depth-Anything-V2">DepthAnything V2 デモ</a> で画像から深度画像を作る
+　　python implicit_function.py np.sin(3*x)*np.cos(3*y)+np.sin(3*y)*np.cos(3*z)+np.sin(3*z)*np.cos(3*x)<br>
+　　(<a href="https://ja.wikipedia.org/wiki/ジャイロイド">ジャイロイド</a>)
 </p>
-<img src="images/DepthAnythingV2.svg">
-<p>
-　② 画像, 深度画像 → 点群 → メッシュ
-</p>
-<img src="images/WorkflowImg2Mesh.svg">
-<br>
+<img src="images/gyroid.gif">
 
-<p>
-　<strong>cat コマンド</strong><br>
-　　ネコに癒されたら、次はネコの手を借りる。<br>
-　　(実態はタートルグラフィックス)<br>
-</p>
-　<img src="images/cat_command.gif">
-<p>
-　　cat　create　(x　y　z　dx　dy　dz)：ネコを作成する<br>
-　　※ xyz：ネコの位置,　dxdydz：ネコの向き<br>
-　　　 (例) cat　create　1　0　0　0　0　-1<br>
-　　　　　(1,0,0)に z 軸と反対向きのネコが生成される<br>
-
-　　cat　f　(長さ)：ネコを前に進める<br>
-　　cat　up/down/right/left/roll  (角度：degree)：ネコの向きを変える<br>
-　　cat　c2p　：Points[] が空または 1 点の状態でネコを作成～移動した場合は, Points[]に移動軌跡をコピー<br>
-　　　　　　　　Points[] が2点以上の状態でネコを作成～移動した場合は, P2[] に移動軌跡をコピー<br>
-　　cat　disp　on/off：ネコ表示をする/しない<br>
-　　　　　　　　　　　 on/off指定なしの場合はトグル<br>
-　　cat　d　　：ネコ終了<br>
-<br>
-　(例)<br>
-　　l　data\mebius1.txt<br>
-　　(エンターキー押下)<br>
-　　(※ ネコが止まるまで待つ)<br>
-　　l　data\mebius2.txt<br>
-<br>
-　※<br>
-　・ねじるところが loop 処理でうまく表現できず(loop変数を参照できるようにしないと･･･)2つのスクリプトに分けた。<br>
-　・mebius1.txt の処理が終わるのを待たないと、loop処理と後処理(mebius2.txt)の順番がぐちゃぐちゃになる。<br>
-</p>
-　<img src="images/mebius.png">
-<p>
-　(例)<br>
-　　l　data/cat_spiral.txt<br>
-　　(エンターキー押下)<br>
-　　(complete scriptと表示されたら)<br>
-　　cat　c2p<br>
-　　polyline
-</p>
-　<img src="images/cat_spiral.png">
 <h3>使い方</h3>
 
 <h4>起動・終了</h4>
@@ -857,6 +776,82 @@ Points 配列の点を折れ線(パイプ)で接続する。<br>
 　(例) フェイスメッシュデータ取り込み<br>
 　　python　src/img2facemesh.py　(画像ファイル)<br>
 </p>
+
+<p>
+　<strong>輪郭の立体化</strong>(スケーリング＋平行移動)<br>
+　　※ 輪郭線が細いとうまくいかない。<br>
+　(例)<br>
+　　l　data\section.txt　　　　　　　･･･　断面用の点データ定義スクリプトをロード<br>
+　　(エンターキー押下)　　　　　　　･･･　スクリプト実行<br>
+　　p　push　section　　　　　　　　･･･　Points[] から Section[] にコピー<br>
+　　img2mesh　data\heart.png　　　　･･･　背景黒の二値(っぽい)画像から輪郭抽出<br>
+　　(ESCキー以外を押下)　　　　　　　･･･　結果がセーブされる<br>
+　　puccho　　　　　　　　　　　　　･･･　輪郭 (Points[]) を断面 (Section[]) で立体化<br>
+　　surface　pclose　　　　　　　　　･･･　立体化した結果 (P2[]) をメッシュ化<br>
+<br>
+　　ウラ返しになる場合は、<br>
+　　d　　　　　　　　　　　　　　　　･･･　メッシュを削除<br>
+　　p2　reverse　p　　　　　　　　　･･･　path方向の順番を逆順にして<br>
+　　surface　pclose　　　　　　　　　･･･　再度メッシュ化
+</p>
+<img src="images/puccho.svg">
+
+<p>
+　人工物に飽きたら･･･(猫(などの自然画像)に癒される)
+</p>
+<img src="images/neko.gif">
+
+<p>
+作り方<br>
+　① <a href="https://huggingface.co/spaces/depth-anything/Depth-Anything-V2">DepthAnything V2 デモ</a> で画像から深度画像を作る
+</p>
+<img src="images/DepthAnythingV2.svg">
+<p>
+　② 画像, 深度画像 → 点群 → メッシュ
+</p>
+<img src="images/WorkflowImg2Mesh.svg">
+<br>
+
+<p>
+　<strong>cat コマンド</strong><br>
+　　ネコに癒されたら、次はネコの手を借りる。<br>
+　　(実態はタートルグラフィックス)<br>
+</p>
+　<img src="images/cat_command.gif">
+<p>
+　　cat　create　(x　y　z　dx　dy　dz)：ネコを作成する<br>
+　　※ xyz：ネコの位置,　dxdydz：ネコの向き<br>
+　　　 (例) cat　create　1　0　0　0　0　-1<br>
+　　　　　(1,0,0)に z 軸と反対向きのネコが生成される<br>
+
+　　cat　f　(長さ)：ネコを前に進める<br>
+　　cat　up/down/right/left/roll  (角度：degree)：ネコの向きを変える<br>
+　　cat　c2p　：Points[] が空または 1 点の状態でネコを作成～移動した場合は, Points[]に移動軌跡をコピー<br>
+　　　　　　　　Points[] が2点以上の状態でネコを作成～移動した場合は, P2[] に移動軌跡をコピー<br>
+　　cat　disp　on/off：ネコ表示をする/しない<br>
+　　　　　　　　　　　 on/off指定なしの場合はトグル<br>
+　　cat　d　　：ネコ終了<br>
+<br>
+　(例)<br>
+　　l　data\mebius1.txt<br>
+　　(エンターキー押下)<br>
+　　(※ ネコが止まるまで待つ)<br>
+　　l　data\mebius2.txt<br>
+<br>
+　※<br>
+　・ねじるところが loop 処理でうまく表現できず(loop変数を参照できるようにしないと･･･)2つのスクリプトに分けた。<br>
+　・mebius1.txt の処理が終わるのを待たないと、loop処理と後処理(mebius2.txt)の順番がぐちゃぐちゃになる。<br>
+</p>
+　<img src="images/mebius.png">
+<p>
+　(例)<br>
+　　l　data/cat_spiral.txt<br>
+　　(エンターキー押下)<br>
+　　(complete scriptと表示されたら)<br>
+　　cat　c2p<br>
+　　polyline
+</p>
+　<img src="images/cat_spiral.png">
 
 <p>
 　<strong>星</strong><br>
