@@ -33,15 +33,25 @@
 <p>
 　<strong>implicit_function.py</strong>　･･･　PLY_interactive.py とは別の即席の陰関数モデリングツール<br>
 　python　implicit_function.py　(式)<br>
-　・ウラ面追加、面の色追加。<br>
-　・エラー終了しにくくした。<br>
-　　(式に x,y,z は必須。要らない場合は +0*z などとする)<br>
-　・表示倍率の調整ができていないので、マウスホィールでズームアウトする必要あり。<br>
-　・矢印キーで level(断面を決めるパラメータ)を増減する。<br>
-　・sキー押下で保存、終了。ESCキー押下で保存せずに終了。<br>
-　(例)<br>
+　・後でウラ面、オモテ面の色を別々に設定できるように<br>
+　　ウラ面＋オモテ面(implicit.ply), オモテ面(implicitA.ply), ウラ面(implicitAA.ply)を保存。<br>
+　・aキー押下で座標軸表示/消すをトグル。<br>
+　・cキー押下でキャプチャーする/しないをトグル。<br>
+　・7/8キーで矢印キーで調整するlevel値のステップを小さくする/大きくする。<br>
+<br>
+　(例)エイリアンっぽい<br>
+　　python implicit_function.py ((x**2)+(y**2)+(z**2)+2*y-1)*((x**2+y**2+z**2-2*y-1)**2-8*z**2)
+</p>
+<img src="images/alien.png">
+</p>
+　(例)サンゴっぽい<br>
+　　python implicit_function.py x+np.sin(4*x)*np.cos(4*y)+np.sin(4*y)*np.cos(4*z)+np.sin(4*z)*np.cos(4*x)
+</p>
+<img src="images/sango.gif">
+<p>
 　　python implicit_function.py x+y**2+z**3
 </p>
+
 <img src="images/x_plus_y2_plus_z3.gif">
 
 <p>
