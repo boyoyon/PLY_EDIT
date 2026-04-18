@@ -10,6 +10,9 @@ from draw import getDrawingPoints
 from RST import *
 from surface import *
 from Cat import Cat
+from filter_mesh import filter_mesh
+from filter_points import filter_points
+from get_boundary_points import get_boundary_points
 
 LINES = []
 input_queue = None
@@ -654,9 +657,6 @@ def main():
     vis.register_key_action_callback(ord("X"), key_callback_X)
     vis.register_key_action_callback(ord("Y"), key_callback_Y)
     vis.register_key_action_callback(ord("Z"), key_callback_Z)
-    vis.register_key_action_callback(KEY_UP, key_callback_scale_up)
-    vis.register_key_action_callback(KEY_UP, key_callback_scale_up)
-    vis.register_key_action_callback(KEY_UP, key_callback_scale_up)
     vis.register_key_action_callback(KEY_UP, key_callback_scale_up)
     vis.register_key_action_callback(KEY_DOWN, key_callback_scale_down)
     vis.register_key_action_callback(KEY_LEFT, key_callback_42)
@@ -2456,6 +2456,33 @@ def main():
                         else:
                             print('p d (num: 0 - %d)' % (len(Points)-1))
 
+                    elif cmds[1] == 'filter':
+
+                        if len(cmds) > 2:
+                             
+                            _points = None
+
+                            if cmds[2] == 'x':
+                                _points = filter_points(Points, 0)
+                            elif cmds[2] == '-x':
+                                _points = filter_points(Points, 1)
+                            elif cmds[2] == 'y':
+                                _points = filter_points(Points, 2)
+                            elif cmds[2] == '-y':
+                                _points = filter_points(Points, 3)
+                            elif cmds[2] == 'z':
+                                _points = filter_points(Points, 4)
+                            elif cmds[2] == '-z':
+                                _points = filter_points(Points, 5)
+                            else:
+                                print('p filter x/-x/y/-y/z/-z')
+                                continue
+
+                            Points = _points
+
+                        else:
+                            print('p filter x/-x/y/-y/z/-z')
+
                     elif len(cmds)== 4: # direct input of 3D coordinates
 
                         fResult, values = Evals(cmds[1:], 3)
@@ -3443,6 +3470,76 @@ def main():
                         P2.append(_p.tolist())
 
                     print('complete puccho')
+
+            elif cmds[0] == 'filter':
+
+                if len(meshes) > 1:
+                    if len(cmds) > 1:
+                        if cmds[1] == 'x':
+                            _mesh = filter_mesh(meshes[curr], 0)
+                        elif cmds[1] == '-x':
+                            _mesh = filter_mesh(meshes[curr], 1)
+                        elif cmds[1] == 'y':
+                            _mesh = filter_mesh(meshes[curr], 2)
+                        elif cmds[1] == '-y':
+                            _mesh = filter_mesh(meshes[curr], 3)
+                        elif cmds[1] == 'z':
+                            _mesh = filter_mesh(meshes[curr], 4)
+                        elif cmds[1] == '-z':
+                            _mesh = filter_mesh(meshes[curr], 5)
+                        elif cmds[1] == 'X':
+                            _mesh = filter_mesh(meshes[curr], 6)
+                        elif cmds[1] == '-X':
+                            _mesh = filter_mesh(meshes[curr], 7)
+                        elif cmds[1] == 'Y':
+                            _mesh = filter_mesh(meshes[curr], 8)
+                        elif cmds[1] == '-Y':
+                            _mesh = filter_mesh(meshes[curr], 9)
+                        elif cmds[1] == 'Z':
+                            _mesh = filter_mesh(meshes[curr], 10)
+                        elif cmds[1] == '-Z':
+                            _mesh = filter_mesh(meshes[curr], 11)
+                        else:
+                            print('filter x/-x/y/-y/z/-z/X/-X/Y/-Y/Z/-Z')
+                            continue
+                        
+                        update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+
+                        if _mesh is not None:
+                        
+                            no = 2
+                            name = 'filtered' 
+                            while name in names:
+                                name = 'filtered(%d)' % no
+                                no += 1
+           
+                            names.pop(-1) 
+                            names.append(name)
+                            curr = len(meshes) - 1
+                            _EyePos = ctrl.convert_to_pinhole_camera_parameters()
+                            vis.remove_geometry(meshes[curr])
+                            meshes.pop(-1)
+                            meshes.append(_mesh)
+                            vis.add_geometry(meshes[curr])
+                            ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+
+                    else:
+                        print('filter x/-x/y/-y/z/-z/X/-X/Y/-Y/Z/-Z') 
+
+                else:
+                    print('no mesh')
+
+            elif cmds[0] == 'getBoundaryPoints':
+
+                if len(meshes) > 1:
+
+                    _points = get_boundary_points(meshes[curr])
+
+                    if _points.shape[0] > 0:
+                        Points = _points.tolist()                
+
+                else:
+                    print('no mesh')
 
             elif cmds[0] == 'quit':
                 break
