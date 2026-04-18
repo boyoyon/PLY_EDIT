@@ -1,0 +1,23 @@
+p clear
+p 1 0 0
+p r 0 -360/30 0 30
+p2 p2p
+p s 0 1 0 2
+surface pclose
+s 1/200 1 1/200
+save mini_circle.ply
+p clear
+p 0 0 0
+p t 0.02 0 0 100
+p2 p2p
+p t 0.01 0 0.02 2
+p2 p2p
+p t 0 0 0.04 50
+p2 p2p
+distribute mini_circle.ply
+centering
+save chcker.ply
+p clear
+
+
+
