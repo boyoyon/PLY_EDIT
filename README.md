@@ -69,6 +69,40 @@
 　　(<a href="https://ja.wikipedia.org/wiki/ジャイロイド">ジャイロイド</a>)
 </p>
 <img src="images/gyroid.gif">
+<p>
+　<strong>地形っぽい面の作成</strong><br>
+　　python　src\create_terrain.py<br>
+<br>
+　　terrainA.ply　(オモテ面)<br>
+　　terrainAA.ply (ウラ面)　　
+</p>
+<p>
+　<strong>フィルター</strong><br>
+　filter　(x/-x/y/-y/z/-z/X/-X/Y/-Y/Z/-Z)<br>
+　・x　　三角形の頂点の１つが x > 0 ならば削除<br>
+　・-x　 三角形の頂点の１つが x < 0 ならば削除<br>
+　・X　　三角形の頂点すべてが x > 0 ならば削除<br>
+　・-X　 三角形の頂点すべてが x < 0 ならば削除<br>
+　　(他も同様)<br>
+　Points[] に対しては<br>
+　p　filter　(x/-x/y/-y/z/-z)<br>
+
+</p>
+
+<img src="images/terrain.svg">
+
+<p>
+　<strong>簡易彫刻</strong><br>
+　python src\sculpt.py<br>
+　(Visualizer画面上で)<br>
+　　矢印キー　･･･　ドリルの位置変更<br>
+　　fキー　　 ･･･　ドリルをターゲットに近づける<br>
+　　bキー　　 ･･･　ドリルをターゲットから離す<br>
+　　mキー　　 ･･･　削り開始位置をマーキング<br>
+　　dキー　　 ･･･　マーキング位置からdキー押下位置まで削る<br>
+　　uキー　　 ･･･　undo<br>
+
+</p>
 
 <h3>使い方</h3>
 
