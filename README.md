@@ -92,6 +92,12 @@
 <img src="images/terrain.svg">
 
 <p>
+　python　src\display_opaque_translucent_mesh.py　(不透明mesh)　(半透明mesh)<br>
+　(例)<br>
+　python src\display_opaque_translucent_mesh.py data\terrainA.ply data\plane.ply　　
+</p>
+<img src="images/opaque_translucent.png">
+<p>
 　<strong>簡易彫刻</strong><br>
 　python src\sculpt.py<br>
 　(Visualizer画面上で)<br>
