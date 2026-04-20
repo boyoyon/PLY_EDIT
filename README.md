@@ -111,6 +111,13 @@
 　　save　　　･･･　plyにセーブする
 </p>
 
+<p>
+　<strong>歯車の点列生成</strong><br>
+　p　gear　(サイズ)　(歯の高さ)　(歯の本数)<br>
+　(例)<br>
+　l　data\gear2.txt
+</p>
+<img src="images/gear.png">
 <h3>使い方</h3>
 
 <h4>起動・終了</h4>
