@@ -12,7 +12,8 @@ from surface import *
 from Cat import Cat
 from filter_mesh import filter_mesh
 from filter_points import filter_points
-from get_boundary_points import get_boundary_points
+from dragon1 import dragon1
+#from dragon import dragon
 
 LINES = []
 input_queue = None
@@ -2483,6 +2484,72 @@ def main():
                         else:
                             print('p filter x/-x/y/-y/z/-z')
 
+                    elif cmds[1] == 'gear':
+
+                        if len(cmds) > 4:
+
+                            fResult, values = Evals(cmds[2:],3)
+                            if fResult:
+                                 size = values[0]
+                                 height = values[1]
+                                 num = int(values[2])
+
+                                 _points = []
+                                 _r0 = size
+                                 _r1 = size + height
+
+                                 _angle_step = np.pi * 2 / (num * 4)
+
+                                 for i in range(num * 4):
+                                     _angle = _angle_step * i
+                                     _scale = _r0
+                                     if i % 4 == 0 or i % 4 == 1:
+                                         _scale = _r1                       
+                                     
+                                     _x = -np.cos(_angle) * _scale
+                                     _z = -np.sin(_angle) * _scale
+
+                                     _points.append((_x, 0.0, _z))
+
+                                 Points.clear()
+                                 P2.clear()
+                                 Points = _points
+
+                            else:
+                                print('p gear size height num')
+
+                        else:
+                            print('p gear size height num')
+
+                    elif cmds[1] == 'dragon':
+
+                        _order = 5
+                        _x = 0
+                        _z = 0.1
+                        if len(cmds) > 2:
+                            fResult, value = Eval(cmds[2])
+                            if fResult:
+                                _order = int(value)
+                            else:
+                                print('p dragon (order x z)')
+                                continue
+
+                        if len(cmds) > 4:
+                            fResult, values = Evals(cmds[3:],2)
+                            if fResult:
+                                _x = values[0]
+                                _z = values[1]
+                            else:
+                                print('p dragon (order x z)')
+                                continue
+
+                        _points = dragon1(_order, _x, _z)
+                        #_points = dragon(_order, _x, _z)
+                        
+                        if len(_points) > 0:
+                            Points.clear()
+                            Points = _points
+
                     elif len(cmds)== 4: # direct input of 3D coordinates
 
                         fResult, values = Evals(cmds[1:], 3)
@@ -3525,18 +3592,6 @@ def main():
 
                     else:
                         print('filter x/-x/y/-y/z/-z/X/-X/Y/-Y/Z/-Z') 
-
-                else:
-                    print('no mesh')
-
-            elif cmds[0] == 'getBoundaryPoints':
-
-                if len(meshes) > 1:
-
-                    _points = get_boundary_points(meshes[curr])
-
-                    if _points.shape[0] > 0:
-                        Points = _points.tolist()                
 
                 else:
                     print('no mesh')
