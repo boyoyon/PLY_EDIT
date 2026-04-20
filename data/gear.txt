@@ -1,0 +1,13 @@
+p gear 1 0.1 20   # 半径１、歯の高さ0.1、歯20個のギアの点列を作成
+p t 0 0.2 0 2     # 厚み0.2
+surface pclose    # ギアの側面を作成
+p push section    # ギアの点列をsectionバッファに一時保存
+p2 reverse p　　　# P2 バッファで path順を逆順にする(天面のウラ、オモテの調整)
+p pop 0           # もう一方のギアの点列をP2からPointsにコピー
+p s 0 1 0 2       # xz平面のスケールをゼロにして
+surface pclose    # 面を張る
+p pop section　　 # section からもう一方のギア点列をロード
+p s 0 1 0 2       # xz平面のスケールをゼロにして
+surface pclose    # 面を張る
+
+

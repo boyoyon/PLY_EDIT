@@ -1,0 +1,26 @@
+p gear 1 0.1 20   # 半径１、歯の高さ0.1、歯20個のギアの点列を作成
+p t 0 0.2 0 2     # 厚み0.2
+surface pclose    # ギアの側面を作成
+
+p gear 0.5 0 20   # 半径0.5、歯の高さ0、歯20個のギアの点列を作成
+p t 0 0.2 0 2     # 厚み0.2
+p2 reverse p
+surface pclose    # ギアの側面を作成
+
+
+p gear 1 0.1 20   # 半径１、歯の高さ0.1、歯20個のギアの点列を作成
+p push  section   # ギア(外側)の点列を section に一時保存
+p gear 0.5 0 20   # 半径0.5、歯の高さ0、歯20個のギアの点列を作成
+p push            # P2にコピー
+p pop section     # ギア(外側)の点列を section から Pointsに戻す
+p push　　　　　　# ギア(外側)の点列を Points から P2 にコピー
+surface　pclose　 # 面を張る
+p2 p2p            # P2 を Points にコピー
+p t 0 0.2 0
+p p2p 2
+p2 reverse p
+surface pclose
+
+
+
+
