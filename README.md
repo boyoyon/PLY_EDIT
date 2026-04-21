@@ -21,6 +21,7 @@
 　pip install manifold3d　　 ･･･　Boolean.py で使用<br>
 　pip install plyfile　　　　･･･　ply2skeleton.py で使用<br>
 　pip install scikit-image　 ･･･　implicit_function.py で使用<br>
+　pip install numpy-hilbert-curve ･･･ create_3d_hilbert_curve_points.py で使用
 </p>
 
 <h3>チュートリアル</h3>
@@ -118,6 +119,24 @@
 　l　data\gear2.txt
 </p>
 <img src="images/gear.png">
+
+<p>
+　<strong>hilbert曲線の点列生成</strong><br>
+　　pip install numpy-hilbert-curve<br>
+　　python src\create_3d_hilbert_curve_points.py (ビット数)<br>
+　　(例)<br>
+　　python src\create_3d_hilbert_curve_points.py 3<br>
+　　polyline
+</p>
+<img src="images/3d_hilbert_curve.png">
+<p>
+　　似たようなものに <a href="https://en.wikipedia.org/wiki/Z-order_curve"> Z-order curve</a> があったので作ってみた。<br>
+　　l data/z_order_curve.txt<br>
+</p>
+<img src="images/z_order_curve.png">
+
+
+
 <h3>使い方</h3>
 
 <h4>起動・終了</h4>
@@ -922,6 +941,16 @@ Points 配列の点を折れ線(パイプ)で接続する。<br>
 　　(例) calc np.sin(np.deg2rad(36))
 　　コンソールから 式を入力して計算できるようにした。
 </p>
+
+<p>
+　<strong>Iterated Function System</strong><br>
+　python src/ifs.py　(タイプ：fern/tree0/tree)<br>
+　※『C言語によるアルゴリズム辞典』に載っていた IFS を移植してみたが使い方未定<br>
+　　 3Dでもないしメッシュでもないし･･･
+</p>
+
+<img src="images/ifs.png">
+
 </body>
 </html>
 
