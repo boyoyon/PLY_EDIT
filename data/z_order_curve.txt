@@ -1,0 +1,24 @@
+# https://en.wikipedia.org/wiki/Z-order_curve
+p clear
+p 0 0.5 0          # 「z」を定義
+p 0.5 0.5 0        #
+p 0 0 0            #
+p 0.5 0 0          #
+p t 0.75 0 0 2     # 「z」を x 方向にコピー:2個
+p2 p2p             #
+p t 0 0 0.75 2     # 「z」を z 方向にコピー:4個
+p2 p2p             #
+p t 0 -0.75 0 2    # 「z」を y 方向にコピー:8個
+p2 p2p             #
+p t 1.5 0 0 2      # 「z」を x 方向にコピー:16個
+p2 p2p             #
+p t 0 0 1.5 2      # 「z」を z 方向にコピー:32個
+p2 p2p             #
+p t 0 -1.5 0 2     # 「z」を y 方向にコピー:64個
+p2 p2p
+polyline 25 0.06 1 sphere sphere
+centering
+normals
+p clear
+
+
