@@ -126,6 +126,8 @@
 　　python src\create_3d_hilbert_curve_points.py (ビット数)<br>
 　　(例)<br>
 　　python src\create_3d_hilbert_curve_points.py 3<br>
+　　python src\PLY_interactive.py<br>
+　　l 3d_hilbert_curve_points_3bits.npy<br>
 　　polyline
 </p>
 <img src="images/3d_hilbert_curve.png">
