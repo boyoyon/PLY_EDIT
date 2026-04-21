@@ -33,7 +33,7 @@ def getRotateMatrix(cmds, size=3):
             if size == 4:
                 R = np.eye(4)
                 r = o3d.geometry.get_rotation_matrix_from_xyz((rad_x, rad_y, rad_z))
-                R[:3,:3] = t            
+                R[:3,:3] = r            
 
             else:
                 R = o3d.geometry.get_rotation_matrix_from_xyz((rad_x, rad_y, rad_z))
