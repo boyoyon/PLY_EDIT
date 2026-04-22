@@ -137,8 +137,40 @@
 </p>
 <img src="images/z_order_curve.png">
 
+<p>
+　<strong>星型頂点座標生成</strong><br>
+　p　star　(サイズ)<br>
+</p>
+<img src="images/star.svg">
 
-
+<p>
+　<strong>多面体頂点座標生成</strong><br>
+　p　polyhedron　tetra/hexa/octa/dodeca/icosa (サイズ)<br>
+<br>
+　<strong>線分描画</strong><br>
+　p　connect　nr_divs　(断面の画数)<br>
+　p　connect　r　(断面の半径)<br>
+　p　connect　(index1)　(index2)<br>
+<br>
+　<strong>面の描画</strong><br>
+　face　(面の番号)<br>
+<br>
+　(例)<br>
+　p　polyhedron　hexa<br>
+　p　connect　nr_divs　25<br>
+　p　connect　r　0.1<br>
+　p　connect　0　1<br>
+　p　connect　1　2<br>
+　　　　：<br>
+　p　connect　0　5<br>
+　p　connect　3　4<br>
+　distribute　sphere　0.1<br>
+　c　yellow<br>
+　face　0<br>
+　c　cyan<br>
+　face　1
+</p>
+<img src="images/polyhedron.png">
 <h3>使い方</h3>
 
 <h4>起動・終了</h4>
