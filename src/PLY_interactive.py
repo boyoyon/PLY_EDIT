@@ -587,6 +587,17 @@ def update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh):
         undo_mesh.append(copy.deepcopy(meshes[curr]))
         undo_name.append(names[curr])
 
+def rotDeg2D(p, degree):
+
+    rad = np.deg2rad(degree)
+    x = p[0]
+    y = p[1]
+
+    X = np.cos(rad) * x - np.sin(rad) * y
+    Y = np.sin(rad) * x + np.sin(rad) * y
+
+    return (X, Y)
+
 def main():
 
     global input_queue, LINES, ctrl, angle_step, translation_step, CatCursor
@@ -631,6 +642,7 @@ def main():
     Points = []  # 点の配列
     P2 = []      # 点の配列の配列
     Section = [] # 断面用の点の配列
+    Faces = []   # 面を構成する頂点indxの配列
  
     EyePos = None    
     EyePos0 = None
@@ -692,6 +704,9 @@ def main():
     cat_idx = -1
     fPath = False
     fCatDisp = True
+
+    connect_nr_divs = '25'
+    connect_r = '0.01'
 
     while True:
    
@@ -883,6 +898,14 @@ def main():
                         LateralInner = [255,200,128]
                         PaddingOuter = [255,128, 64]
                         PaddingInner = [255,200,128]
+
+                    elif cmds[1] == 'yellow':
+                        SurfaceOuter = [255,255,128]
+                        SurfaceInner = [255,255,200]
+                        LateralOuter = [255,255,128]
+                        LateralInner = [255,255,200]
+                        PaddingOuter = [255,255,128]
+                        PaddingInner = [255,255,255]
 
                     elif cmds[1] == 'cyan':
                         SurfaceOuter = [ 64,230,230]
@@ -1806,6 +1829,7 @@ def main():
                         print('Points[] is cleared')
                         P2.clear()
                         Section.clear()
+                        Faces.clear()
 
                     elif cmds[1] == 'polygon':
 
@@ -2134,7 +2158,7 @@ def main():
                                     P2.append(copy.deepcopy(Points))
                                     print('Points are copied to P2[%d]:' % (len(P2) - 1))
                                 elif cmds[2] == 'section':
-                                    Section = copy.deepcopy(Points)
+                                    Section.append(copy.deepcopy(Points))
                                     print('Points are copied to Section[]')
 
                                 else:
@@ -2152,7 +2176,7 @@ def main():
                         if len(cmds) > 2 and cmds[2] == 'section':
 
                             if len(Section) > 0:
-                                Points = copy.deepcopy(Section)
+                                Points = Section.pop()
 
                             else:
                                 print('Section[] is empty')
@@ -2202,7 +2226,23 @@ def main():
 
                     elif cmds[1] == 'connect':
 
-                        if len(cmds) >= 4:
+                        if len(cmds) > 3 and cmds[2] == 'nr_divs':
+                            fResult, value = Eval(cmds[3])
+                            if fResult:
+                                connect_nr_divs = '%d' % int(value)
+                                print('p connect nr_divs is set to %s' % connect_nr_divs)
+                            else:
+                                print('p connect nr_divs <number of sides of section>')
+
+                        elif len(cmds) > 3 and cmds[2] == 'r':
+                            fResult, value = Eval(cmds[3])
+                            if fResult:
+                                connect_r = cmds[3]
+                                print('p conenct r is set to %s' % connect_r)
+                            else:
+                                print('p connect r <radius>')
+
+                        elif len(cmds) >= 4:
 
                             fResult, value = Eval(cmds[2])
                             if fResult:
@@ -2222,16 +2262,13 @@ def main():
                                 print('idx: %d ～ %d' % (-len(Points), len(Points) - 1))
                                 continue
 
-                            nr_divs = '25'
-                            r = '0.01'
-
                             if len(cmds) > 4:
                                 nr_divs = cmds[4]
 
                                 if len(cmds) > 5:
                                     r = cmds[5]
 
-                            _cmds = ['polyline', nr_divs, r]
+                            _cmds = ['polyline', connect_nr_divs, connect_r]
 
                             _meshes, _ = polyline(_cmds, (Points[start], Points[end]), False)
 
@@ -2550,6 +2587,228 @@ def main():
                             Points.clear()
                             Points = _points
 
+                    elif cmds[1] == 'star':
+
+                        size = 1
+
+                        if len(cmds) > 2:
+                            fResult, value = Eval(cmds[2])
+                            if fResult:
+                                size = value
+                            else:
+                                print('p star (size)')
+                                continue
+
+                        _x0 = -size
+                        _p0 = []
+
+                        for i in range(5):
+                            _angle = np.pi * 2 / 5 * i
+                            _x = np.cos(_angle) * _x0
+                            _z = np.sin(_angle) * _x0
+                            _p0.append((_x, 0.0, _z))
+
+                        _scale = np.cos(np.deg2rad(72)) / np.cos(np.deg2rad(36))
+                        _points = []
+                        _angle = np.pi * 2 / 10
+
+                        for i in range(5):
+
+                            _x = np.cos(_angle) * _p0[i][0] - np.sin(_angle) * _p0[i][2]
+                            _z = np.sin(_angle) * _p0[i][0] + np.cos(_angle) * _p0[i][2]
+                            _points.append(_p0[i])
+                            _points.append((_x * _scale, 0.0, _z * _scale))
+
+                        Points.clear()
+                        Points = _points
+
+                    elif cmds[1] == 'polyhedron':
+
+                        if len(cmds) > 2:
+
+                            _points = []
+                            _faces = []
+
+                            if cmds[2] == 'tetra':
+                                size = 1.0
+                                if len(cmds) > 3:
+                                    fResult, value = Eval(cmds[3])
+                                    if fResult:
+                                        size = value
+                                    else:
+                                        print('p polyhedron tetra/hexa/octa/dodeca/icosa (size)')
+                                        continue
+
+                                _points.append(( size, size, size))
+                                _points.append((-size,-size, size))
+                                _points.append(( size,-size,-size))
+                                _points.append((-size, size,-size))
+
+                                _faces.append(( 0, 1, 2))
+                                _faces.append(( 1, 3, 2))
+                                _faces.append(( 2, 3, 0))
+                                _faces.append(( 0, 3, 1))
+
+                            elif cmds[2] == 'hexa':
+                                size = 1.0
+                                if len(cmds) > 3:
+                                    fResult, value = Eval(cmds[3])
+                                    if fResult:
+                                        size = value
+                                    else:
+                                        print('p polyhedron tetra/hexa/octa/dodeca/icosa (size)')
+                                        continue
+
+                                _points.append(( size/2, size/2, size/2))
+                                _points.append(( size/2, size/2,-size/2))
+                                _points.append((-size/2, size/2,-size/2))
+                                _points.append((-size/2, size/2, size/2))
+                                _points.append((-size/2,-size/2, size/2))
+                                _points.append(( size/2,-size/2, size/2))
+                                _points.append(( size/2,-size/2,-size/2))
+                                _points.append((-size/2,-size/2,-size/2))
+
+                                _faces.append(( 0, 5, 6, 1))
+                                _faces.append(( 1, 6, 7, 2))
+                                _faces.append(( 4, 7, 6, 5))
+                                _faces.append(( 3, 4, 5, 0))
+                                _faces.append(( 2, 3, 0, 1))
+                                _faces.append(( 2, 7, 4, 3))
+
+                            elif cmds[2] == 'octa':
+                                size = 1.0
+                                if len(cmds) > 3:
+                                    fResult, value = Eval(cmds[3])
+                                    if fResult:
+                                        size = value
+                                    else:
+                                        print('p polyhedron tetra/hexa/octa/dodeca/icosa (size)')
+                                        continue
+
+
+                                _points.append(( size,  0.0,  0.0))
+                                _points.append((-size,  0.0,  0.0))
+                                _points.append((  0.0, size,  0.0))
+                                _points.append((  0.0,-size,  0.0))
+                                _points.append((  0.0,  0.0, size))
+                                _points.append((  0.0,  0.0,-size))
+
+                                _faces.append(( 2, 4, 0))
+                                _faces.append(( 2, 0, 5))
+                                _faces.append(( 2, 5, 1))
+                                _faces.append(( 2, 1, 4))
+                                _faces.append(( 3, 0, 4))
+                                _faces.append(( 3, 5, 0))
+                                _faces.append(( 3, 1, 5))
+                                _faces.append(( 3, 4, 1))
+
+                            elif cmds[2] == 'dodeca':
+                                size = 1.0
+                                if len(cmds) > 3:
+                                    fResult, value = Eval(cmds[3])
+                                    if fResult:
+                                        size = value
+                                    else:
+                                        print('p polyhedron tetra/hexa/octa/dodeca/icosa (size)')
+                                        continue
+
+
+                                _P = (size, 0.0)
+                                _z = (np.sqrt(5) + 3) * size / 4
+    
+                                for i in range(5):
+                                    _Q = rotDeg2D(_P, 18 + 72 * i)
+                                    _points.append((_Q[0], _Q[1], _z))
+
+                                _P = ((np.sqrt(5) + 1) * size / 2, 0.0)
+                                _z = (np.sqrt(5) - 1) * size / 4
+
+                                for i in range(5, 10):
+                                    _Q = rotDeg2D(_P, 18 + 72 * i)
+                                    _points.append((_Q[0], _Q[1], _z))
+
+                                _z = -(np.sqrt(5) - 1) * size / 4
+
+                                for i in range(10, 15):
+                                    _Q = rotDeg2D(_P, 54 + 72 * i)
+                                    _points.append((_Q[0], _Q[1], _z))
+
+                                _P = (size, 0.0)
+                                _z = -(np.sqrt(5) + 3) * size / 4
+
+                                for i in range(15, 20):
+                                    _Q = rotDeg2D(_P, 54 + 72 * i)
+                                    _points.append((_Q[0], _Q[1], _z))
+
+                                _faces.append(( 5,10, 6, 1, 0))
+                                _faces.append(( 3, 4, 0, 1, 2))
+                                _faces.append(( 9,14, 5, 0, 4))
+                                _faces.append((19,15,10, 5,14))
+                                _faces.append((16,11, 6,10,15))
+                                _faces.append(( 7, 2, 1, 6,11))
+                                _faces.append((17,18,13, 8,12))
+                                _faces.append((11,16,17,12, 7))
+                                _faces.append((15,19,18,17,16))
+                                _faces.append((14, 9,13,18,19))
+                                _faces.append(( 4, 3, 8,13, 9))
+                                _faces.append(( 2, 7,12, 8, 3))
+
+                            elif cmds[2] == 'icosa':
+                                size = 1.0
+                                if len(cmds) > 3:
+                                    fResult, value = Eval(cmds[3])
+                                    if fResult:
+                                        size = value
+                                    else:
+                                        print('p polyhedron tetra/hexa/octa/dodeca/icosa (size)')
+                                        continue
+
+                                _t = (1+np.sqrt(5)) / 2 * size
+
+                                _points.append(( _t, 0,  size))
+                                _points.append(( _t, 0, -size))
+                                _points.append((-_t, 0, -size))
+                                _points.append((-_t, 0,  size))
+                                
+                                _points.append(( size,  _t, 0))
+                                _points.append((-size,  _t, 0))
+                                _points.append((-size, -_t, 0))
+                                _points.append(( size, -_t, 0))
+                                
+                                _points.append((0,  size,  _t))
+                                _points.append((0, -size,  _t))
+                                _points.append((0, -size, -_t))
+                                _points.append((0,  size, -_t))
+                            
+                                _faces.append(( 0, 1, 4))
+                                _faces.append(( 0, 7, 1))
+                                _faces.append(( 0, 9, 7))
+                                _faces.append(( 0, 8, 9))
+                                _faces.append(( 0, 4, 8))
+                                _faces.append((11, 4, 1))
+                                _faces.append((10, 1, 7))
+                                _faces.append(( 6, 7, 9))
+                                _faces.append(( 3, 9, 8))
+                                _faces.append(( 5, 8, 4))
+                                _faces.append(( 1,10,11))
+                                _faces.append(( 7, 6,10))
+                                _faces.append(( 9, 3, 6))
+                                _faces.append(( 8, 5, 3))
+                                _faces.append(( 4,11, 5))
+                                _faces.append(( 2,11,10))
+                                _faces.append(( 2,10, 6))
+                                _faces.append(( 2, 6, 3))
+                                _faces.append(( 2, 3, 5))
+                                _faces.append(( 2, 5,11))
+
+                            Points.clear()
+                            Points = copy.deepcopy(_points)
+                            Faces.clear()
+                            Faces = copy.deepcopy(_faces)
+
+                        else:
+                            print('p polyhedron tetra/hexa/octa/dodeca/icosa (size)')
+
                     elif len(cmds)== 4: # direct input of 3D coordinates
 
                         fResult, values = Evals(cmds[1:], 3)
@@ -2639,6 +2898,34 @@ def main():
 
                         else:
                             print('P2[] is empty')
+
+                    elif cmds[1] == 'pop':
+
+                        if len(cmds) > 2 and cmds[2] == 'section':
+                            if len(Section) > 0:
+                                P2.clear()
+                                P2 = copy.deepcopy(Section)
+                                Section.clear()
+                                print('Section --> P2')
+                                print('P2:', P2.shape)
+                            else:
+                                print('Section is empty')
+                        else:
+                            print('p2 pop section: Section[] --> P2[]')
+
+                    elif cmds[1] == 'push':
+
+                        if len(cmds) > 2 and cmds[2] == 'section':
+                            if len(P2) > 0:
+                                Section.clear()
+                                Section = copy.deepcopy(P2)
+                                P2.clear()
+                                print('P2 --> Section')
+                                print('Section:', Section.shape)
+                            else:
+                                print('P2 is empty')
+                        else:
+                            print('p2 push section: P2[] --> Section[]')
 
                     displayMarker(vis, Pmarker, Points, fPdisp)
 
@@ -2846,6 +3133,84 @@ def main():
 
                 else:
                     print('no points or insufficient points to draw skeleton')
+
+            elif cmds[0] == 'face':
+
+                if len(Faces) > 0:
+                    if len(cmds) < 2:
+                        print('Faces:', Faces)
+
+                    else:
+                        fResult, value = Eval(cmds[1])
+                        if fResult and value < len(Faces):
+                           _i = int(value)
+                        else:
+                           print('face index')
+                           continue
+
+                        #_fError = False
+
+                        _outer = np.array(SurfaceOuter).astype(np.float32) / 255.0
+                        _inner = np.array(SurfaceInner).astype(np.float32) / 255.0
+                        _OUTER = np.tile(_outer, (len(Points), 1))
+                        _INNER = np.tile(_inner, (len(Points), 1))
+
+                        idx0 = Faces[_i][0]
+                        if idx0 >= len(Points):
+                            print('invalid index at Faces[%d][0]:%d' % (_i, Faces[_i][0]))
+                            #_fError = True
+                            continue                           
+
+                        _faces = []
+                        for j in range(1, len(Faces[_i])-1):
+                            idx1 = Faces[_i][j]
+                            if idx1 >= len(Points):
+                                print('invalid index at Faces[%d][%d]:%d' % (_i, j, Faces[_i][j]))
+                                #_fError = True
+                                continue 
+                          
+                            idx2 = Faces[_i][j+1]
+                            if idx2 >= len(Points):
+                                print('invalid index at Faces[%d][%d]:%d' % (_i, j+1, Faces[_i][j+1]))
+                                #_fError = True
+                                continue 
+                          
+                            _faces.append((idx0, idx1, idx2))
+                                
+                        _meshFront = o3d.geometry.TriangleMesh()
+                        _meshFront.vertices = o3d.utility.Vector3dVector(np.array(Points))
+                        _meshFront.triangles = o3d.utility.Vector3iVector(np.array(_faces))
+                        _meshFront.vertex_colors = o3d.utility.Vector3dVector(_OUTER)
+               
+                        _meshBack = o3d.geometry.TriangleMesh()
+                        _meshBack.vertices = o3d.utility.Vector3dVector(np.array(Points))
+                        _meshBack.triangles = o3d.utility.Vector3iVector(np.array(_faces)[:,[0,2,1]])
+                        _meshBack.vertex_colors = o3d.utility.Vector3dVector(_INNER)
+
+                        _mesh = _meshFront + _meshBack
+
+                        _EyePos = ctrl.convert_to_pinhole_camera_parameters()
+ 
+                        update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+   
+                        vis.add_geometry(_mesh)
+                        meshes.append(_mesh)
+   
+                        name0 = cmds[0]
+                        name = '%s_%d' % (name0, _i)
+                        no = 2
+                        while name in names:
+                            name = '%s_%d(%d)' % (name0, _i, no)
+                            no += 1
+                        names.append(name)
+                      
+                        curr = len(meshes) - 1
+                        if len(meshes) < 3 and not fAxis:
+                            ctrl.convert_from_pinhole_camera_parameters(EyePos0)
+                        else:
+                            ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+                else:
+                    print('Faces[] is empty')    
 
             elif cmds[0] == 'distribute':
 
@@ -3517,7 +3882,7 @@ def main():
 
                 else:
                     P2.clear()
-                    _S = np.array(Section)
+                    _S = np.array(Section[-1])
                     _S[:,0] -= np.min(_S[:,0])
                     _S[:,1] -= np.min(_S[:,1])
 
@@ -3527,7 +3892,7 @@ def main():
                     _P = np.array(Points)
                     _P -= np.mean(_P, axis=0)
 
-                    for s in Section:
+                    for s in Section[-1]:
                         S = np.eye(3)
                         scale = s[1]/_S_ymax
                         S[0][0] = scale
