@@ -171,6 +171,24 @@
 　face　1
 </p>
 <img src="images/polyhedron.png">
+
+<p>
+　(例)<br>
+　p　polyhedron　dodeca　･･･　12面体の頂点データを生成<br>
+　p　p2p　4　･･･　4つのシーケンスとして P2 にコピー<br>
+　surface　pclose<br>
+　p　push　section　･･･　切り口を Section バッファに一時退避<br>
+　p　pop　0　･･･　もう一方の切り口を P2 --> Points にコピー<br>
+　p　s　0　0　1　2<br>
+　p2　reverse　p　･･･　面を裏返したいので逆順にする<br>　
+　surface　pclose<br>
+　p　pop　section<br>
+　p　s　0　0　1　2<br>
+　surface　pclose
+</p>
+
+<img src="images/dodecahedron.png">
+
 <h3>使い方</h3>
 
 <h4>起動・終了</h4>
