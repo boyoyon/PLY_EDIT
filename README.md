@@ -30,6 +30,11 @@
 </p>
 
 <h3>更新項目</h3>
+<p>
+　<strong>sculpt.py</strong>　･･･　PLY_interactive.py とは別の即席の彫刻モデリングツール<br>
+　(例)･･･傘っぽいものをつくる
+</p>
+<img src="images/sculpt.svg">
 
 <p>
 　<strong>implicit_function.py</strong>　･･･　PLY_interactive.py とは別の即席の陰関数モデリングツール<br>
