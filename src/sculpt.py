@@ -22,7 +22,7 @@ KEY_DOWN  = 264
 LATITUDE = 45
 LONGITUDE = -90
 r = 1.5
-scale = 0.2
+scale = 1.0
 
 feedLati = 0.0
 feedLongi = 1.0
@@ -45,6 +45,9 @@ drillLongi = None
 fUpdate = True
 
 undo_buffer = []
+
+angle_step = np.pi / 180
+translation_step = 0.01
 
 def manifold_to_mesh(mani):
     # 演算後のデータをOpen3D形式に戻す
@@ -351,6 +354,220 @@ def key_callback_undo(vis, action, mods):
         else:
             print('undo buffer is empty')
 
+def key_callback_updown_angle_step(vis, action, mods):
+
+    global angle_step, translation_step
+
+    shift_pressed = (mods & 0x1) != 0
+    ctrl_pressed = (mods & 0x2) != 0
+
+    if shift_pressed:
+
+        if ctrl_pressed:
+            
+            angle_step *= 1.5
+
+        else:
+
+            angle_step *= 1.1
+    else:
+
+        if ctrl_pressed:
+            
+            angle_step *= 0.5
+
+        else:
+
+            angle_step *= 0.9
+
+    return True
+
+def key_callback_updown_translation_step(vis, action, mods):
+
+    global angle_step, translation_step
+
+    shift_pressed = (mods & 0x1) != 0
+    ctrl_pressed = (mods & 0x2) != 0
+
+    if shift_pressed:
+
+        if ctrl_pressed:
+            
+            translation_step *= 1.5
+
+        else:
+
+            translation_step *= 1.1
+    else:
+
+        if ctrl_pressed:
+            
+            translation_step *= 0.5
+
+        else:
+
+            translation_step *= 0.9
+
+    return True
+
+def key_callback_1(vis, action, mods):
+
+    shift_pressed = (mods & 0x1) != 0
+    ctrl_pressed = (mods & 0x2) != 0
+
+    #if action == 1: # on pressing
+
+    if shift_pressed:
+        angle = -angle_step
+    else:
+        angle = angle_step
+
+    if ctrl_pressed:
+        angle *= 10
+
+    rotation = np.array([[np.cos(angle), 0, np.sin(angle), 0],
+        [0, 1, 0, 0],
+        [-np.sin(angle), 0, np.cos(angle), 0],
+        [0, 0, 0, 1]])
+
+    transform = rotation #@ transform
+    drill.transform(transform)
+
+    return True
+
+def key_callback_2(vis, action, mods):
+
+    shift_pressed = (mods & 0x1) != 0
+    ctrl_pressed = (mods & 0x2) != 0
+
+    #if action == 1: # on pressing
+
+    if shift_pressed:
+        angle = -angle_step
+    else:
+        angle = angle_step
+
+    if ctrl_pressed:
+        angle *= 10
+
+    rotation = np.array([[1, 0, 0, 0],
+        [0, np.cos(angle), -np.sin(angle), 0],
+        [0, np.sin(angle), np.cos(angle), 0],
+        [0, 0, 0, 1]])
+
+    transform = rotation #@ transform
+    drill.transform(transform)
+
+    return True
+
+def key_callback_3(vis, action, mods):
+
+    shift_pressed = (mods & 0x1) != 0
+    ctrl_pressed = (mods & 0x2) != 0
+
+    #if action == 1: # on pressing
+
+    if shift_pressed:
+        angle = -angle_step
+    else:
+        angle = angle_step
+
+    if ctrl_pressed:
+        angle *= 10
+
+    rotation = np.array([[np.cos(angle), -np.sin(angle), 0, 0],
+        [np.sin(angle), np.cos(angle), 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1]])
+
+    transform = rotation #@ transform
+    drill.transform(transform)
+
+    return True
+
+def key_callback_4(vis, action, mods):
+
+    shift_pressed = (mods & 0x1) != 0
+    ctrl_pressed = (mods & 0x2) != 0
+
+    #if action == 1: # on pressing
+
+    if shift_pressed:
+        offset = -translation_step
+    else:
+        offset = translation_step
+
+    if ctrl_pressed:
+        offset *= 10
+
+    translate = np.array([[1, 0, 0, offset],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1]])
+
+    transform = translate
+    drill.transform(transform)
+
+    return True
+
+def key_callback_5(vis, action, mods):
+
+    shift_pressed = (mods & 0x1) != 0
+    ctrl_pressed = (mods & 0x2) != 0
+
+    #if action == 1: # on pressing
+
+    if shift_pressed:
+        offset = -translation_step
+    else:
+        offset = translation_step
+
+    if ctrl_pressed:
+        offset *= 10
+
+    translate = np.array([[1, 0, 0, 0],
+        [0, 1, 0, offset],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1]])
+
+    transform = translate
+    drill.transform(transform)
+
+    return True
+
+def key_callback_6(vis, action, mods):
+
+    shift_pressed = (mods & 0x1) != 0
+    ctrl_pressed = (mods & 0x2) != 0
+
+    #if action == 1: # on pressing
+
+    if shift_pressed:
+        offset = -translation_step
+    else:
+        offset = translation_step
+
+    if ctrl_pressed:
+        offset *= 10
+
+    translate = np.array([[1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, offset],
+        [0, 0, 0, 1]])
+
+    transform = translate
+    drill.transform(transform)
+
+    return True
+
+def key_callback_reset_step(vis, action, mod):
+
+    global angle_step, translation_step
+
+    angle_step = np.pi / 180
+    translation_step = 0.005
+
+    return True
 def key_callback_dummy(vis, action, mods): # supress capture
 
     return True
@@ -372,6 +589,8 @@ def main():
 
     width = 800
     height = 600
+    
+    targetColorNormal = ((200/255, 200/255, 200/255))
     
     drillColorNormal = ((255/255, 200/255, 128/255))
     drillColorMark   = ((255/255, 128/255,  64/255))
@@ -396,6 +615,16 @@ def main():
     vis.register_key_action_callback(ord('P'), key_callback_plus)
     vis.register_key_action_callback(ord('U'), key_callback_undo)
 
+    vis.register_key_action_callback(ord("0"), key_callback_reset_step)
+    vis.register_key_action_callback(ord("1"), key_callback_1)
+    vis.register_key_action_callback(ord("2"), key_callback_2)
+    vis.register_key_action_callback(ord("3"), key_callback_3)
+    vis.register_key_action_callback(ord("4"), key_callback_4)
+    vis.register_key_action_callback(ord("5"), key_callback_5)
+    vis.register_key_action_callback(ord("6"), key_callback_6)
+    vis.register_key_action_callback(ord("7"), key_callback_updown_angle_step)
+    vis.register_key_action_callback(ord("8"), key_callback_updown_translation_step)
+
     axis = o3d.io.read_triangle_mesh(os.path.join(os.path.dirname(__file__), 'axisXYZ.ply'))
     vis.add_geometry(axis)
 
@@ -406,8 +635,10 @@ def main():
     target0.compute_vertex_normals()
 
     target = copy.deepcopy(target0)
-    
-    drill0 = o3d.geometry.TriangleMesh.create_cone(radius=1.0, height=2.0)
+   
+    target_name = 'cylinder'
+ 
+    drill0 = o3d.geometry.TriangleMesh.create_cone(radius=0.2, height=0.4)
     drill0.scale(scale, center=drill0.get_center())
     drill0.paint_uniform_color(drillColorNormal)
     drill0.compute_vertex_normals()
@@ -434,6 +665,8 @@ def main():
     prevScale = 1.0
     prevR = 1.0
 
+    screenNo = 1
+
     print('Hit ESC-key or q-key on visualizer or enter quit on console to terminate this program')
 
  
@@ -446,50 +679,283 @@ def main():
             if len(cmds) == 0 or len(cmds[0]) == 0:
                 continue
 
-            elif cmds[0] == 'cylinder':
+            elif cmds[0] == 'target':
+     
+                if len(cmds) == 1:
+                    print('target cone/cylinder/ball/box')
+                    print('target:', target_name)
 
-                if len(cmds) > 2:
+                else:
+                    if cmds[1] == 'cone':
 
-                    fResult, value = Eval(cmds[1])
-                    if fResult:
-                        radius = value
+                        _r = 1.0
+                        _h = 1.0
+
+                        if len(cmds) > 2:
+                            fResult, value = Eval(cmds[2])
+                            if fResult:
+                                _r = value
+                            else:
+                                print('target cone <radius(1.0)> <height(1.0)>')
+                                continue
+
+                        if len(cmds) > 3:
+                            fResult, value = Eval(cmds[3])
+                            if fResult:
+                                _h = value
+                            else:
+                                print('target cone <radius(1.0)> <height(1.0)>')
+                                continue
+
+                        target0 = o3d.geometry.TriangleMesh.create_cone(radius = _r, height = _h)
+                        target0.paint_uniform_color(targetColorNormal)
+                        target0.compute_vertex_normals()
+                        target_name = 'cone'
+
+                    elif cmds[1] == 'cylinder':
+                        _r = 1.0
+                        _h = 1.0
+
+                        if len(cmds) > 2:
+                            fResult, value = Eval(cmds[2])
+                            if fResult:
+                                _r = value
+                            else:
+                                print('target cylinder <radius(1.0)> <height(1.0)>')
+                                continue
+
+                        if len(cmds) > 3:
+                            fResult, value = Eval(cmds[3])
+                            if fResult:
+                                _h = value
+                            else:
+                                print('target cylinder <radius(1.0)> <height(1.0)>')
+                                continue
+
+                        target0 = o3d.geometry.TriangleMesh.create_cylinder(radius = _r, height = _h)
+                        target0.paint_uniform_color(targetColorNormal)
+                        target0.compute_vertex_normals()
+                        target_name = 'cylinder'
+
+
+                    elif cmds[1] == 'ball':
+
+                        _r = 1.0
+
+                        if len(cmds) > 2:
+                            fResult, value = Eval(cmds[2])
+                            if fResult:
+                                _r = value
+                            else:
+                                print('target ball <radius(1.0)>')
+                                continue
+
+                        target0 = o3d.geometry.TriangleMesh.create_sphere(radius = _r)
+                        target0.paint_uniform_color(targetColorNormal)
+                        target0.compute_vertex_normals()
+                        target_name = 'ball'
+
+                    elif cmds[1] == 'box':
+                        _w = 1.0
+                        _h = 1.0
+                        _d = 1.0
+
+                        if len(cmds) > 2:
+                            fResult, value = Eval(cmds[2])
+                            if fResult:
+                                _w = value
+                            else:
+                                print('target box <width(1.0)> <height(1.0)> <depth(1.0)>')
+                                continue
+
+                        if len(cmds) > 3:
+                            fResult, value = Eval(cmds[3])
+                            if fResult:
+                                _h = value
+                            else:
+                                print('target box <width(1.0)> <height(1.0)> <depth(1.0)')
+                                continue
+
+                        if len(cmds) > 4:
+                            fResult, value = Eval(cmds[4])
+                            if fResult:
+                                _d = value
+                            else:
+                                print('target box <width(1.0)> <height(1.0)> <depth(1.0)')
+                                continue
+
+                        target0 = o3d.geometry.TriangleMesh.create_box(width = _w, height = _h, depth = _d)
+                        target0.paint_uniform_color(targetColorNormal)
+                        target0.compute_vertex_normals()
+                        target_name = 'box'
 
                     else:
-                        print('cylinder <radius> <height> [<resolution>]')
+                        print('dirll cone/cylinder/ball/box')
+                        print('target:', target_name)
                         continue
-
-                    fResult, value = Eval(cmds[2])
-                    if fResult:
-                        height = value
-                    else:
-                        print('cylinder <radius> <height> [<resolution>]')
-                        continue
-
-                    resolution = 30
-                    if len(cmds) > 3:
-                        fResult, value = Eval(cmds[3])
-                        if fResult:
-                            resolution
-                        else:
-                            print('cylinder <radius> <height> [<resolution>]')
-                            continue
 
                     _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
                     vis.remove_geometry(target)
-
-                    target = o3d.geometry.TriangleMesh.create_cylinder(
-                        radius, height, resolution)
-                  
                     R = o3d.geometry.get_rotation_matrix_from_xyz((np.pi/2, 0, 0))
-                    target.rotate(R, center=(0,0,0))
- 
-                    undo_meshes.append(target)
-                    
+                    target0.rotate(R, center=(0,0,0))
+                    target = copy.deepcopy(target0)
                     vis.add_geometry(target)
                     ctrl.convert_from_pinhole_camera_parameters(_EyePos)
 
+            elif cmds[0] == 'drill':
+
+                if len(cmds) == 1:
+                    print('drill cone/cylinder/ball/box')
+                    print('drill:', drill_name)
+
                 else:
-                    print('cylinder <radius> <height> [<resolution>]')
+
+                    if cmds[1] == 'pos':
+
+                        if len(cmds) > 4:
+                            fResult, values = Evals(cmds[2:], 3)
+                            if fResult:
+                    
+                                _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
+                                vis.remove_geometry(drill)
+   
+                                drill.translate(-drill.get_center()) 
+                                drill.translate(np.array((values[0], values[1], values[2])))
+
+                                vis.add_geometry(drill)
+                                ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+                                print('drill moves')
+                                continue
+
+                            else:
+                                print('drill pos <x> <y> <z>')
+                                continue
+
+                        else:
+                            print('drill pos <x> <y> <z>')
+                            continue
+
+                    elif cmds[1] == 'cone':
+
+                        _r = 0.2
+                        _h = 0.4
+
+                        if len(cmds) > 2:
+                            fResult, value = Eval(cmds[2])
+                            if fResult:
+                                _r = value
+                            else:
+                                print('drill cone <radius(0.2)> <height(0.4)>')
+                                continue
+
+                        if len(cmds) > 3:
+                            fResult, value = Eval(cmds[3])
+                            if fResult:
+                                _h = value
+                            else:
+                                print('drill cone <radius(0.2)> <height(0.4)>')
+                                continue
+
+                        drill0 = o3d.geometry.TriangleMesh.create_cone(radius = _r, height = _h)
+
+                        drill0.paint_uniform_color(drillColorNormal)
+                        drill0.compute_vertex_normals()
+                        drill_name = 'cone'
+
+                    elif cmds[1] == 'cylinder':
+                        _r = 0.2
+                        _h = 0.2
+
+                        if len(cmds) > 2:
+                            fResult, value = Eval(cmds[2])
+                            if fResult:
+                                _r = value
+                            else:
+                                print('drill cylinder <radius(0.2)> <height(0.2)>')
+                                continue
+
+                        if len(cmds) > 3:
+                            fResult, value = Eval(cmds[3])
+                            if fResult:
+                                _h = value
+                            else:
+                                print('drill cylinder <radius(0.2)> <height(0.2)>')
+                                continue
+
+                        drill0 = o3d.geometry.TriangleMesh.create_cylinder(radius = _r, height = _h)
+
+                        drill0.paint_uniform_color(drillColorNormal)
+                        drill0.compute_vertex_normals()
+                        drill_name = 'cylinder'
+
+
+                    elif cmds[1] == 'ball':
+
+                        _r = 0.2
+
+                        if len(cmds) > 2:
+                            fResult, value = Eval(cmds[2])
+                            if fResult:
+                                _r = value
+                            else:
+                                print('drill ball <radius(0.2)>')
+                                continue
+
+                        drill0 = o3d.geometry.TriangleMesh.create_sphere(radius = _r)
+
+                        drill0.paint_uniform_color(drillColorNormal)
+                        drill0.compute_vertex_normals()
+                        drill_name = 'ball'
+
+                    elif cmds[1] == 'box':
+                        _w = 0.2
+                        _h = 0.2
+                        _d = 0.2
+
+                        if len(cmds) > 2:
+                            fResult, value = Eval(cmds[2])
+                            if fResult:
+                                _w = value
+                            else:
+                                print('drill box <width(0.2)> <height(0.2)> <depth(0.2)>')
+                                continue
+
+                        if len(cmds) > 3:
+                            fResult, value = Eval(cmds[3])
+                            if fResult:
+                                _h = value
+                            else:
+                                print('drill box <width(0.2)> <height(0.2)> <depth(0.2)')
+                                continue
+
+                        if len(cmds) > 4:
+                            fResult, value = Eval(cmds[4])
+                            if fResult:
+                                _d = value
+                            else:
+                                print('drill box <width(0.2)> <height(0.2)> <depth(0.2)')
+                                continue
+
+                        drill0 = o3d.geometry.TriangleMesh.create_box(width = _w, height = _h, depth = _d)
+
+                        drill0.paint_uniform_color(drillColorNormal)
+                        drill0.compute_vertex_normals()
+                        drill_name = 'box'
+
+                    else:
+                        print('dirll cone/cylinder/ball/box')
+                        print('drill:', drill_name)
+                        continue
+
+                    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
+                    vis.remove_geometry(drill)
+    
+                    drill = copy.deepcopy(drill0)
+
+                    drill.translate(-drill.get_center())
+                    drill.translate(np.array((1.0, 0.0, 1.0)))
+                    vis.add_geometry(drill)
+                    ctrl.convert_from_pinhole_camera_parameters(_EyePos)
 
             elif cmds[0] == 'u':
     
@@ -540,52 +1006,62 @@ def main():
                 else:
                     print('feed  latitude  longitude')
 
-            elif cmds[0] == 'drill':
-     
-                if len(cmds) == 1:
-                    print('dirll cone/cylinder/ball/box')
-                    print('drill:', drill_name)
+            elif cmds[0] == '-':
+       
+                _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
+   
+                undo_buffer.append(target)
+                vis.remove_geometry(target)
 
-                else:
-                    if cmds[1] == 'cone':
-                        drill0 = o3d.geometry.TriangleMesh.create_cone(radius=1.0, height=2.0)
-                        drill0.scale(scale, center=drill0.get_center())
-                        drill0.paint_uniform_color(drillColorNormal)
-                        drill0.compute_vertex_normals()
-                        drill_name = 'cone'
+                mani_target = mesh_to_manifold(target)
+                mani_drill = mesh_to_manifold(drill)
+    
+                result_mani = mani_target - mani_drill
+                target = manifold_to_mesh(result_mani)
+                target.compute_vertex_normals()
 
-                    elif cmds[1] == 'cylinder':
-                        drill0 = o3d.geometry.TriangleMesh.create_cylinder(radius=1.0, height=2.0)
-                        drill0.scale(scale, center=drill0.get_center())
-                        drill0.paint_uniform_color(drillColorNormal)
-                        drill0.compute_vertex_normals()
-                        drill_name = 'cylinder'
+                vis.add_geometry(target)
+                ctrl.convert_from_pinhole_camera_parameters(_EyePos)
 
-
-                    elif cmds[1] == 'ball':
-                        drill0 = o3d.geometry.TriangleMesh.create_sphere(radius=1.0)
-                        drill0.scale(scale, center=drill0.get_center())
-                        drill0.paint_uniform_color(drillColorNormal)
-                        drill0.compute_vertex_normals()
-                        drill_name = 'ball'
-
-                    elif cmds[1] == 'box':
-                        drill0 = o3d.geometry.TriangleMesh.create_box(width=1.0, height=2.0, depth=1.0)
-                        drill0.scale(scale, center=drill0.get_center())
-                        drill0.paint_uniform_color(drillColorNormal)
-                        drill0.compute_vertex_normals()
-                        drill_name = 'box'
-                    else:
-                        print('dirll cone/cylinder/ball/box')
-                        print('drill:', drill_name)
-                        continue
-
-                    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
-                    vis.remove_geometry(drill)
-                    ctrl.convert_from_pinhole_camera_parameters(_EyePos)
-                    drill = copy.deepcopy(drill0)
-                    updateDrill(vis)                   
+            elif cmds[0] == '+':
  
+                _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
+
+                undo_buffer.append(target)
+                vis.remove_geometry(target)
+                target += drill
+                vis.add_geometry(target)
+        
+                ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+
+            elif cmds[0] == 'cap':
+
+                dst_path = 'screen.png'
+
+                if len(cmds) < 2:
+                    dst_path = '%04d.png' % screenNo
+                else:
+                    filename, ext = os.path.splitext(cmds[1])
+
+                    if ext == '':
+                        ext = '.png'
+
+                    dst_path = '%s%s' % (filename, ext)
+                    no = 1
+
+                while os.path.exists(dst_path):
+
+                    if len(cmds) < 2:
+                        screenNo += 1
+                        dst_path = '%04d.png' % screenNo
+
+                    else:
+                        no += 1
+                        dst_path = '%s(%d)%s' % (filename, no, ext)
+
+                vis.capture_screen_image(dst_path)
+                print('save %s' % dst_path)
+
             elif cmds[0] == 'quit':
                 break
    
