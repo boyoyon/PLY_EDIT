@@ -31,6 +31,12 @@
 
 <h3>更新項目</h3>
 <p>
+　<strong>もう少しリアルな傘を作れるようにしてみた</strong><br>
+　python PLY_interactive.py<br>
+　l data\umbrella.txt
+</p>
+<img src="images/umbrella.png">
+<p>
 　<strong>sculpt.py</strong>　･･･　PLY_interactive.py とは別の即席の彫刻モデリングツール<br>
 　(例)･･･傘っぽいものをつくる
 </p>
