@@ -1,0 +1,27 @@
+d all
+p clear
+p -1 0 0
+p r 0 360/5 0 5
+p2 p2p
+p g r 0 10 0 s 0.95 1 0.95 t 0 -0.5/36 0 72
+surface pclose
+p s 0 1 0 2
+surface pclose
+merge
+save pentagon.ply
+
+t -np.cos(np.deg2rad(36)) 0 0   # 一辺をz軸に合わせる
+r 0 0 -63.5                     # z軸に沿って五角形を起こす
+t -np.cos(np.deg2rad(36)) 0 0   # 回転した時に底面が五角形になるように移動する
+r 0 72 0 5                      # y軸周りに72°回転を5回繰り返す
+l pentagon.ply
+r 0 36 0                        # 底面のずれを直す
+save half.ply                    # 半分できたとことで一旦セーブ
+d all                           # 一旦全部消す
+l half.ply                       # 半分をロード
+r 0 0 180                       # z軸周りに反転
+t 0 np.sin(np.deg2rad(36))*np.sin(np.deg2rad(63.5))*5 0 # 上に移動
+l half.ply                       # 半分をもう一回ロード
+t 0 0.01 0                      # ちょっと位置合わせ
+merge                           # 上と下をマージする(セーブするとマージされるが)
+save something_feels_off.ply    # 正十二面体をセーブ
