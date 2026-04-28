@@ -1,0 +1,90 @@
+p clear
+p -1 0 0
+p r 0 -360/5 0 5
+p2 p2p
+p g r 0 36/10 0 t 0 np.sin(np.deg2rad(36))*np.sqrt(3)/10 0 10
+surface pclose
+p push section
+p pop 0
+p g s 0.9 1 0.9 r 0 -36/10 0 t 0 -np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.8/0.9 1 0.8/0.9 r 0 -36/10 0 t 0 -np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.8/0.9 1 0.8/0.9 r 0 -36/10 0 t 0 -np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.8/0.9 1 0.8/0.9 r 0 -36/10 0 t 0 -np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.8/0.9 1 0.8/0.9 r 0 -36/10 0 t 0 -np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.7/0.8 1 0.7/0.8 r 0 -36/10 0 t 0 -np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.6/0.7 1 0.6/0.7 r 0 -36/10 0 t 0 -np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.5/0.6 1 0.5/0.6 r 0 -36/10 0 t 0 -np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.4/0.5 1 0.4/0.5 r 0 -36/10 0 t 0 -np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.3/0.4 1 0.3/0.4 r 0 -36/10 0 t 0 -np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.2/0.3 1 0.2/0.3 r 0 -36/10 0 t 0 -np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.1/0.2 1 0.1/0.2 r 0 -36/10 0 t 0 -np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0 1 0 r 0 -36/10 0 t 0 -np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p pop section
+
+p g s 0.9 1 0.9 r 0 36/10 0 t 0 np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.8/0.9 1 0.8/0.9 r 0 36/10 0 t 0 np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.8/0.9 1 0.8/0.9 r 0 36/10 0 t 0 np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.8/0.9 1 0.8/0.9 r 0 36/10 0 t 0 np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.8/0.9 1 0.8/0.9 r 0 36/10 0 t 0 np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.7/0.8 1 0.7/0.8 r 0 36/10 0 t 0 np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.6/0.7 1 0.6/0.7 r 0 36/10 0 t 0 np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.5/0.6 1 0.5/0.6 r 0 36/10 0 t 0 np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.4/0.5 1 0.4/0.5 r 0 36/10 0 t 0 np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.3/0.4 1 0.3/0.4 r 0 36/10 0 t 0 np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.2/0.3 1 0.2/0.3 r 0 36/10 0 t 0 np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0.1/0.2 1 0.1/0.2 r 0 36/10 0 t 0 np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+p g s 0 1 0 r 0 36/10 0 t 0 np.sin(np.deg2rad(36))*np.sqrt(3)/20 0 2
+p2 reverse p
+surface pclose
+
+
