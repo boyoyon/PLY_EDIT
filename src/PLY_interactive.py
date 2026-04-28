@@ -2156,13 +2156,16 @@ def main():
 
                                 if cmds[2] == 'p2':
                                     P2.append(copy.deepcopy(Points))
+                                    Points.clear()
                                     print('Points are copied to P2[%d]:' % (len(P2) - 1))
+
                                 elif cmds[2] == 'section':
                                     Section.append(copy.deepcopy(Points))
+                                    Points.clear()
                                     print('Points are copied to Section[]')
 
                                 else:
-                                    print('p push -/p2/section')
+                                    print('p push p2/section')
 
                             else:
                                 P2.append(copy.deepcopy(Points))
@@ -2826,7 +2829,7 @@ def main():
                     print('P2[]=', P2) 
                         
                     if len(P2) > 0: 
-                        print(len(P2), len(P2[0]),len(P2[0][0]))
+                        print(np.array(P2).shape)
 
                 else:
 
@@ -2904,10 +2907,10 @@ def main():
                         if len(cmds) > 2 and cmds[2] == 'section':
                             if len(Section) > 0:
                                 P2.clear()
-                                P2 = copy.deepcopy(Section)
+                                P2 = copy.deepcopy(Section) 
                                 Section.clear()
                                 print('Section --> P2')
-                                print('P2:', P2.shape)
+                                print('P2:', len(P2))
                             else:
                                 print('Section is empty')
                         else:
@@ -2917,17 +2920,59 @@ def main():
 
                         if len(cmds) > 2 and cmds[2] == 'section':
                             if len(P2) > 0:
-                                Section.clear()
-                                Section = copy.deepcopy(P2)
+                                _p2 = np.array(P2).squeeze()
+                                Section.append(_p2.tolist())
                                 P2.clear()
                                 print('P2 --> Section')
-                                print('Section:', Section.shape)
+                                print('Section:', len(Section))
                             else:
                                 print('P2 is empty')
                         else:
                             print('p2 push section: P2[] --> Section[]')
 
+                    elif cmds[1] == 'r':
+                        
+                        if len(P2) == 0:
+                            print('P2[] is empty')
+                            continue
+
+                        if len(cmds) > 4:
+                            R = getRotateMatrix(cmds[2:])
+                            if R is not None:
+                                _points = np.array(P2)
+                                P2 = (_points @ R.T).tolist()
+                            else:
+                                print('p2 r <deg_x> <deg_y> <deg_z>')
+
+                        else:
+                            print('p2 r <deg_x> <deg_y> <deg_z>')
+
                     displayMarker(vis, Pmarker, Points, fPdisp)
+
+            elif cmds[0] == 'section':
+
+                if len(Section) == 0:
+                    print('Section[] is empty')
+                    continue
+
+                if len(cmds) > 2:
+            
+                    if cmds[1] == 'r':
+
+                        if len(cmds) > 4:
+                            R = getRotateMatrix(cmds[2:])
+                            if R is not None:
+                                _points = np.array(Section)
+                                Section = (_points @ R.T).tolist()
+                            else:
+                                print('section r <deg_x> <deg_y> <deg_z>')
+
+                        else:
+                            print('section r <deg_x> <deg_y> <deg_z>')
+                else:
+                    print('section r <deg_x> <deg_y> <deg_z>')
+                    print(Section)
+                    print(np.array(Section).shape)
 
             elif cmds[0] == 'surface' or cmds[0] == 'sideA' or cmds[0] == 'sideAA':
 
