@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+        <meta charset="utf-8" />
+        <title>Surfaces</title>
+        <style type="text/css">
+            p
+            {
+                padding-left: 2em;
+            }
+           .margin-abstract {
+               margin-left: 60px; /* 左マージンを広くする */
+               margin-right: 60px; /* 右マージンを広くする */
+           }
+        </style>
+    <style>
+        .styleRef { 
+            text-indent: -40px; /* 最初の行の字下げを逆方向に */
+            margin-left: 10px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 40px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+    <style>
+        .styleBullet { 
+            text-indent: -20px; /* 最初の行の字下げを逆方向に */
+            margin-left: 30px; /* 2行目以降の字下げを調整 */
+            ul {
+                  list-style-type: none; /* 箇条書き記号を非表示 */
+                  padding-left: 40px; /* 全体の左余白 */
+            }
+            li {
+            }
+        }
+    </style>
+<style>
+.container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.column {
+  flex: 0.50%; /* 幅を50%に設定して2列に */
+  box-sizing: border-box;
+  padding: 10px;
+}
+</style>
+
+    </head>
+    <body>
+        <h1><center>Surface <span style="color:blue;">曲面</span></center></h1>
+
+<center>Math 131 Multivariate Calculus <span style="color:blue;">多変数微積分</span></center>
+<center>D Joyce, Spring 2014</center>
+
+<h2>Preview <span style="color:blue;">プレビュー</span></h2>
+
+<p>
+ We’ll introduce parametrized surfaces so we can study surface integrals and generalize the results we’ve seen from dimension 2 to dimension 3.   In  dimension  2,  we  had  regions  in  the  plane and their boundaries were closed curves.  Then we took  double  integrals  over  the  plane  regions  and line integrals over the curves. In dimension 3, we’ll have regions in space and their boundaries will be surfaces.  Then we’ll take triple integrals over the solid regions and surface integrals over the surfaces. That means we’ll have to dene surface integrals, and before that we’ll look at surfaces in more detail.
+
+<br><span style="color:blue;">
+パラメータ表示された曲面を導入することで、面積分を研究し、2次元で見てきた結果を3次元に一般化します。2次元では、平面上に領域があり、その境界は閉曲線でした。そして、平面上の領域に対して二重積分を、曲線に対して線積分を行いました。3次元では、空間上に領域があり、その境界は曲面になります。そして、立体領域に対して三重積分を、曲面に対して面積分を行います。つまり、面積分を定義する必要があり、その前に曲面についてより詳しく見ていきます。
+</span>
+</p>
+
+<h2>Surfaces in \(R^3\) <span style="color:blue;">三次元内の曲面</span></h2>
+
+<p>
+The general principle of analytic geometry says that a surface in \(R^3\) is given by an equation in three variables \(x, y,\) and \(z\).  When the equation is linear, then the surface is a plane, but when it’s not linear, then some other surface is de-scribed.
+
+
+<br><span style="color:blue;">
+解析幾何学の一般原理によれば、\(R^3\) における曲面は、3 つの変数 \(x, y, z\) を含む方程式で表されます。方程式が線形であれば、その曲面は平面になりますが、線形でない場合は、別の曲面が記述されます。
+</span>
+</p><p>
+Of course,  graphs \(f(x,y)  =  z\)  of functions \(f:R^2 → R\) of  two  variables  are  surfaces  over  the \((x,y)\)-plane.	But  there  are  other  surfaces  that aren’t graphs of such functions like the unit sphere, which has the equation \(x^2 + y^2 + z^2  = 1\).
+
+<br><span style="color:blue;">
+もちろん、2変数関数 \(f:R^2 → R\) のグラフ \(f(x,y) = z\) は、\((x,y)\) 平面上の曲面です。しかし、単位球のように、そのような関数のグラフではない曲面も存在します。単位球の方程式は \(x^2 + y^2 + z^2 = 1\) です。
+</span>
+</p><p>
+
+Lots  of  surfaces  arise  as  level  sets  of  functions \(f: R^3→ R\) of three variables, the surface being given by the equation \(f(x,y,z) = c\) for the level \(c\). For example, the unit sphere is the \(c = 1\) level set of the function \(f(x,y,z) = x^2 + y^2 + z^2\).
+
+<br><span style="color:blue;">
+多くの曲面は、3変数関数 \(f: R^3→ R\) のレベル集合として現れ、レベル \(c\) における曲面は方程式 \(f(x,y,z) = c\) で与えられます。例えば、単位球は関数 \(f(x,y,z) = x^2 + y^2 + z^2\) の \(c = 1\) レベル集合です。
+</span>
+</p>
+<h2>Parameterizing surfaces <span style="color:blue;">曲面のパラメータ化</span></h2>
+<p>
+Those equations are ne for describing surfaces, but they don’t work as well for doing calculus with surfaces. A more useful way  to  describe  a  surface  is  by  parametrizing  it.
+
+<br><span style="color:blue;">
+これらの式は曲面を記述するには良いが、曲面を用いた微積分を行うにはあまり適していない。曲面を記述するより有用な方法は、それをパラメータ化することである。
+</span>
+</p><p>
+
+Whereas a line is parametrized by one variable| we’ve usually used \(t\) - a surface is parametrized by two variables - we’ll usually use \(s\) and \(t\).
+
+<br><span style="color:blue;">
+曲線は 1 つの変数でパラメータ化され、通常は \(t\) を使用しますが、曲面は 2 つの変数でパラメータ化され、通常は \(s\) と \(t\) を使用します。
+</span>
+</p><p>
+It helps to have a standard notation. We’ll use \(S\) to denote the surface in \(R^3\) that we’re parametrizing.  We’ll use \(\mathbf{X}(s,t)\) to describe the parametriza-tion. Then \(\mathbf{X}\) is a vector-valued function \(R^2 → R^3\). The domain \(D\) of \(\mathbf{X}\) is usually not all of \(R^2\). The coordinate functions of \(\mathbf{X}\) are denoted \(x, y,\) and \(z\), so
+
+<br><span style="color:blue;">
+標準的な表記法があると便利です。パラメータ化する \(R^3\) の曲面を表すのに \(S\) を使用します。パラメータ化を表すのに \(\mathbf{X}(s,t)\) を使用します。すると \(\mathbf{X}\) はベクトル値関数 \(R^2 → R^3\) になります。\(\mathbf{X}\) の定義域 \(D\) は通常 \(R^2\) 全体ではありません。\(\mathbf{X}\) の座標関数は \(x, y,\) および \(z\) で表されます。
+</span>
+
+\[
+\mathbf{X}(s,t) = (x(s,t),y(s,t),z(s,t))
+\]
+
+<center><img src="images/1.png"></center>
+<center>Figure 1: Onion domes</center>
+<center><span style="color:blue;">図1: 玉ねぎドーム</span></center>
+
+
+</p>
+
+<h2>Example 1 <span style="color:blue;">例1</span></h2>
+
+<p>
+ (An onion dome).  Onion domes are domes often seen at the tops of Russian Orthodox churches such as the colorful domes on Saint Basil’s Cathedral in Moscow.  We can model one with the function \(\mathbf{X}\) dened by
+
+<br><span style="color:blue;">
+（玉ねぎ型ドーム）玉ねぎ型ドームは、モスクワの聖ワシリイ大聖堂の色鮮やかなドームなど、ロシア正教会の屋根によく見られるドームです。関数 \(\mathbf{X}\) でモデル化できます。
+</span>
+
+\[
+[x,y,z]=
+\begin{bmatrix}
+(1 + \cos s)\cos t \\
+(1 + \sin s)\sin t \\
+s
+\end{bmatrix}
+\]
+
+where the domain \(D\) of \(X\) is the rectangle \([-\frac{\pi}{3},\pi]×[0,2\pi]\).   This  surface  \(S\)  is  a  surface  of  revolution about  the  \(z\).The  variable  \(t\)  describes  an  angle around the \(z\)-axis. Since \(z\) is just \(s\), the base of the dome is at height \(z = \frac{\pi}{3}\), and the tip is at \(z = \pi\). The radius of the dome at height \(z\) is \(1 + \cos z\). At the base, that radius is 1.5, increasing to 2 at \(z = 0\), then decreasing to 0 at the tip.
+
+<br><span style="color:blue;">
+ここで、\(X\) の領域 \(D\) は長方形 \([-\frac{\pi}{3},\pi]×[0,2\pi]\) です。この曲面 \(S\) は \(z\) を中心とした回転面です。変数 \(t\) は \(z\) 軸を中心とした角度を表します。\(z\) は単に \(s\) なので、ドームの底面は高さ \(z = \frac{\pi}{3}\) にあり、先端は \(z = \pi\) にあります。高さ \(z\) でのドームの半径は \(1 + \cos z\) です。底面では半径は 1.5 で、\(z = 0\) で 2 に増加し、先端で 0 に減少します。
+</span>
+</p><p>
+
+For examples of more surfaces and their param-eterizations see the Gallery of Surfaces at http:// math.clarku.edu/~djoyce/ma131/gallery.pdf
+
+<br><span style="color:blue;">
+より多くの曲面とそのパラメーター化の例については、http://math.clarku.edu/~djoyce/ma131/gallery.pdf にある「曲面ギャラリー」を参照してください。
+</span>
+</p><p>
+
+<h2>The tangent plane at a point <span style="color:blue;">点における接平面</span></h2>
+<p>
+Let’s consider a particular point on the surface. Let it be the point
+\(\mathbf{X}(s_0, t_0)\), and let’s also denote it
+
+
+<br><span style="color:blue;">
+表面上の特定の点を考えてみましょう。その点を
+\(\mathbf{X}(s_0, t_0)\) とします。また、それを と表記します。
+</span>
+
+\[
+\mathbf{X}(s_0, t_0) = (x_0, y_0, z_0) = (x(s_0, t_0), y(s_0. t_0), z(s_0, t_0))
+\]
+
+</p><p>
+
+We can think of the parametrization \(\mathbf{X}(s,t)\) as placing and \((s,t)\)-coordinate system on the surface \(S\). When \(t\) has a specic value \(t_0\), we get a "latitude" on \(S\), called an \(s\)-coordinate curve, and it’s denoted \(\mathbf{X}(s, t_0)\).   Likewise, when \(s\) has a specic value  \(s_0\),  we  get  a  "longitude"  on  \(S\),  called  a  \(t\)-coordinate curve, and denoted \(\mathbf{X}(s_0,t)\). These two coordinate curves pass through the point \(\mathbf{X}(s_0, t_0)\). 
+
+<br><span style="color:blue;">
+パラメータ化 \(\mathbf{X}(s,t)\) は、表面 \(S\) 上に \((s,t)\) 座標系を配置するものと考えることができます。 \(t\) が特定の値 \(t_0\) を取ると、\(S\) 上に「緯度」となる \(s\) 座標曲線が得られ、これは \(\mathbf{X}(s, t_0)\) と表記されます。同様に、\(s\) が特定の値 \(s_0\) を取ると、\(S\) 上に「経度」となる \(t\) 座標曲線が得られ、これは \(\mathbf{X}(s_0,t)\) と表記されます。これら 2 つの座標曲線は、点 \(\mathbf{X}(s_0, t_0)\) を通ります。
+</span>
+</p><p>
+
+The tangent vector \(\mathbf{T}_s\) to the coordinate curve
+\(\mathbf{X}(s, t_0)\) is
+
+<br><span style="color:blue;">
+座標曲線\(\mathbf{X}(s, t_0)\)への接ベクトル\(\mathbf{T}_s\)は
+</span>
+
+\[
+\mathbf{T}_s(s_0, t_0) =  \frac{∂\mathbf{X}}{∂s} =\left(\frac{∂x}{∂s}(s_0,t_0), \frac{∂y}{∂s}(s_0, t_0), \frac{∂z}{∂s}(s_0, t_0)\right)
+\]
+
+while the tangent vector \(\mathbf{T}_t\) to the coordinate curve \(\mathbf{X}(s_0, t)\) is
+
+<br><span style="color:blue;">
+座標曲線 \(\mathbf{X}(s_0, t)\) への接線ベクトル \(\mathbf{T}_t\) は
+</span>
+
+\[
+\mathbf{T}_t(s_0, t_0) = \frac{∂\mathbf{x}}{∂t} = \left(\frac{∂x}{∂t}(s_0,t_0),\frac{∂y}{∂t}(s_0, t_0),\frac{∂z}{∂t}(s_0, t_0)\right)
+\]
+
+Together, these two tangent vectors \(\mathbf{T}_s\) and \(\mathbf{T}_t\) span a tangent plane at the point \(\mathbf{X}(s_0, t_0)\), at least in the case that the parametrization \(\mathbf{X}\) is a \(C^1\) function. (If it’s not \(C^1\), then there might not be a tangent plane.)   The easiest way to describe this plane is to use the normal vector \(\mathbf{N} = \mathbf{T}_s×\mathbf{T}_t\).  Properly written out in full \(\mathbf{N}\) is
+
+<br><span style="color:blue;">
+これら2つの接ベクトル \(\mathbf{T}_s\) と \(\mathbf{T}_t\) は、少なくともパラメータ表示 \(\mathbf{X}\) が \(C^1\) 関数である場合、点 \(\mathbf{X}(s_0, t_0)\) で接平面を張ります。(C^1\) 関数でない場合は、接平面が存在しない可能性があります。) この平面を最も簡単に記述する方法は、法線ベクトル \(\mathbf{N} = \mathbf{T}_s×\mathbf{T}_t\) を使用することです。 \(\mathbf{N}\) を完全に書き出すと次のようになります。
+</span>
+
+\[
+\mathbf{N}(s_0, t_0) = \mathbf{T}_s(s_0, t_0)×\mathbf{T}_t(s_0,t_0)
+\]
+
+With this denition of the normal vector \(\mathbf{N}\),  the equation of the plane tangent to the surface \(S\)  at the point \(\mathbf{X}(s_0, t_0)\) is
+
+<br><span style="color:blue;">
+この法線ベクトル\(\mathbf{N}\)の定義を用いると、点\(\mathbf{X}(s_0, t_0)\)における曲面\(S\)に接する平面の方程式は次のようになる。
+</span>
+
+\[
+\mathbf{N}(s_0,t_0)\cdot (\mathbf{x}-\mathbf{X}(s_0, t_0)) = 0
+\]
+
+where \(\mathbf{x}\) is the variable point \((x,y,z)\) on that plane. If \(\mathbf{N}(s_0, t_0)\) has coordinates \((A,B,C)\), then we can write that equation as
+
+<br><span style="color:blue;">
+ここで、\(\mathbf{x}\) はその平面上の変数点 \((x,y,z)\) です。\(\mathbf{N}(s_0, t_0)\) の座標が \((A,B,C)\) である場合、その方程式は次のように書くことができます。
+</span>
+\[
+A(x-x_0) + B(y-y_0) + C(z-z_0) = 0
+\] 
+
+Math 131 Home Page at
+http://math.clarku.edu/  djoyce/ma131/
+</p>
+    </body>
+</html>
