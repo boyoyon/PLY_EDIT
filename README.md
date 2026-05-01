@@ -26,10 +26,60 @@
 
 <h3>チュートリアル</h3>
 <p>
-　チュートリアルは <a href="https://boyoyon.github.io/PLY_EDIT/tutorial/tutorial.html">こちら</a>
+　チュートリアルは <a href="https://boyoyon.github.io/PLY_EDIT/tutorial/tutorial.html">こちら</a><br>
+　参考文献は <a href="https://boyoyon.github.io/PLY_EDIT/papers/papers.html">こちら</a>
 </p>
 
 <h3>更新項目</h3>
+<p>
+　<strong>切り口×経路で面を張る</strong><br>
+　　p　polyline<br>
+　(例)<br>
+　　p　gear　0.3　0.06　20　･･･　x-z面に切り口を作る(半径0.3　歯の高さ0.06　歯の枚数20枚の歯車)<br>
+　　p　push　section　･･･　切り口を Section[ ] バッファに移動する<br>
+　　p　curve　np.linspace(0,np.pi+3,100)　np.cos(T)　T/3　np.sin(T)　･･･　経路を生成する<br>
+　　p　polyline　･･･　切り口×経路の点列を生成する<br>
+　　p2　reverse　p　･･･　(この例では)面が裏返しになったので点のindexを逆順にする<br>
+　　surface　pclose　･･･　面を張る
+</p>
+
+<img src="images/p_polyline.svg">
+<p>
+　<strong>玉ねぎドーム</strong><br>
+　(例１)<br>
+　p　curve　np.linspace(-1/3*np.pi,np.pi,30)　(1+np.cos(T))*0.75　T　(1+np.cos(T))*0.75<br>
+　p　r　0　360/10　0　10<br>
+　surface　eclose<br>
+<br>
+　(例２)<br>
+　p　curve　np.linspace(-1/3*np.pi,np.pi,30)　1+np.cos(T)　T　1+np.sin(T)<br>
+　p ･･･ Points[ ]の内容を表示し<br>
+<br>
+　Points[]= [(np.float64(1.5), np.float64(-1.0471975511965976), 　np.float64(0.1339745962155614)),<br>
+　･･･<br>
+　(np.float64(0.0), np.float64(3.141592653589793), np.float64(1.0000000000000002))]
+　30<br>
+<br>
+　最後の点(y 座標が 3.14･･･) の x, z が 0になるように平行移動する<br>
+　p　t　0　0　-1<br>
+　p　r　0　360/10　0　10<br>
+　surface　eclose<br>
+</p>
+
+<img src="images/giboshi.png">
+<p>
+　<strong>腰っぽい･･･</strong><br>
+　python src\implicit_function.py (2.3-z)*((x-1)**2+y**2-0.5)*((x+1)**2+y**2-0.5)+z*(x**2+3/2*y**2-1)<br>
+<br>
+　式は <a href="http://math.clarku.edu/~djoyce/ma131/">Math 131, Multivariate Calculus</a> に載っていたものを使った。
+</p>
+<img src="images/waist-like.png">
+<p>
+　<strong>曲がった矢印</strong><br>
+　l　data\arrow.txt<br>
+　l　data\arrow2.txt
+</p>
+<img src="images/arrow.png">
 <p>
 　<strong>もう少しリアルな傘を作れるようにしてみた</strong><br>
 　python PLY_interactive.py<br>
