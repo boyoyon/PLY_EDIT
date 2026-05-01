@@ -1,0 +1,61 @@
+p clear
+p 0 1 0
+
+p r 5 0 0 13
+p2 p2p
+p t 0 -0.75 0
+p push section
+p 0 1 0
+section r 0 360/9/6 0
+
+p r 5 0 0 13
+p2 p2p
+p t 0 -0.75 0
+p s 0.95 0.95 0.95
+p push section
+p 0 1 0
+section r 0 360/9/6 0
+
+p r 5 0 0 13
+p2 p2p
+p t 0 -0.75 0
+p s 0.925 0.925 0.925
+p push section
+p 0 1 0
+section r 0 360/9/6 0
+
+p r 5 0 0 13
+p2 p2p
+p t 0 -0.75 0
+p s 0.92 0.92 0.92
+p push section
+p 0 1 0
+section r 0 360/9/6 0
+
+p r 5 0 0 13
+p2 p2p
+p t 0 -0.75 0
+p s 0.925 0.925 0.925
+p push section
+p 0 1 0
+section r 0 360/9/6 0
+
+p r 5 0 0 13
+p2 p2p
+p t 0 -0.75 0
+p s 0.95 0.95 0.95
+p push section
+p 0 1 0
+section r 0 360/9/6 0
+
+p r 5 0 0 13
+p2 p2p
+p t 0 -0.75 0
+p push section
+#section r 0 360/9/6 0
+
+p2 pop section
+surface
+r 0 360/9 0 9
+t 0 1 0
+

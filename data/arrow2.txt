@@ -1,0 +1,22 @@
+d all
+p clear
+
+POLYGON 3 1 0.1
+t -np.cos(np.deg2rad(60)) 0 0
+
+p 0 0.05 np.sqrt(3)/6
+p 0 0.05 -np.sqrt(3)/6
+p 0 -0.05 -np.sqrt(3)/6
+p 0 -0.05 np.sqrt(3)/6
+
+p g t 0 0 2 r 0 -90/15 0 t 0 0 -2 16
+surface pclose
+merge
+
+p t -(1.711325+2.288675)/2 0 -2
+t -(1.711325+2.288675)/2 0 -2
+
+p s 0 0 0 2
+surface pclose
+merge
+
