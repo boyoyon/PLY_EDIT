@@ -13,7 +13,7 @@ from Cat import Cat
 from filter_mesh import filter_mesh
 from filter_points import filter_points
 from dragon1 import dragon1
-#from dragon import dragon
+from p_polyline import p_polyline
 
 LINES = []
 input_queue = None
@@ -2811,6 +2811,23 @@ def main():
 
                         else:
                             print('p polyhedron tetra/hexa/octa/dodeca/icosa (size)')
+
+                    elif cmds[1] == 'polyline':
+
+                        if len(Points) == 0:
+                            print('Points[ ] is empty')
+                            continue
+
+                        if len(Section) == 0:
+                            print('Section[ ] is empty')
+                            continue
+
+                        _p2 = p_polyline(Points, Section) 
+
+                        if len(_p2) > 0:
+                            _p2 = np.array(_p2).squeeze().tolist()
+                            P2.clear()
+                            P2 = _p2
 
                     elif len(cmds)== 4: # direct input of 3D coordinates
 
