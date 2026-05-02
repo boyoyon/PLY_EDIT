@@ -36,8 +36,8 @@ def p_polyline(points, section):
                 
             if np.allclose(R3,-np.eye(3), atol=1e-8):
                 print('R3 nearly equals -np.eye(3)')
-                #R3 = o3d.geometry.get_rotation_matrix_from_xyz((np.pi, 0, 0)) 
-                R3 = -np.eye(3)
+                R3 = o3d.geometry.get_rotation_matrix_from_xyz((np.pi, 0, 0)) 
+                #R3 = -np.eye(3)
 
             x_axis = R3 @ np.array([1.0, 0.0, 0.0])
             X_AXIS = B - A
