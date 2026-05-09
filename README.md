@@ -44,6 +44,53 @@
 </p>
 
 <img src="images/p_polyline.svg">
+
+<p>
+　<strong>切り口×AM変調</strong><br>
+　　p am x/z<br>
+　(例)<br>
+　　p curve np.linspace(-1,1,30) T**2 [0]*30 T　･･･ x-z平面に点群を作成する<br>
+　　p push section　　　　　　　　　　　　　　･･･　Section[ ] にコピーする<br>
+　　p curve np.linspace(-1,1,30) T T [0]*30　　　･･･　x-y面に点群を生成する<br>
+　　p am x　　　　　　　　　　　　　　　　　･･･　Section[ ]の内容をPoints[ ]の内容でAM変調 → P2[ ]<br>
+　　surface 　　　　　　　　　　　　　　　　　･･･ 面を張る　
+</p>
+
+<img src="images/am.svg">
+
+<p>
+　<strong>点群plyの編集</strong><br>
+　Lotus-2, DepthAnythingなどで <a href="https://github.com/boyoyon/RgbDepth">画像を点群化</a> したplyを、メッシュ化する前に点群を編集する。<br>
+　(起動)<br>
+　　python src\pcd_edit.py<br>
+　(コマンド)<br>
+　　Visualizer<br>
+　　・1/2/3/4/5/6: 選択した点群を回転、平行移動する<br>
+　　・+shift：回転方向、移動方向を反転する<br>
+　　・+ctrl：回転量、移動量を一時的に増やす<br>
+　　・7/8：回転ステップ、移動ステップを減らす<br>
+　　・+shift：回転ステップ、移動ステップを増やす<br>
+　　・0：回転ステップ、移動ステップをデフォルトに戻す<br>
+　　・a：座標軸の表示/消去<br>
+　　・x：x=0面(青)の表示/消去<br>
+　　・y：y=0面(赤)の表示/消去<br>
+　　・z：z=0面(緑)の表示/消去<br>
+　　Console<br>
+　　・l：点群plyのロード<br>
+　　・remove x/y/z/-x/-y/-z：点群の削除<br>
+　　・mirror x/y/z/-x/-y/-z：点群のミラーリング(鏡像作成)<br>
+　　・select　(番号)：点群の選択<br>
+　　・save　(ファイル名(.ply))：点群のセーブ<br>
+　　・d：点群の削除<br>
+　　・u：undo(一回のみ)<br>
+　　・cap：スクリーンキャプチャー<br>
+　　・quit：終了<br>
+<br>
+　(使用例) ･･･ 使い勝手悪い<br>
+</p>
+
+<img src="images/pcd_edit.svg">
+
 <p>
 　<strong>玉ねぎドーム</strong><br>
 　(例１)<br>
