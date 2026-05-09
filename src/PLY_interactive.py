@@ -2829,6 +2829,52 @@ def main():
                             P2.clear()
                             P2 = _p2
 
+                    elif cmds[1] == 'am':
+
+                        if len(Points) == 0:
+                            print('Points[ ] is empty')
+                            continue
+
+                        if len(Section) == 0:
+                            print('Section[ ] is empty')
+                            continue
+
+                        _section = np.array(Section)
+                        P2.clear()
+
+                        if len(cmds) < 3 or cmds[2] == 'r':
+                            for _p in Points:
+
+                                _y = _p[1]
+                                _scale = np.sqrt(_p[0]**2 + _p[2]**2)
+                                _p2 = _scale * _section + np.array((0, _y, 0))
+
+                                P2.append(_p2.squeeze().tolist()) 
+
+                        elif cmds[2] == 'x':
+
+                            for _p in Points:
+
+                                _y = _p[1]
+                                _S = np.eye(3)
+                                _S[0][0] = _p[0]
+                                _p2 = _section @ _S + np.array((0, _y, 0))
+
+                                P2.append(_p2.squeeze().tolist()) 
+
+                        elif cmds[2] == 'z':
+
+                            for _p in Points:
+
+                                _y = _p[1]
+                                _S = np.eye(3)
+                                _S[2][2] = _p[2]
+                                _p2 = _section @ _S + np.array((0, _y, 0))
+
+                                P2.append(_p2.squeeze().tolist()) 
+
+                        print('P2: AMed section')
+
                     elif len(cmds)== 4: # direct input of 3D coordinates
 
                         fResult, values = Evals(cmds[1:], 3)
