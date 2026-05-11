@@ -37,7 +37,7 @@
 　(例)<br>
 　　p　gear　0.3　0.06　20　･･･　x-z面に切り口を作る(半径0.3　歯の高さ0.06　歯の枚数20枚の歯車)<br>
 　　p　push　section　･･･　切り口を Section[ ] バッファに移動する<br>
-　　p　curve　np.linspace(0,np.pi+3,100)　np.cos(T)　T/3　np.sin(T)　･･･　経路を生成する<br>
+　　p　curve　np.linspace(0,np.pi*3,100)　np.cos(T)　T/3　np.sin(T)　･･･　経路を生成する<br>
 　　p　polyline　･･･　切り口×経路の点列を生成する<br>
 　　p2　reverse　p　･･･　(この例では)面が裏返しになったので点のindexを逆順にする<br>
 　　surface　pclose　･･･　面を張る
