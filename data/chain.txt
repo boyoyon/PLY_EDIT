@@ -1,0 +1,22 @@
+d all
+p clear
+p 0.25 0 0
+p r 0 360/10 0 10
+p2 p2p
+p push section
+p curve np.linspace(0,np.pi*2,100) np.cos(T)*2 [0]*100 np.sin(T)
+p polyline
+surface peclose
+save chain_tmp.ply
+r 90 0 0
+t 3 0 0
+l chain_tmp.ply
+c 255 64 128
+merge
+t -6 0 0 5
+s 1/6 1/6 1/6
+centering
+normals
+save chain.ply
+del chain_tmp.ply
+
