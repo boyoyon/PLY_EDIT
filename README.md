@@ -32,6 +32,24 @@
 
 <h3>更新項目</h3>
 <p>
+　<strong>鎖をつなげる</strong><br>
+　　chain　[鎖の色１(0～255)×3)　鎖の色２(0～255)×3]<br>
+　　Points[ ]の点列に沿って輪を並べるだけで衝突判定など難しいことは行っていないので、点列によっては輪がめり込んだりする。<br>
+　(例)<br>
+　　p curve np.linspace(0,np.pi*3,30) np.cos(T) 0.1*T np.sin(T)<br>
+　　chain<br>
+</p>
+
+<img src="images/chain.png">
+
+<p>
+　<strong>x0平面、y0平面、z0平面 表示/非表示</strong><br>
+　Visualizer 画面で Shift+x、Shift+y、Shift+z
+</p>
+
+<img src="images/planeX0Y0Z0.png">
+
+<p>
 　<strong>切り口×経路で面を張る</strong><br>
 　　p　polyline<br>
 　(例)<br>
