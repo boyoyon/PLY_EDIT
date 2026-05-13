@@ -36,6 +36,14 @@ CatCursor = None
 Cursor = None
 CatLastPos = None
 
+fX0 = False
+fY0 = False
+fZ0 = False
+
+planeX0 = None
+planeY0 = None
+planeZ0 = None
+
 def input_thread():
 
     while True:
@@ -461,53 +469,113 @@ def key_callback_6(vis, action, mods):
 
 def key_callback_X(vis, action, mods):
 
-    param = ctrl.convert_to_pinhole_camera_parameters()
+    global fX0
 
-    transform = np.array([[np.cos(-np.pi/2), 0, -np.sin(-np.pi/2), 0],
-        [0, 1, 0, 0],
-        [np.sin(-np.pi/2), 0, np.cos(-np.pi/2), 3.0],
-        [0, 0, 0, 1]])
+    shift_pressed = (mods & 0x1) != 0
+    
+    if shift_pressed and action == 0:
 
-    Rx = np.array([[1,              0,              0,              0],
-                  [0,               np.cos(np.pi),  -np.sin(np.pi), 0],
-                  [0,               np.cos(np.pi),  np.cos(np.pi),  0],
-                  [0,               0,              0,              1]])
+        if planeX0 is not None:
 
-    param.extrinsic = transform @ Rx
-    ctrl.convert_from_pinhole_camera_parameters(param, allow_arbitrary=True)
+            fX0 = not fX0
+            _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
+    
+            if fX0:
+                vis.add_geometry(planeX0)
+            else:
+                vis.remove_geometry(planeX0)
+
+            ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+
+    elif not shift_pressed and action == 0:
+
+        param = ctrl.convert_to_pinhole_camera_parameters()
+    
+        transform = np.array([[np.cos(-np.pi/2), 0, -np.sin(-np.pi/2), 0],
+            [0, 1, 0, 0],
+            [np.sin(-np.pi/2), 0, np.cos(-np.pi/2), 3.0],
+            [0, 0, 0, 1]])
+    
+        Rx = np.array([[1,              0,              0,              0],
+                      [0,               np.cos(np.pi),  -np.sin(np.pi), 0],
+                      [0,               np.cos(np.pi),  np.cos(np.pi),  0],
+                      [0,               0,              0,              1]])
+    
+        param.extrinsic = transform @ Rx
+        ctrl.convert_from_pinhole_camera_parameters(param, allow_arbitrary=True)
 
     return False
 
 def key_callback_Y(vis, action, mods):
 
-    param = ctrl.convert_to_pinhole_camera_parameters()
+    global fY0
 
-    # 外部パラメータの算出方法がわからなかったので取得した値をそのまま設定...
+    shift_pressed = (mods & 0x1) != 0
+    
+    if shift_pressed and action == 0:
 
-    E = np.array([[ 6.12323400e-17, 1.22464680e-16, -1.00000000e+00, -1.47911420e-31],
-        [ 9.99991074e-01,  4.22513628e-03,  6.17492234e-17,  1.18481613e-15],
-        [ 4.22513628e-03, -9.99991074e-01, -1.22204872e-16,  3.00000000e+00],
-        [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]])
+        if planeY0 is not None:
 
+            fY0 = not fY0
+            _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
+    
+            if fY0:
+                vis.add_geometry(planeY0)
+            else:
+                vis.remove_geometry(planeY0)
 
-    param.extrinsic = E
-    ctrl.convert_from_pinhole_camera_parameters(param, allow_arbitrary=True)
+            ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+
+    elif not shift_pressed and action == 0:
+
+        param = ctrl.convert_to_pinhole_camera_parameters()
+    
+        # 外部パラメータの算出方法がわからなかったので取得した値をそのまま設定...
+    
+        E = np.array([[ 6.12323400e-17, 1.22464680e-16, -1.00000000e+00, -1.47911420e-31],
+            [ 9.99991074e-01,  4.22513628e-03,  6.17492234e-17,  1.18481613e-15],
+            [ 4.22513628e-03, -9.99991074e-01, -1.22204872e-16,  3.00000000e+00],
+            [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]])
+    
+    
+        param.extrinsic = E
+        ctrl.convert_from_pinhole_camera_parameters(param, allow_arbitrary=True)
 
     return False
 
 def key_callback_Z(vis, action, mods):
 
-    param = ctrl.convert_to_pinhole_camera_parameters()
+    global fZ0
 
-    # 外部パラメータの算出方法がわからなかったので取得した値をそのまま設定...
+    shift_pressed = (mods & 0x1) != 0
+    
+    if shift_pressed and action == 0:
 
-    E = np.array([[ 9.99997484e-01,  2.74701742e-19, -2.24310995e-03,  3.81639165e-17],
-        [ 0.00000000e+00, -1.00000000e+00, -1.22464680e-16,  3.94430453e-31],
-        [-2.24310995e-03,  6.27980454e-17, -9.99997484e-01,  3.00000000e+00],
-        [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]])
+        if planeZ0 is not None:
 
-    param.extrinsic = E
-    ctrl.convert_from_pinhole_camera_parameters(param, allow_arbitrary=True)
+            fZ0 = not fZ0
+            _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
+    
+            if fZ0:
+                vis.add_geometry(planeZ0)
+            else:
+                vis.remove_geometry(planeZ0)
+
+            ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+
+    elif not shift_pressed and action == 0:
+
+        param = ctrl.convert_to_pinhole_camera_parameters()
+    
+        # 外部パラメータの算出方法がわからなかったので取得した値をそのまま設定...
+    
+        E = np.array([[ 9.99997484e-01,  2.74701742e-19, -2.24310995e-03,  3.81639165e-17],
+            [ 0.00000000e+00, -1.00000000e+00, -1.22464680e-16,  3.94430453e-31],
+            [-2.24310995e-03,  6.27980454e-17, -9.99997484e-01,  3.00000000e+00],
+            [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]])
+    
+        param.extrinsic = E
+        ctrl.convert_from_pinhole_camera_parameters(param, allow_arbitrary=True)
 
     return False
 
@@ -601,7 +669,8 @@ def rotDeg2D(p, degree):
 def main():
 
     global input_queue, LINES, ctrl, angle_step, translation_step, CatCursor
-               
+    global planeX0, planeY0, planeZ0        
+       
     argv = sys.argv
     argc = len(argv)
     
@@ -685,6 +754,16 @@ def main():
     Pmarker = o3d.io.read_triangle_mesh(os.path.join(os.path.dirname(__file__), 'Pmarker.ply'))
 
     CatCursor = o3d.io.read_triangle_mesh(os.path.join(os.path.dirname(__file__), 'cursor.ply'))
+
+    planeX0 = o3d.io.read_triangle_mesh(os.path.join(os.path.dirname(__file__), 'plane_x0.ply'))
+
+    planeY0 = o3d.io.read_triangle_mesh(os.path.join(os.path.dirname(__file__), 'plane_y0.ply'))
+
+    planeZ0 = o3d.io.read_triangle_mesh(os.path.join(os.path.dirname(__file__), 'plane_z0.ply'))
+
+    Chain_even = o3d.io.read_triangle_mesh(os.path.join(os.path.dirname(__file__), 'chain_even.ply'))
+
+    Chain_odd = o3d.io.read_triangle_mesh(os.path.join(os.path.dirname(__file__), 'chain_odd.ply'))
 
     ctrl = vis.get_view_control()
     ctrl.set_front([0.5, 0.25, 0.5])
@@ -1463,8 +1542,6 @@ def main():
                     else:
                         ctrl.convert_from_pinhole_camera_parameters(_EyePos)
   
-                    #vis.update_geometry(mesh)
-
             elif cmds[0] == 'polyline' or cmds[0] == 'POLYLINE': 
 
                 if cmds[0] == 'polyline': # open path
@@ -1496,8 +1573,6 @@ def main():
                     else:
                         ctrl.convert_from_pinhole_camera_parameters(_EyePos)
   
-                    #vis.update_geometry(mesh)
-
             elif cmds[0] == 'poly-line' or cmds[0] == 'POLY-LINE': 
 
                 if cmds[0] == 'poly-line': # open path
@@ -1529,8 +1604,42 @@ def main():
                     else:
                         ctrl.convert_from_pinhole_camera_parameters(_EyePos)
   
-                    #vis.update_geometry(mesh)
+            elif cmds[0] == 'chain' or cmds[0] == 'CHAIN': 
 
+                if len(cmds) > 6:
+                    fResult, values = Evals(cmds[1:],6)
+                    if not fResult:
+                        print('%s chain_color_1(0-255 0-255 0-255) chain_color_2(0-255 0-255 0-255)')
+                        continue
+                    _meshes, _names = chain(cmds, Points, Chain_even, Chain_odd, (values[0], values[1], values[2]), (values[3], values[4], values[5]))
+               
+                else:
+
+                    _meshes, _names = chain(cmds, Points, Chain_even, Chain_odd)
+
+                if len(_meshes) > 0:
+                
+                    _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
+
+                    update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+
+                    vis.add_geometry(_meshes[0])
+                    meshes.append(_meshes[0])
+
+                    name0 = _names[0]
+                    name = '%s' % name0
+                    no = 2
+                    while name in names:
+                        name = '%s(%d)' % (name0, no)
+                        no += 1
+                    names.append(name)
+                   
+                    curr = len(meshes) - 1
+                    if len(meshes) < 3 and not fAxis:
+                        ctrl.convert_from_pinhole_camera_parameters(EyePos0)
+                    else:
+                        ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+  
             elif cmds[0] == 'line': 
 
                 if len(cmds) > 6:
@@ -3398,7 +3507,7 @@ def main():
                 else:
                     print('distribute <ply>')
                     print('distribute ply to the places specidied by Points[]') 
-
+            
             elif cmds[0] == 'cap':
 
                 dst_path = 'screen.png'

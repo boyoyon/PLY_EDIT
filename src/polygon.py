@@ -330,6 +330,42 @@ def polyline(cmds, Points, fClose, fPadding = False, SurfaceOuter = (128,128,255
 
     return meshes, names
 
+def chain(cmds, Points, Chain_even, Chain_odd, even_color = (128,128,255), odd_color = (255, 64, 128)):
+
+    meshes = []
+    names = []
+    accum = None
+
+    points = copy.deepcopy(Points)
+    chain_even = copy.deepcopy(Chain_even)
+    chain_even.paint_uniform_color([even_color[0]/255.0, even_color[1]/255.0, even_color[2]/255.0])
+
+    chain_odd = copy.deepcopy(Chain_odd)
+    chain_odd.paint_uniform_color([odd_color[0]/255.0, odd_color[1]/255.0, odd_color[2]/255.0])
+
+    if len(Points) > 1:
+
+        if cmds[0] == 'CHAIN':
+            points.append(points[0])
+
+        _meshes =  _chain(points, chain_even, chain_odd)
+    
+        for i in range(len(_meshes)):
+                    
+            if i == 0:
+                accum = copy.deepcopy(_meshes[i])
+            else:
+                accum += copy.deepcopy(_meshes[i])
+    
+        if accum is not None:
+            meshes.append(accum)
+            names.append('chain')
+
+    else:
+         print('2 or more points are needed for chain')
+
+    return meshes, names
+
 def star(cmds, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner):
 
     _meshes = []
@@ -791,6 +827,58 @@ def _polyline(size, nr_divs, ratio, fClose, fPadding, start, end, points, Surfac
     
         if accum is not None:
             meshes.append(accum)
+
+    return meshes
+
+CHAIN_SCALE = 1.3
+
+def _chain(points, chain_even, chain_odd):
+    
+    meshes = []
+    accum = None
+
+    nr_points = len(points)
+
+    # パイプの作成 
+    for i in range(1, nr_points):
+
+        if i % 2 == 0:
+            pipe0 = chain_even
+        else:
+            pipe0 = chain_odd
+
+        A = np.array(points[i-1])
+        B = np.array(points[i])
+        M = (A + B) * 0.5  
+        
+        l = np.linalg.norm(B - A) * CHAIN_SCALE
+ 
+        S = np.array([[l, 0, 0, 0],
+                      [0, l, 0, 0],
+                      [0, 0, l, 0],
+                      [0, 0, 0, 1]],np.float64)
+   
+        pipe = copy.deepcopy(pipe0)
+        pipe.transform(S) 
+    
+        R = get_rotation_to_vector(B - A) # pipe direction
+        if not np.allclose(R,-np.eye(3), atol=1e-8):
+            pipe.rotate(R, center=(0,0,0))
+    
+        T = np.array([[1, 0, 0, M[0]],
+                      [0, 1, 0, M[1]],
+                      [0, 0, 1, M[2]],
+                      [0, 0, 0, 1]], np.float64)
+    
+        pipe.transform(T)
+
+        if accum is None:
+            accum = copy.deepcopy(pipe)
+        else:
+            accum += copy.deepcopy(pipe)
+
+    if accum is not None:
+        meshes.append(accum)
 
     return meshes
 
