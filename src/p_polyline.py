@@ -35,7 +35,7 @@ def p_polyline(points, section):
             R3 = get_rotation_to_vector(Y_AXIS, y_axis)
                 
             if np.allclose(R3,-np.eye(3), atol=1e-8):
-                print('R3 nearly equals -np.eye(3)')
+                #print('R3 nearly equals -np.eye(3)')
                 R3 = o3d.geometry.get_rotation_matrix_from_xyz((np.pi, 0, 0)) 
                 #R3 = -np.eye(3)
 
@@ -44,7 +44,7 @@ def p_polyline(points, section):
  
             R4 = get_rotation_to_vector(X_AXIS, x_axis)
             if np.allclose(R4,-np.eye(3), atol=1e-8):
-                print('R4 nearly equal -np.eye(3)')
+                #print('R4 nearly equal -np.eye(3)')
                 R4 = -np.eye(3)
 
             R = R4

@@ -2984,6 +2984,38 @@ def main():
 
                         print('P2: AMed section')
 
+                    elif cmds[1] == 'reverse':
+
+                        if len(Points) > 2:
+
+                            start_idx = 0
+
+                            if len(cmds) > 2:
+
+                                if cmds[2] == 'half':
+
+                                    start_idx = len(Points) // 2
+
+                                else:
+
+                                    fResult, value = Eval(cmds[2])
+                                
+                                    if fResult:
+                                        start_idx = int(value)
+                                
+                                    else:
+                                        print('p reverse [<start idx>]')
+                                        continue                               
+                       
+                            _points = np.array(Points)
+                            _points[start_idx:] = _points[start_idx:][::-1]
+                            Points.clear()
+                            Points = _points.tolist()
+                            print('indices of second hald of Points[ ] are reversed')
+
+                        else: 
+                            print('number of Points[](%d) < 3' % len(Points))
+
                     elif len(cmds)== 4: # direct input of 3D coordinates
 
                         fResult, values = Evals(cmds[1:], 3)
@@ -3123,26 +3155,106 @@ def main():
 
             elif cmds[0] == 'section':
 
-                if len(Section) == 0:
-                    print('Section[] is empty')
-                    continue
-
                 if len(cmds) > 2:
-            
-                    if cmds[1] == 'r':
+           
+                    if cmds[1] == 'polygon':
+
+                        if len(cmds) > 2:
+
+                            _nr_edges = 5
+                            _r = 1.0
+                             
+                            fResult, value = Eval(cmds[2])
+
+                            if fResult:
+                                _nr_edges = int(value)
+
+                            else:
+                                print('section polygon <number of edges> <raduis>')
+                                continue
+
+                            if len(cmds) > 3:
+
+                                fResult, value = Eval(cmds[3])
+
+                                if fResult:
+                                    _r = value
+                            
+                                else:
+                                    print('section polygon <number of edges> <raduis>')
+                                    continue
+
+                            _x0 = 0.0
+                            _y0 = 0.0
+                            _z0 = _r
+
+                            _p = []
+                            _p.append((_x0, _y0, _z0))
+
+                            angle_step = -np.pi * 2 / _nr_edges
+
+                            for i in range(1, _nr_edges):
+                                angle = angle_step * i
+                                _x = np.cos(angle) * _x0 - np.sin(angle) * _z0
+                                _z = np.sin(angle) * _x0 + np.cos(angle) * _z0
+
+                                _p.append((_x, _y0, _z))
+
+                            Section = []
+                            Section.append(_p)
+                            print('polygon vertices are stored to Section[]')  
+
+                        else:
+                            print('section polygon <number of edges> <raduis>')
+                            continue
+ 
+                    elif cmds[1] == 'r':
+
+                        if len(Section) == 0:
+                            print('Section[] is empty')
+                            continue
 
                         if len(cmds) > 4:
                             R = getRotateMatrix(cmds[2:])
                             if R is not None:
                                 _points = np.array(Section)
-                                Section = (_points @ R.T).tolist()
+                                for i in range(_points.shape[0]):
+                                    _points[i] = _points[i] @ R.T
+                                    
+                                Section = _points.tolist()
+                                print('Section[] is rotated')
                             else:
                                 print('section r <deg_x> <deg_y> <deg_z>')
 
                         else:
                             print('section r <deg_x> <deg_y> <deg_z>')
+
+                    elif cmds[1] == 's':
+
+                        if len(Section) == 0:
+                            print('Section[] is empty')
+                            continue
+
+                        if len(cmds) > 4:
+                            fResult, values = Evals(cmds[2:],3)
+
+                            if fResult:
+                                _points = np.array(Section)
+                                _S = np.array([values[0], values[1], values[2]])
+
+                                for i in range(_points.shape[0]):
+                                    _points[i] = _points[i] * _S
+                                Section = _points.tolist()
+                                print('Section [] is scaled')    
+
+                            else:
+                                print('section s <scale_x> <scale_y> <scale_z>')
+                                continue 
+
                 else:
+                    print('section polygon <nr_edges> <radius>')
                     print('section r <deg_x> <deg_y> <deg_z>')
+                    print('section s <scale_x> <scale_y> <scale_y>')
                     print(Section)
                     print(np.array(Section).shape)
 
