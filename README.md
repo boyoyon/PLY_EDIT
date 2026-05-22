@@ -32,6 +32,52 @@
 
 <h3>更新項目</h3>
 <p>
+　<strong>点列の index を反転にする</strong><br>
+　 p reverse　･･･　すべての点の index を逆順にする<br>
+　 p reverse half ･･･ 後半の点の index を逆順にする<br>
+　 p reverse (数字) ･･･ 指定したindex 以降の index を逆順にする<br>
+</p>
+<img src="images/reverse_indices.svg">
+<img src="images/reverse_indices2.svg">
+<p>
+　(例)<br>
+　　l　data\sx10.txt
+</p>
+<img src="images/sx10.png">
+<p>
+　<strong>切り口を変更する</strong><br>
+　　section  polygon　(角数)　(外接円半径)<br>
+　　section　r　(x軸周り回転角度)　(y軸周り回転角度)　(z軸周り回転角度)<br>
+　　section　s　(x軸方向倍率)　(y軸方向倍率)　(z軸方向倍率)<br>
+　(例)<br>
+　　l sx10.npy　･･･　data\sx10.txt を実行すると作成される点列データを軌道としてロードする<br>
+<br>
+　　c　green<br>
+　　section polygon 2 0.3　･･･　二角形は違和感があるが切り口(x-z面上の点列)は作成される<br>
+　　p polyline　･･･　軌道(Poiunts[])×切り口(Section[])で P2[] を生成する<br>
+　　surface　･･･　P2[] で面を張る<br>
+
+<br>
+　　c　default<br>
+　　section polygon 4 0.3　･･･　四角形で切り口(x-z面上の点列)を作成する<br>
+　　p polyline　･･･　軌道(Poiunts[])×切り口(Section[])で P2[] を生成する<br>
+　　surface pclose　･･･　P2[] で面を張る<br>
+<br>
+　　c　pink<br>
+　　section polygon 4 0.3　･･･　四角形で切り口(x-z面上の点列)を作成する<br>
+　　section r 0 45 0 ･･･ 切り口を y軸周りに45°回転する<br>
+　　p polyline　･･･　軌道(Poiunts[])×切り口(Section[])で P2[] を生成する<br>
+　　surface pclose　･･･　P2[] で面を張る<br>
+<br>
+　　c　orange<br>
+　　section polygon 30 0.3　･･･　30角形で切り口を作成する<br>
+　　p polyline　･･･　軌道(Poiunts[])×切り口(Section[])で P2[] を生成する<br>
+　　surface pclose　･･･　P2[] で面を張る
+</p>
+
+<img src="images/sections.png">
+
+<p>
 　<strong>鎖をつなげる</strong><br>
 　　chain　[鎖の色１(0～255)×3)　鎖の色２(0～255)×3]<br>
 　　Points[ ]の点列に沿って輪を並べるだけで衝突判定など難しいことは行っていないので、点列によっては輪がめり込んだりする。<br>
