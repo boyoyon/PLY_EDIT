@@ -14,6 +14,8 @@ from filter_mesh import filter_mesh
 from filter_points import filter_points
 from dragon1 import dragon1
 from p_polyline import p_polyline
+from wrap2cylinder import wrap2cylinder
+from lid import lid
 
 LINES = []
 input_queue = None
@@ -3016,6 +3018,100 @@ def main():
                         else: 
                             print('number of Points[](%d) < 3' % len(Points))
 
+                    elif cmds[1] == 'wrap':
+
+                        print('wrap vert/horz [r (value) extra (value)]')
+                                
+                        if len(Points) > 0:
+
+                            mode = ''
+                            mode2 = 'vert'
+
+                            if len(cmds) > 2:
+                                mode2 = cmds[2]
+                            
+                            if mode2 != 'vert' and mode2 != 'horz':
+                                print('wrap vert/horz')
+                                continue
+
+                            r = 3.0
+                            extra = 0
+                            cmdIdx = 3
+
+                            fResult = True
+                            if len(cmds) > 3:
+                                fResult = False
+
+                            while len(cmds) > cmdIdx + 1:
+
+                                if cmds[cmdIdx] == 'r':
+
+                                    fResult, value = Eval(cmds[cmdIdx+1])
+                                    if fResult:
+                                        r = value
+                                        cmdIdx += 2
+                                        continue
+                                    else:
+                                        break
+
+                                elif cmds[cmdIdx] == 'extra':
+                                    
+                                    fResult, value = Eval(cmds[cmdIdx+1])
+                                    if fResult:
+                                        extra = value
+                                        cmdIdx += 2
+                                        continue
+
+                                    else:
+                                        break
+
+                                else:
+                                    break
+
+                            if not fResult:
+                                continue
+
+                            _points = np.array(Points)
+                            _width_x = np.max(_points[:,0])-np.min(_points[:,0])
+                            _width_y = np.max(_points[:,1])-np.min(_points[:,1])
+                            _width_z = np.max(_points[:,2])-np.min(_points[:,2])
+
+                            _width_max = np.max([_width_x, _width_y, _width_z])
+                            _width_min = np.min([_width_x, _width_y, _width_z])
+
+                            if _width_x == _width_max:
+
+                                if _width_y == _width_min:
+                                    mode = 'xz'
+                                else:
+                                    mode = 'xy'
+
+                            elif _width_y == _width_max:
+
+                                if _width_x == _width_min:
+                                    mode = 'yz'
+                                else:
+                                    mode = 'yx'
+
+                            elif _width_z == _width_max:
+ 
+                                if _width_x == _width_min:
+                                    mode = 'zy'
+                                else:
+                                    mode = 'zx'
+
+                            print('r:', r)
+                            print('extra:', extra)
+
+                            _wrapped = wrap2cylinder(_points, mode, mode2, r, extra)
+
+                            if _wrapped is not None:
+                                Points.clear()
+                                Points = _wrapped.tolist()
+
+                        else:
+                            print('Points[] is empty')
+
                     elif len(cmds)== 4: # direct input of 3D coordinates
 
                         fResult, values = Evals(cmds[1:], 3)
@@ -3111,6 +3207,7 @@ def main():
                         if len(cmds) > 2 and cmds[2] == 'section':
                             if len(Section) > 0:
                                 P2.clear()
+                                print(np.array(Section.shape))
                                 P2 = copy.deepcopy(Section) 
                                 Section.clear()
                                 print('Section --> P2')
@@ -3125,8 +3222,16 @@ def main():
                         if len(cmds) > 2 and cmds[2] == 'section':
                             if len(P2) > 0:
                                 _p2 = np.array(P2).squeeze()
-                                Section.append(_p2.tolist())
-                                P2.clear()
+                                _shape_before = _p2.shape
+                                if len(_p2.shape) > 2:
+                                    _m = 1
+                                    for i in range(len(_p2.shape)-1):
+                                        _m *= _p2.shape[i]
+                                    _n = _p2.shape[-1]
+                                    _p2 = _p2.reshape(_m, _n)
+                                    _shape_after = _p2.shape
+                                    print(_shape_before, '-->', _shape_after)
+                                Section = _p2.tolist()
                                 print('P2 --> Section')
                                 print('Section:', len(Section))
                             else:
@@ -4289,6 +4394,49 @@ def main():
 
                 else:
                     print('no mesh')
+
+            elif cmds[0] == 'lid' or cmds[0] == '-lid':
+
+                if len(Points) > 0:
+
+                    height = 0
+
+                    if len(cmds) > 1:
+
+                        fResult, value = Eval(cmds[1])
+
+                        if fResult:
+                            height = value
+
+                        else:
+                            print('lid [<height>]')
+                            continue
+
+                    if cmds[0] == 'lid':
+                        _mesh = lid(Points, SurfaceOuter, SurfaceInner, height) 
+                    else:
+                        _mesh = lid(Points, SurfaceInner, SurfaceOuter, height) 
+
+                    update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
+
+                    if _mesh is not None:
+                        _mesh.compute_vertex_normals()
+                        meshes.append(_mesh)
+                    
+                        no = 2
+                        name = 'lid' 
+                        while name in names:
+                            name = 'lid(%d)' % no
+                            no += 1
+           
+                        names.append(name)
+                        curr = len(meshes) - 1
+                        _EyePos = ctrl.convert_to_pinhole_camera_parameters()
+                        vis.add_geometry(meshes[curr])
+                        ctrl.convert_from_pinhole_camera_parameters(_EyePos)
+
+                else:
+                    print('Points[] is empty')
 
             elif cmds[0] == 'quit':
                 break
