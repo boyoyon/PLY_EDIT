@@ -143,7 +143,7 @@ def wrap2cylinder(points, mode, mode2, radius, extra):
 
             new_z = (radius + deltaR) * np.cos(theta)
             new_y = (radius + deltaR) * np.sin(theta)
-            new_z = z
+            new_x = x
 
         else:
             return None   
