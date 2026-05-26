@@ -31,6 +31,85 @@
 </p>
 
 <h3>更新項目</h3>
+
+<p>
+　<strong>点列を(円筒に)巻きつける</strong><br>
+　 p wrap vert/horz [r (半径)　extra (すき間の値)]<br>
+　(例)<br>
+　　p curve np.linspace(0,np.pi*10,500) T 1-np.abs(np.sin(T)) [0]*len(T)<br>
+　　p wrap vert　･･･　円筒に巻きつける<br>
+　　p t 0 1.5 0　･･･　y 軸方向に点列を持ち上げる<br>
+　　p s 1 0 1 2　･･･　y 軸方向の点列の凹凸をつぶす。スケーリング前と後の2個作成<br>
+　　surface pclose<br>
+</p>
+
+<img src="images/wrap.svg">
+
+<p>
+　(例)<br>
+　　p curve np.linspace(0,np.pi*10,500) T 1-np.abs(np.sin(T)) [0]*len(T)<br>
+　　p wrap horz　･･･　円筒に巻きつける<br>
+　　p t 0 0 1 2　･･･　z 軸方向に点列を移動。移動前と移動後の2個作成<br>
+　　surface pclose<br>
+</p>
+
+<img src="images/wrap2.svg">
+
+<p>
+　巻きつけのつなぎ目にすき間を開けたい場合は extra パラメータを指定する。<br>
+　(例)<br>
+　　l　sx10.npy　･･･　data/sx10.txtを実行するとできる点列ファイルをロード<br>
+　　p wrap vert　･･･　extra 指定なし<br>
+　　p wrap vert extra 1　･･･　extra 指定あり<br>
+　　p wrap horz　･･･　extra 指定なし<br>
+　　p wrap horz extra 1　･･･　extra 指定あり<br>
+　　POLYLINE 25 0.1
+</p>
+
+<img src="images/wrap3.svg">
+
+<p>
+　p　wrap　で作成した経路×切り口は、(今のところ)ねじれてうまくいかず。<br>
+　(手作り感はあるが･･･)
+</p>
+
+<img src="images/wrap.png">
+
+<p>
+　<strong>点列からフタを作成する</strong><br>
+　　lid　[(高さ)]　･･･　フタの中央を持ち上げる場合は高さを指定する。下げる場合は負の値を指定する<br>
+　　-lid　[(高さ)]　･･･　裏返しのフタを作成する<br>
+　　(例)<br>
+　　　l　data\s.txt　･･･　S字のパイプを作成するスクリプトをロードする<br>
+　　　エンターキー押下　･･･　スクリプトを実行する<br>
+　　　p　pop　0　･･･　P2[0] を　Points[] にロードする<br>
+　　　lid　･･･　フタを作成する<br>
+　　　p　pop　-1　･･･　P2[-1] を Points[] にロードする<br>
+　　　-lid　･･･　裏返しのフタを作成する<br>
+</p>
+
+<img src="images/lid.svg">
+
+<p>
+　(例)<br>
+　　点列が平面上になくてもうまくいくこともある。<br>
+　　p curve np.linspace(0,np.pi*10,100) T np.sin(T) [0]*len(T)<br>
+　　p wrap vert　･･･　正弦波を円筒に巻きつける<br>
+　　lid　･･･　フタを作成<br>
+</p>
+
+<img src="images/lid2.svg">
+
+<p>
+　(例)<br>
+　　平面上にあっても点列の並びによりうまくフタを作成できない･･･<br>
+　　l　data.f.txt　･･･　F 字の頂点座標をロード<br>
+　　エンターキー押下　･･･　スクリプトを実行<br>
+　　lid　･･･　フタを作成<br>
+</p>
+
+<img src="images/lid3.svg">
+
 <p>
 　<strong>点列の index を反転にする</strong><br>
 　 p reverse　･･･　すべての点の index を逆順にする<br>
