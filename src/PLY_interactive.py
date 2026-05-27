@@ -4412,10 +4412,15 @@ def main():
                             print('lid [<height>]')
                             continue
 
+                    shape = 'line'
+
+                    if len(cmds) > 2:
+                        shape = cmds[2]
+
                     if cmds[0] == 'lid':
-                        _mesh = lid(Points, SurfaceOuter, SurfaceInner, height) 
+                        _mesh = lid(Points, SurfaceOuter, SurfaceInner, height, shape) 
                     else:
-                        _mesh = lid(Points, SurfaceInner, SurfaceOuter, height) 
+                        _mesh = lid(Points, SurfaceInner, SurfaceOuter, height, shape) 
 
                     update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
 
