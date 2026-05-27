@@ -1,0 +1,9 @@
+d all
+p clear
+p　curve　np.linspace(0,3.5*np.pi,100)　0.1*np.exp(0.15*T)*np.cos(T)　0.1*np.exp(0.15*T)*np.sin(T)　[0]*len(T)
+p r 0 0 20
+c green
+poly-line 25 0.06 0.5 
+t 0 0.95 0
+r 0 0 45 8
+normals

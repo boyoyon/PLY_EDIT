@@ -1,0 +1,30 @@
+d all 
+p clear
+p 0.5 0 0 
+p r 0 360/25 0 25
+p2 p2p
+p push section
+p 0 0 0
+p g t -np.cos(np.deg2rad(45)) 0 np.sin(np.deg2rad(45)) r 0 360/30 0 t np.cos(np.deg2rad(45)) 0 -np.sin(np.deg2rad(45)) 
+p g t -np.cos(np.deg2rad(45)) 0 np.sin(np.deg2rad(45)) r 0 360/30 0 t np.cos(np.deg2rad(45)) 0 -np.sin(np.deg2rad(45)) int(30*3/4)
+p2 p2p
+p reverse
+p r 0 180 0 2
+p2 p2p
+p reverse half
+section polygon 20 0.5
+p polyline
+c pink
+SKELETON
+p2 transpose
+c default
+skeleton
+surface eclose 0 0
+surface eclose 42 42
+p2 transpose
+lid
+p pop 0
+-lid
+merge
+normals
+
