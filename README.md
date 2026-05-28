@@ -33,6 +33,31 @@
 <h3>更新項目</h3>
 
 <p>
+　<strong>トロコイドで点列をつくる</strong><br>
+　 　python　src\trochoid　[(ペン位置)　(回転円半径)　(固定円半径)]<br>
+　　 ・ペン位置：回転円の半径を 1 としたペンの位置<br>
+　　 ・ESCキーまたはqキー押下：終了<br>
+　　 ・sキー押下：点列を保存して終了<br>
+　　 ・pキー押下：回転の一時停止/一時停止解除<br>
+　　 ・上記以外のキー押下：回転開始<br>
+　　 ・終了すると以下のファイルができる<br>
+　　 　trochoid.npy：トロコイド点列<br>
+　　　 trochoid.png：トロコイド画像<br>　
+</p>
+
+<img src="images/trochoid.svg">
+
+<p>
+　(例)NTTっぽい<br>
+　　・python　src\trochoid.py　2.5<br>
+　　・sキー押下で保存～終了<br>
+　　・python　src\PLY_interactive.py<br>
+　　・l　trochoid.npy<br>
+</p>
+
+<img src="images/trochoid2.svg">
+
+<p>
 　<strong>点列を(円筒に)巻きつける</strong><br>
 　 p wrap vert/horz [r (半径)　extra (すき間の値)]<br>
 　(例)<br>
