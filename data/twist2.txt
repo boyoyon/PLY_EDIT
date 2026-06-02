@@ -1,0 +1,5 @@
+p curve np.linspace(-np.pi*2,np.pi*2,100) T np.sin(T) np.cos(T)
+p r 180 0 0 2
+p2 transpose
+p2 wrap
+surface
