@@ -33,6 +33,63 @@
 <h3>更新項目</h3>
 
 <p>
+　<strong> P2[]の一時退避、復旧、アペンド</strong><br>
+　　p2　push　section　･･･　P2[] の内容を Section[] に一時退避する<br>
+　　p2　pop　section　･･･　Section[] に一時退避したデータを P2[] に戻す<br>
+　　p2　append　section　(before/after)　･･･　Section[] の内容を P2[] の前/後ろに配置する<br>
+<br>
+　(例)<br>
+　　# ①ひねったリボン用点列をつくる<br>
+　　p　clear<br> 
+　　p　-0.1　1　0　<br>
+　　p　-0.1　-1　0<br>
+　　p　g　t　-0.1　0　0　r　2　0　0　91　･･･　x 軸と反対向きに点列をひねる＋伸ばす： 2°×(91-1)= 180°<br>
+　　p2　reverse　e　･･･　x 軸向きに点列の index を振りなおす<br>
+　　surface　･･･　可視化のためメッシュ化<br>
+　　<span style="color:red;">p2　push　section</span><br>
+
+<br>
+　　# ②ひねっていないリボン用点列をつくる<br>
+　　p　clear<br>
+　　p　0　1　0<br>
+　　p　0　-1　0<br>
+　　p　t　0.1　0　0　360<br>
+　　surface　･･･　可視化のためメッシュ化<br>
+　　<span style="color:red;">p2　append　section　before</span><br>
+　　p2　save　twist_and_straight.npy　･･･　P2[] をセーブ
+</p>
+
+<img src="images/p2append.svg">
+
+<p>
+　<strong> P2[] を円筒に巻きつける、曲げる</strong><br>
+　　p2　wrap　(vert/horz)<br>
+　　p2　bend　x回転角度　y回転角度　z回転角度
+</p>
+
+<p>
+　(例)<br>
+　　d　all　･･･　すべてのメッシュを削除<br>
+　　l　twist_and_straight.npy<br>
+　　<span style="color:red;">p2　bend　0　360/451　0</span>　･･･ 451 はリボン①の長さ(91)＋リボン②の長さ(360)<br>
+　　surface　Eclose
+</p>
+
+<img src="images/mebius2.svg">
+
+<p>
+　(例)<br>
+　　d　all　･･･　すべてのメッシュを削除<br>
+　　p　curve　np.linspace(-np.pi*2,np.pi*2,100)　T　np.sin(T)　np.cos(T)<br>
+　　p　r　180　0　0　2<br>
+　　p2　transpose<br>
+　　<span style="color:red;">p2　wrap</span><br>
+　　surface
+</p>
+
+<img src="images/p2wrap.svg">
+
+<p>
 　<strong>トロコイドで点列をつくる</strong><br>
 　 　python　src\trochoid　[(ペン位置)　(回転円半径)　(固定円半径)]<br>
 　　 ・ペン位置：回転円の半径を 1 としたペンの位置<br>
@@ -225,9 +282,9 @@
 　<strong>切り口×AM変調</strong><br>
 　　p am x/z<br>
 　(例)<br>
-　　p curve np.linspace(-1,1,30) T**2 [0]*30 T　･･･ x-z平面に点群を作成する<br>
+　　p curve np.linspace(-1,1,30) T**2 [0]*30 T　･･･ x-z平面に点列を作成する<br>
 　　p push section　　　　　　　　　　　　　　･･･　Section[ ] にコピーする<br>
-　　p curve np.linspace(-1,1,30) T T [0]*30　　　･･･　x-y面に点群を生成する<br>
+　　p curve np.linspace(-1,1,30) T T [0]*30　　　･･･　x-y面に点列を生成する<br>
 　　p am x　　　　　　　　　　　　　　　　　･･･　Section[ ]の内容をPoints[ ]の内容でAM変調 → P2[ ]<br>
 　　surface 　　　　　　　　　　　　　　　　　･･･ 面を張る　
 </p>
