@@ -1,0 +1,19 @@
+d all
+p clear
+p -0.1 1 0
+p -0.1 -1 0
+p g t -0.1 0 0 r 2 0 0 91
+p2 reverse e
+p2 push section
+p clear
+p 0 1 0
+p 0 -1 0
+p t 0.1 0 0 360
+p2 append section before
+p2 bend 0 360/451 0
+surface Eclose
+
+
+
+
+

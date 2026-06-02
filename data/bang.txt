@@ -1,0 +1,13 @@
+d all
+p clear
+p curve np.linspace(0,np.pi*20,500) 1-np.abs(np.sin(T)) T [0]*len(T)
+p wrap horz
+p s 0 0 1 2
+surface
+p pop 0
+p t 0 0 -0.5 2
+p2 reverse p
+surface pclose
+p s 0 0 1 2
+surface
+

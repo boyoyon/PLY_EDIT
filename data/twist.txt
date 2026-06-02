@@ -1,0 +1,9 @@
+d all
+p clear
+p 0 0.3 0
+p 0 -0.3 0
+p g t -0.3 0 0 r 360/30 0 0 31
+surface
+p2 bend 0 360/31 0
+surface Eclose
+
