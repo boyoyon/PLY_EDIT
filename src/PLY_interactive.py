@@ -14,7 +14,7 @@ from filter_mesh import filter_mesh
 from filter_points import filter_points
 from dragon1 import dragon1
 from p_polyline import p_polyline
-from wrap2cylinder import wrap2cylinder
+from wrap2cylinder import *
 from lid import lid
 
 LINES = []
@@ -1939,25 +1939,73 @@ def main():
                         Points.clear()
                         print('Points[] is cleared')
                         P2.clear()
-                        Section.clear()
+                        #Section.clear()
                         Faces.clear()
 
                     elif cmds[1] == 'polygon':
 
-                        _meshes, _names = polygon(cmds[1:], False, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+                        #_meshes, _names = polygon(cmds[1:], False, SurfaceOuter, SurfaceInner, LateralOuter, LateralInner)
+                        #
+                        #if len(_meshes) > 0:
+                        #
+                        #    nr_points = int(cmds[2])
+                        #
+                        #    Points.clear()
+                        #    P2.clear()
+                        #    if len(cmds) < 5 or (len(cmds) > 4 and cmds[4] == '0'):
+                        #        _points = np.asarray(_meshes[0].vertices).tolist() 
+                        #    else:
+                        #        _points = np.asarray(_meshes[0].vertices).tolist()[::2]
+                        #    #Points = _points[:nr_points]
+                        #    Points = _points
 
-                        if len(_meshes) > 0:
+                        if len(cmds) > 2:
 
-                            nr_points = int(cmds[2])
+                            _nr_edges = 5
+                            _r = 1.0
+                             
+                            fResult, value = Eval(cmds[2])
+
+                            if fResult:
+                                _nr_edges = int(value)
+
+                            else:
+                                print('section polygon <number of edges> <raduis>')
+                                continue
+
+                            if len(cmds) > 3:
+
+                                fResult, value = Eval(cmds[3])
+
+                                if fResult:
+                                    _r = value
+                            
+                                else:
+                                    print('section polygon <number of edges> <raduis>')
+                                    continue
+
+                            _x0 = 0.0
+                            _y0 = 0.0
+                            _z0 = _r
+
+                            _p = []
+                            _p.append((_x0, _y0, _z0))
+
+                            angle_step = -np.pi * 2 / _nr_edges
+
+                            for i in range(1, _nr_edges):
+                                angle = angle_step * i
+                                _x = np.cos(angle) * _x0 - np.sin(angle) * _z0
+                                _z = np.sin(angle) * _x0 + np.cos(angle) * _z0
+
+                                _p.append((_x, _y0, _z))
 
                             Points.clear()
-                            P2.clear()
-                            if len(cmds) < 5 or (len(cmds) > 4 and cmds[4] == '0'):
-                                _points = np.asarray(_meshes[0].vertices).tolist() 
-                            else:
-                                _points = np.asarray(_meshes[0].vertices).tolist()[::2]
-                            #Points = _points[:nr_points]
-                            Points = _points
+                            Points = copy.deepcopy(_p)
+
+                        else:
+                            print('p polygon <number of edges> <raduis>')
+                            continue
 
                     elif cmds[1] == 'curve':
 
@@ -3024,15 +3072,10 @@ def main():
                                 
                         if len(Points) > 0:
 
-                            mode = ''
-                            mode2 = 'vert'
+                            mode = 'vert'
 
                             if len(cmds) > 2:
-                                mode2 = cmds[2]
-                            
-                            if mode2 != 'vert' and mode2 != 'horz':
-                                print('wrap vert/horz')
-                                continue
+                                mode = cmds[2]
 
                             r = 3.0
                             extra = 0
@@ -3071,39 +3114,10 @@ def main():
                             if not fResult:
                                 continue
 
-                            _points = np.array(Points)
-                            _width_x = np.max(_points[:,0])-np.min(_points[:,0])
-                            _width_y = np.max(_points[:,1])-np.min(_points[:,1])
-                            _width_z = np.max(_points[:,2])-np.min(_points[:,2])
-
-                            _width_max = np.max([_width_x, _width_y, _width_z])
-                            _width_min = np.min([_width_x, _width_y, _width_z])
-
-                            if _width_x == _width_max:
-
-                                if _width_y == _width_min:
-                                    mode = 'xz'
-                                else:
-                                    mode = 'xy'
-
-                            elif _width_y == _width_max:
-
-                                if _width_x == _width_min:
-                                    mode = 'yz'
-                                else:
-                                    mode = 'yx'
-
-                            elif _width_z == _width_max:
- 
-                                if _width_x == _width_min:
-                                    mode = 'zy'
-                                else:
-                                    mode = 'zx'
-
                             print('r:', r)
                             print('extra:', extra)
 
-                            _wrapped = wrap2cylinder(_points, mode, mode2, r, extra)
+                            _wrapped = pwrap(Points, mode, r, extra)
 
                             if _wrapped is not None:
                                 Points.clear()
@@ -3207,8 +3221,12 @@ def main():
                         if len(cmds) > 2 and cmds[2] == 'section':
                             if len(Section) > 0:
                                 P2.clear()
-                                print(np.array(Section.shape))
-                                P2 = copy.deepcopy(Section) 
+                                _section = np.array(Section)
+                                if len(_section.shape) == 3:
+                                    P2 = copy.deepcopy(Section) 
+                                else:
+                                    _section = np.eapand_dim(_section, axis=0)
+                                    P2 = _section.tolist()
                                 Section.clear()
                                 print('Section --> P2')
                                 print('P2:', len(P2))
@@ -3221,23 +3239,45 @@ def main():
 
                         if len(cmds) > 2 and cmds[2] == 'section':
                             if len(P2) > 0:
-                                _p2 = np.array(P2).squeeze()
-                                _shape_before = _p2.shape
-                                if len(_p2.shape) > 2:
-                                    _m = 1
-                                    for i in range(len(_p2.shape)-1):
-                                        _m *= _p2.shape[i]
-                                    _n = _p2.shape[-1]
-                                    _p2 = _p2.reshape(_m, _n)
-                                    _shape_after = _p2.shape
-                                    print(_shape_before, '-->', _shape_after)
-                                Section = _p2.tolist()
+                                Section.clear()
+                                Section = copy.deepcopy(P2)
+                                P2.clear()
                                 print('P2 --> Section')
                                 print('Section:', len(Section))
                             else:
                                 print('P2 is empty')
                         else:
                             print('p2 push section: P2[] --> Section[]')
+
+                    elif cmds[1] == 'append':
+
+                        if len(cmds) > 2 and cmds[2] == 'section':
+
+                            mode = 'after'
+                            if len(cmds) > 3 and cmds[3] == 'before':
+                                mode = 'before'
+
+                            if len(Section) > 0:
+
+                                _section = np.array(Section)
+                                if len(_section.shape) == 3:
+                                    if mode == 'before':
+                                        P2 = Section + P2
+                                    else:
+                                        P2 += Section 
+                                else:
+                                    _section = np.eapand_dim(_section, axis=0)
+                                    if mode == 'before':
+                                        P2 = _section.tolist() + P2
+                                    else:
+                                        P2 += _section.tolist()
+                                Section.clear()
+                                print('Section --> P2')
+                                print('P2:', len(P2))
+                            else:
+                                print('Section is empty')
+                        else:
+                            print('p2 append section [before/after]')
 
                     elif cmds[1] == 'r':
                         
@@ -3255,6 +3295,83 @@ def main():
 
                         else:
                             print('p2 r <deg_x> <deg_y> <deg_z>')
+
+                    elif cmds[1] == 'wrap':
+
+                        print('wrap vert/horz [r (value) extra (value)]')
+                                
+                        if len(P2) > 0:
+
+                            mode = 'vert'
+
+                            if len(cmds) > 2:
+                                mode = cmds[2]
+
+                            r = 3.0
+                            extra = 0
+                            cmdIdx = 3
+
+                            fResult = True
+                            if len(cmds) > 3:
+                                fResult = False
+
+                            while len(cmds) > cmdIdx + 1:
+
+                                if cmds[cmdIdx] == 'r':
+
+                                    fResult, value = Eval(cmds[cmdIdx+1])
+                                    if fResult:
+                                        r = value
+                                        cmdIdx += 2
+                                        continue
+                                    else:
+                                        break
+
+                                elif cmds[cmdIdx] == 'extra':
+                                    
+                                    fResult, value = Eval(cmds[cmdIdx+1])
+                                    if fResult:
+                                        extra = value
+                                        cmdIdx += 2
+                                        continue
+
+                                    else:
+                                        break
+
+                                else:
+                                    break
+
+                            if not fResult:
+                                continue
+
+                            print('r:', r)
+                            print('extra:', extra)
+
+                            _wrapped = p2wrap(P2, mode, r, extra)
+
+                            if _wrapped is not None:
+                                P2.clear()
+                                P2 = _wrapped.tolist()
+
+                        else:
+                            print('P2[] is empty')
+
+                    elif cmds[1] == 'bend':
+
+                        if len(cmds) > 4:
+
+                            
+                            R = getRotateMatrix(cmds[2:])
+                            if R is not None:
+                                _p2 = p2bend(P2, R)
+                                P2.clear()
+                                P2 = _p2
+
+                            else:
+                                print('p2 bend rotX rotY rotZ')
+
+                        else:
+                            print('p2 bend rotX rotY rotZ')
 
                     displayMarker(vis, Pmarker, Points, fPdisp)
 
