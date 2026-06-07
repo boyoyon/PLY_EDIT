@@ -713,6 +713,7 @@ def main():
     Points = []  # 点の配列
     P2 = []      # 点の配列の配列
     Section = [] # 断面用の点の配列
+    Vertices = []
     Faces = []   # 面を構成する頂点indxの配列
  
     EyePos = None    
@@ -2343,6 +2344,29 @@ def main():
                             else:
                                 print('Section[] is empty')
 
+                        elif len(cmds) > 2 and cmds[2] == 'face':
+
+                            _nr_faces = len(Faces)
+
+                            if len(cmds) > 3:
+                                
+                                fResult, value = Eval(cmds[3])
+
+                                if fResult and value >= -_nr_faces and value < _nr_faces:
+
+                                    _idx = int(value)
+                                    _p = []
+
+                                    for i in Faces[_idx]:
+                                        _p.append(Vertices[i])
+                                    Points.clear()
+                                    Points = copy.deepcopy(_p)
+
+                                    print('Faces[%d] --> Points[]' % int(value))
+
+                            else:
+                                print('p pop face %d - %d' % (-_nr_faces, _nr_faces-1))
+
                         else:
 
                             if len(P2) > 0:
@@ -2525,6 +2549,9 @@ def main():
                                     _after2 = np.array(_after2).tolist()
 
                                     Points = _after2
+                    
+                                    if cmds[1] == 'SUBDIV':
+                                        Points.pop() # delete the last element
 
                                 else: # not fResult:
                                     print('p subdiv <length>')
@@ -2647,14 +2674,14 @@ def main():
 
                         if len(cmds) > 2:
                             fResult, value = Eval(cmds[2])
-                            if fResult and value >= 0 and value < len(Points):
+                            if fResult and value >= -len(Points) and value < len(Points):
                                 _p = Points.pop(value)
                                 print('delete ', _p)
                             else:
-                                print('p d (num: 0 - %d)' % (len(Points)-1))
+                                print('p d (num: %d - %d)' % (-len(Points), len(Points)-1))
 
                         else:
-                            print('p d (num: 0 - %d)' % (len(Points)-1))
+                            print('p d (num: %d - %d)' % (-len(Points), len(Points)-1))
 
                     elif cmds[1] == 'filter':
 
@@ -2963,6 +2990,8 @@ def main():
                                 _faces.append(( 2, 3, 5))
                                 _faces.append(( 2, 5,11))
 
+                            Vertices.clear()
+                            Vertices = copy.deepcopy(_points)
                             Points.clear()
                             Points = copy.deepcopy(_points)
                             Faces.clear()
@@ -3125,6 +3154,76 @@ def main():
 
                         else:
                             print('Points[] is empty')
+                    
+                    elif cmds[1] == 'nearest':
+
+                        nr_points = len(Points)
+                        points = np.array(Points)
+
+                        if nr_points > 0:
+
+                            if len(cmds) > 2:
+
+                                fResult, value = Eval(cmds[2])
+
+                                if fResult and value >= -nr_points and value < nr_points:
+                                  
+                                    idx_all = np.arange(nr_points)
+                                    idx_selected = idx_all[idx_all != value]
+
+                                    points_selected = points[idx_selected]
+
+                                    distances = np.linalg.norm(points_selected - points[value], axis=1)
+                                    min_distance = np.min(distances)
+                                    min_indices = np.where(distances == min_distance)[0]
+                                    print(idx_selected[min_indices])
+
+                                else:
+                                    print('p nearest %d ~ %d' % (-nr_points, nr_points - 1))
+
+                            else:
+                                print('p nearest %d ~ %d' % (-nr_points, nr_points - 1))
+                        else:
+                            print('Points[] is empty')
+                    
+                    elif cmds[1] == 'edge':
+
+                        n_vertices = len(Points)
+                        vertices = np.array(Points)
+
+                        if len(cmds) > 2 and cmds[2] == 'Vertices':
+
+                            n_vertices = len(Vertices)
+                            vertices = np.array(Vertices)
+                        
+                        if n_vertices > 0:
+
+                            diff = vertices[:, None, :] - vertices[None, :, :]
+                            dist_matrix = np.linalg.norm(diff, axis=-1)
+                            
+                            unique_dists = np.unique(np.round(dist_matrix, decimals=5))
+                            edge_length = unique_dists[1]
+                            
+                            upper_tri = np.triu_indices(n_vertices, k=1)
+                            
+                            is_edge = np.isclose(dist_matrix[upper_tri], edge_length)
+                            
+                            edges = np.column_stack((upper_tri[0][is_edge], upper_tri[1][is_edge]))
+                            
+                            _p2 = []
+                            for i in range(edges.shape[0]):
+                                edge = edges[i]
+                                idx0 = edge[0]
+                                idx1 = edge[1]
+                                p0 = (vertices[idx0][0], vertices[idx0][1], vertices[idx0][2])
+                                p1 = (vertices[idx1][0], vertices[idx1][1], vertices[idx1][2])
+                                _p2.append((p0, p1))
+
+                            P2.clear()
+                            P2 = copy.deepcopy(_p2)
+ 
+                        else:
+                            print('p polyhedron tetra/hexa/ovta/dodeca/icosa')
 
                     elif len(cmds)== 4: # direct input of 3D coordinates
 

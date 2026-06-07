@@ -18,6 +18,9 @@ def lid(points,color_front, color_back, height = 0.0, shape = 'line'):
     _, eig_vecs = np.linalg.eigh(cov)
     mean_normal = eig_vecs[:,0]
 
+    if np.dot(centroid, mean_normal) > 0:
+        height *= -1.0
+
     center = centroid + mean_normal * mean_radius * height
 
     if shape == 'sphere':
