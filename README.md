@@ -33,6 +33,28 @@
 <h3>更新項目</h3>
 
 <p>
+　<strong> 正多角形の辺と面の取得</strong><br>
+　　p　polyhedron　(tetra/hexa/octa/dodeca/icosa) で取得した頂点データから、辺、面の頂点を抽出できるようにした。<br>
+　　p　edge　･･･　正多角形の辺の両端の座標対を P2[] に格納する<br>
+　　p　pop　face　(面のindex) ･･･ 正多角形の index 番目の面の頂点座標を Points[] に格納する<br>
+<br>
+　(例)　･･･　スクリプトは data\edges_faces_***.txt <br>
+　　p　polyhedron　tetra　･･･　正四面体の頂点データ取得<br>
+　　p　edge　･･･　正四面体の辺の両端の座標対が P2[] に格納される<br>
+　　c　pink　･･･　色をピンクに設定する<br>
+　　skeleton　25　0.06 ･･･ P2[] の点列シーケンスをパイプでつなぐ<br>
+　　distribute　sphere　0.06　･･･　頂点位置に球を配置する(パイプとパイプの隙間のパディング)<br>
+　　c　default　･･･　色をデフォルトに戻す<br>
+　　p　pop　face　0　･･･　面 0 の頂点座標を　Point[] に取得する<br>
+　　p　SUBDIV　0.02　･･･　面 0 の周囲の点を細分する<br>
+　　lid　0.25　sphere　･･･　面 0 をメッシュ化する<br>
+　　p　pop　face　1　･･･　面 1 の頂点座標を　Point[] に取得する<br>
+　　　　：
+</p>
+
+<img src="images/edges_faces.svg">
+
+<p>
 　<strong> P2[]の一時退避、復旧、アペンド</strong><br>
 　　p2　push　section　･･･　P2[] の内容を Section[] に一時退避する<br>
 　　p2　pop　section　･･･　Section[] に一時退避したデータを P2[] に戻す<br>
