@@ -64,12 +64,9 @@
 　　skeleton　25　0.05　 ･･･　P2[] の点列シーケンスをパイプでつなぐ<br>
 　　distribute sphere　0.05 ･･･ 頂点に球を配置(パイプすき間のパディング)<br>
 　　p　s　0.5　0.5　0.5　2 ･･･ 頂点座標を 0.5 倍にスケーリング<br>
-　　p2　p2p　　　　　　　　･･･ P2[] を Points[] にコピー<br>
-　　p　connect　r　0.05　  ･･･ 2点間接続のパイプ半径を0 .05 に設定<br>
-　　p　connect　0　8　　　 ･･･ Points[0] と Points[8] をパイプで接続<br>
-　　p　connect　1　9　　　 ･･･ Points[1] と Points[9] をパイプで接続<br>
-　　　　　：<br>
-　　p　connect　7　15　　　 ･･･ Points[7] と Points[15] をパイプで接続</p>
+　　p2　transpose　　　　　･･･ P2[] の転置<br>
+　　skeleton　25　0.05　 ･･･　P2[] の点列シーケンスをパイプでつなぐ<br>
+</p>
 
 <img src="images/hyper_cube.png">
 
