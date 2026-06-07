@@ -1,0 +1,28 @@
+d all
+c pink
+p polyhedron hexa
+p edge
+skeleton 25 0.06
+distribute sphere 0.06
+c default
+
+p pop face 0
+lid
+
+p pop face 1
+lid
+
+p pop face 2
+lid
+
+p pop face 3
+lid
+
+p pop face 4
+lid
+
+p pop face 5
+lid
+
+merge
+normals

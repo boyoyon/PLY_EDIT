@@ -1,0 +1,70 @@
+d all
+c pink
+p polyhedron icosa
+p edge
+skeleton 25 0.06
+distribute sphere 0.06
+c default
+
+p pop face 0
+lid
+
+p pop face 1
+lid
+
+p pop face 2
+lid
+
+p pop face 3
+lid
+
+p pop face 4
+lid
+
+p pop face 5
+lid
+
+p pop face 6
+lid
+
+p pop face 7
+lid
+
+p pop face 8
+lid
+
+p pop face 9
+lid
+
+p pop face 10
+lid
+
+p pop face 11
+lid
+
+p pop face 12
+lid
+
+p pop face 13
+lid
+
+p pop face 14
+lid
+
+p pop face 15
+lid
+
+p pop face 16
+lid
+
+p pop face 17
+lid
+
+p pop face 18
+lid
+
+p pop face 19
+lid
+
+merge
+normals

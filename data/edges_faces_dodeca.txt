@@ -1,0 +1,45 @@
+d all
+c pink
+p polyhedron dodeca
+p edge
+skeleton 25 0.06
+distribute sphere 0.06
+c default
+p pop face 0
+p SUBDIV 0.2
+lid 0.25 sphere
+p pop face 1
+p SUBDIV 0.2
+lid 0.25 sphere
+p pop face 2
+p SUBDIV 0.2
+lid 0.25 sphere
+p pop face 3
+p SUBDIV 0.2
+lid 0.25 sphere
+p pop face 4
+p SUBDIV 0.2
+lid 0.25 sphere
+p pop face 5
+p SUBDIV 0.2
+lid 0.25 sphere
+p pop face 6
+p SUBDIV 0.2
+lid 0.25 sphere
+p pop face 7
+p SUBDIV 0.2
+lid 0.25 sphere
+p pop face 8
+p SUBDIV 0.2
+lid 0.25 sphere
+p pop face 9
+p SUBDIV 0.2
+lid 0.25 sphere
+p pop face 10
+p SUBDIV 0.2
+lid 0.25 sphere
+p pop face 11
+p SUBDIV 0.2
+lid 0.25 sphere
+merge
+normals

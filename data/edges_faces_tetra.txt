@@ -1,0 +1,21 @@
+d all
+c pink
+p polyhedron tetra
+p edge
+skeleton 25 0.06
+distribute sphere 0.06
+c default
+p pop face 0
+p SUBDIV 0.2
+lid 0.25 sphere
+p pop face 1
+p SUBDIV 0.2
+lid 0.25 sphere
+p pop face 2
+p SUBDIV 0.2
+lid 0.25 sphere
+p pop face 3
+p SUBDIV 0.2
+lid 0.25 sphere
+merge
+normals
