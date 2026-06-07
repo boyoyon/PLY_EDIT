@@ -1,0 +1,24 @@
+d all
+p polyhedron hexa
+p edge
+skeleton 25 0.05
+p s 2 2 2
+p edge
+skeleton 25 0.05
+distribute sphere 0.05
+p s 0.5 0.5 0.5 2
+p2 p2p
+p connect r 0.05
+p connect 0 8
+p connect 1 9
+p connect 2 10
+p connect 3 11
+p connect 4 12
+p connect 5 13
+p connect 6 14
+p connect 7 15
+merge
+normals
+
+
+
