@@ -75,7 +75,7 @@
 　　　※ 三角形なので <strong><span style="color:blue;">120°</span></strong> ねじると頂点の位置が重なる<br>
 　　　※ <strong><span style="color:red;">3</span></strong> 回ひねる場合の例<br>
 <br>
-　　　p2　bend　0　360/100　0　･･･　まげて輪にする<br>
+　　　p2　bend　0　0　360/100　･･･　まげて輪にする<br>
 <br>
 　　　surface　p<strong><span style="color:red;">E</span></strong>close　･･･　メッシュ化<br>
 　　　※ 同じ index ではなく、距離の近い点をつなぐ
