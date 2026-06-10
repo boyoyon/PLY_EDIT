@@ -18,6 +18,9 @@ filter_mesh
  mode 10:                                   z > 0
  mode 11:                                   z < 0
 
+ mode 12:                                R**2 < x**2+y**2+z*:2
+ mode 13:                                R**2 > x**2+y**2+z**2
+
 """
 
 def filter0(vertices, triangles):
@@ -194,8 +197,43 @@ def filter11(vertices, triangles):
 
     return filtered
 
+def filter12(vertices, triangles, R):
 
-def filter_mesh(mesh, mode):
+    filtered = []
+    R2 = R**2
+
+    for t in triangles:
+
+        r0 = vertices[t[0]][0]**2 + vertices[t[0]][1]**2 + vertices[t[0]][2]**2
+        r1 = vertices[t[1]][0]**2 + vertices[t[1]][1]**2 + vertices[t[1]][2]**2
+        r2 = vertices[t[2]][0]**2 + vertices[t[2]][1]**2 + vertices[t[2]][2]**2
+
+        if r0 > R2 or r1 > R2 or r2 > R2:
+            continue
+
+        filtered.append(t)
+
+    return filtered
+  
+def filter13(vertices, triangles, R):
+
+    filtered = []
+    R2 = R**2
+
+    for t in triangles:
+
+        r0 = vertices[t[0]][0]**2 + vertices[t[0]][1]**2 + vertices[t[0]][2]**2
+        r1 = vertices[t[1]][0]**2 + vertices[t[1]][1]**2 + vertices[t[1]][2]**2
+        r2 = vertices[t[2]][0]**2 + vertices[t[2]][1]**2 + vertices[t[2]][2]**2
+
+        if r0 < R2 or r1 < R2 or r2 < R2:
+            continue
+
+        filtered.append(t)
+
+    return filtered
+
+def filter_mesh(mesh, mode, R = 1.0):
 
     filtered_mesh = None
     filtered = None
@@ -203,7 +241,7 @@ def filter_mesh(mesh, mode):
     if mesh is None:
         print('mesh is None')
 
-    elif mode < 0 or mode > 11:
+    elif mode < 0 or mode > 13:
         print('invalid mode(%d)' % mode)
 
     else:
@@ -235,6 +273,10 @@ def filter_mesh(mesh, mode):
             filtered = filter10(vertices, triangles)
         elif mode == 11:
             filtered = filter11(vertices, triangles)
+        elif mode == 12:
+            filtered = filter12(vertices, triangles, R)
+        elif mode == 13:
+            filtered = filter13(vertices, triangles, R)
 
         filtered_mesh = o3d.geometry.TriangleMesh()
         filtered_mesh.vertices = o3d.utility.Vector3dVector(vertices)

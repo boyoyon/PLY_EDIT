@@ -11,7 +11,7 @@ from RST import *
 from surface import *
 from Cat import Cat
 from filter_mesh import filter_mesh
-from filter_points import filter_points
+from filter_points import *
 from dragon1 import dragon1
 from p_polyline import p_polyline
 from wrap2cylinder import *
@@ -2687,25 +2687,15 @@ def main():
 
                         if len(cmds) > 2:
                              
-                            _points = None
+                            _points = filter_points(Points, cmds[2])
 
-                            if cmds[2] == 'x':
-                                _points = filter_points(Points, 0)
-                            elif cmds[2] == '-x':
-                                _points = filter_points(Points, 1)
-                            elif cmds[2] == 'y':
-                                _points = filter_points(Points, 2)
-                            elif cmds[2] == '-y':
-                                _points = filter_points(Points, 3)
-                            elif cmds[2] == 'z':
-                                _points = filter_points(Points, 4)
-                            elif cmds[2] == '-z':
-                                _points = filter_points(Points, 5)
+                            if _points is not None:
+
+                                Points.clear()
+                                Points = _points
+
                             else:
                                 print('p filter x/-x/y/-y/z/-z')
-                                continue
-
-                            Points = _points
 
                         else:
                             print('p filter x/-x/y/-y/z/-z')
@@ -3224,6 +3214,29 @@ def main():
  
                         else:
                             print('p polyhedron tetra/hexa/ovta/dodeca/icosa')
+
+                    elif cmds[1] == 'mirror':
+
+                        if len(Points) == 0:
+                            print('Points[] is empty')
+                            continue
+
+                        _points = np.array(Points)
+
+                        if len(cmds) > 2:
+                                               
+                            _mirrored = mirror_points(Points, cmds[2])
+                                
+                        
+                            if _mirrored is not None:
+                                Points.clear()
+                                Points = _mirrored
+
+                            else:
+                                print('p mirror x/-x/y/-y/z/-z')
+
+                        else:
+                            print('p mirror x/-x/y/-y/z/-z')
 
                     elif len(cmds)== 4: # direct input of 3D coordinates
 
@@ -4581,8 +4594,34 @@ def main():
                             _mesh = filter_mesh(meshes[curr], 10)
                         elif cmds[1] == '-Z':
                             _mesh = filter_mesh(meshes[curr], 11)
+                        elif cmds[1] == 'R':
+
+                            R = 1.0
+                            if len(cmds) > 2:
+                                fResult, value = Eval(cmds[2])
+                                if fResult:
+                                    R = value
+                                else:
+                                    print('filter R <radius>')
+                                    continue
+
+                            _mesh = filter_mesh(meshes[curr], 12, R)
+
+                        elif cmds[1] == '-R':
+
+                            R = 1.0
+                            if len(cmds) > 2:
+                                fResult, value = Eval(cmds[2])
+                                if fResult:
+                                    R = value
+                                else:
+                                    print('filter -R <radius>')
+                                    continue
+
+                            _mesh = filter_mesh(meshes[curr], 13, R)
+
                         else:
-                            print('filter x/-x/y/-y/z/-z/X/-X/Y/-Y/Z/-Z')
+                            print('filter x/-x/y/-y/z/-z/X/-X/Y/-Y/Z/-Z/R (radius)/-R (radius)')
                             continue
                         
                         update_undo_info(meshes, names, curr, undo_idx, undo_name, undo_mesh)
