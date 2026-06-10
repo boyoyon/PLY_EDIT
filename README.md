@@ -33,6 +33,57 @@
 <h3>更新項目</h3>
 
 <p>
+　<strong> メッシュのフィルターに R, -R を追加</strong><br>
+　　filter　R　(フィルター半径)　･･･　頂点すべてが x**2+y**2+z**2 > R**2 となる三角形を削除<br>
+　　filter　-R　(フィルター半径)　･･･　頂点すべてが x**2+y**2+z**2 < R**2 となる三角形を削除<br>
+<br>
+　(例) 雑なポテトチップス<br>
+　　p　surface　np.linspace(-1,1,200)　np.linspace(-1,1,200)　0.5*(x**2-z**2)<br>
+　　surface<br>
+　　filter　R　0.9<br>
+　　filter　-R　0.8<br>　
+</p>
+
+<img src="images/potechi.svg">
+
+<p>
+　<strong> 点列のミラーリング</strong><br>
+　　p　mirror　(x/-x/y/-y/z/-z)<br>
+<br>
+　(例) もみじ　data\momiji.txt<br>
+　　p curve np.linspace(-np.pi/2,np.pi,30) 1+np.sin(T) T [0]*len(T)　･･･　曲線を作る<br>
+　　p s 0.1 0.1 1　･･･　大きいので小さくする<br>
+　　p reverse　･･･　輪郭の都合で index を逆順にする<br>
+　　<strong><span style="color:red;">p mirror x</span></strong>　･･･　点列をミラーリングする<br>
+　　p s 1 2 1　･･･　縦長に変形する<br>
+　　p t 0 -0.77 0　･･･　回転させるため原点から離す<br>
+　　p reverse　　　･･･　輪郭の都合で index を逆順にする<br>
+　　p r 0 0 360/5 5　･･･　回転する<br>
+　　p2 p2p　･･･　回転した点列シーケンス P2[] を Points[] にコピーする<br>
+　　-lid 0.25 sphere　･･･　フタを作成する<br>
+</p>
+
+<img src="images/momiji.svg">
+
+<p>
+　<strong> ねじって、まげて</strong><br>
+　　p2　bend　の例追加<br>
+　　(例)<br>
+　　　p　polygon　3　3<br>
+<br>
+　　　p　g　t　0　-0.25　0　r　0　<strong><span style="color:blue;">120</span></strong>*<strong><span style="color:red;">3</span></strong>/100　0　100　･･･　ねじる<br>
+　　　※ 三角形なので <strong><span style="color:blue;">120°</span></strong> ねじると頂点の位置が重なる<br>
+　　　※ <strong><span style="color:red;">3</span></strong> 回ひねる場合の例<br>
+<br>
+　　　p2　bend　0　360/100　0　･･･　まげて輪にする<br>
+<br>
+　　　surface　p<strong><span style="color:red;">E</span></strong>close　･･･　メッシュ化<br>
+　　　※ 同じ index ではなく、距離の近い点をつなぐ
+</p>
+
+<img src="images/twisted_and_bended.svg">
+
+<p>
 　<strong> 正多角形の辺と面の取得</strong><br>
 　　p　polyhedron　(tetra/hexa/octa/dodeca/icosa) で取得した頂点データから、辺、面の頂点を抽出できるようにした。<br>
 　　p　edge　･･･　正多角形の辺の両端の座標対を P2[] に格納する<br>
