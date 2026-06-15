@@ -31,6 +31,44 @@
 </p>
 
 <h3>更新項目</h3>
+<p>
+<strong>　結び目をつくる</strong><br>
+　(使い勝手悪いが、結び目をつくってみた)<br>
+　[1] 結び目の絵を探す<br>
+　[2] 結び目に沿った点列を作る<br>
+　　　python　src\click2point.py　(結び目画像)<br>
+　　　・結び目の変曲点あたりに点を打つ(左クリック)<br>
+　　　・取り消す場合は右クリック<br>
+　　　・s キー押下で保存終了<br>
+　　　・ESC キー押下で保存せずに終了<br>
+<img src="images/knot.png"><br>
+　[3] 点列を補間する<br>
+　　　python　src\interpolate.py　([2]で作った点列(.npy))<br>
+　[4] 点列の重なり部分を上下させる<br>
+　　　python　src\knot_edit.py　([3]で補間した点列(.npy))<br>
+　　　(コンソール操作)
+　　　・l　(.npy)　　　　 ･･･　点列のロード<br>
+　　　・save　(.npy)　　　･･･　点列のセーブ ～ knot_edit の終了<br>
+　　　・quit　　　　　　　･･･　knot_edit の終了<br>
+　　　(Visualizer画面)<br>
+　　　・p/P/n/N キー押下　･･･　操作する点の選択 (prev/next)<br>
+　　　・z/Z キー押下　　　･･･　選択した点を持ち上げる/下げる<br>
+　　　・←/→ キー押下　　･･･　上げ下げする幅を狭める/広げる<br>
+　　　・↓/↑キー押下　　 ･･･　zキー押下時の上げ下げ量を小さくする/大きくする<br>
+　　　・-/+ キー押下　　　･･･　点のマーカーを小さくする/大きくする<br>
+　　　・a キー押下　　　　･･･　座標軸を消す/表示する<br>
+　　　・ESC キー押下　　　･･･　knot_edit の終了<br>　　　　　　
+<img src="images/knot.svg"><br>
+　[5] 結び目の点列をメッシュ化<br>
+　　　python　src\PLY_interactive.py<br>
+　　　・l　([4]で編集した点列(.npy))<br>
+　　　・polyline　25　0.05<br>　
+　　　※ メッシュ同士が食い込む場合は、点列の z 値を拡大してからメッシュ化をやり直す<br>
+　　　・d　　　　　　　･･･　メッシュを削除<br>
+　　　・p　s　1　1　2　･･･　z 方向を2倍にスケーリング<br>
+　　　・polyline　25　0.05<br>　
+<img src="images/knot_mesh.png"><br>
+</p>
 
 <p>
 　<strong> メッシュのフィルターに R, -R を追加</strong><br>
