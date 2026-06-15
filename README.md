@@ -46,9 +46,9 @@
 　　　python　src\interpolate.py　([2]で作った点列(.npy))<br>
 　[4] 点列の重なり部分を上下させる<br>
 　　　python　src\knot_edit.py　([3]で補間した点列(.npy))<br>
-　　　(コンソール操作)
+　　　(コンソール操作)<br>
 　　　・l　(.npy)　　　　 ･･･　点列のロード<br>
-　　　・save　(.npy)　　　･･･　点列のセーブ ～ knot_edit の終了<br>
+　　　・save　(.npy)　　　･･･　点列のセーブ<br>
 　　　・quit　　　　　　　･･･　knot_edit の終了<br>
 　　　(Visualizer画面)<br>
 　　　・p/P/n/N キー押下　･･･　操作する点の選択 (prev/next)<br>
