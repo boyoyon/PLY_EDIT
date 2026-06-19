@@ -80,6 +80,16 @@
 　　surface<br>
 　　filter　R　0.9<br>
 　　filter　-R　0.8<br>　
+<br>
+　(例) メッシュのフィルターとは関係ないが、もう少していねいなポテチ<br>
+　　p curve np.linspace(-np.pi*2,np.pi*2,100) T np.sin(T) [0]*len(T)<br>
+　　p wrap<br>
+　　p reverse half<br>
+　　p p2p 2<br>
+　　p2 transpose<br>
+　　c yellow <br>
+　　surface<br>
+　　c default<br>
 </p>
 
 <img src="images/potechi.svg">
