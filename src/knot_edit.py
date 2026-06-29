@@ -223,6 +223,64 @@ def displayMarker(vis, marker, Points, flag):
     ctrl.convert_from_pinhole_camera_parameters(_EyePos)
     return True
 
+def key_callback_x(vis, action, mods):
+
+    global fUpdate
+
+    if action == 0:
+
+        step = STEP * -1
+     
+        if mods == 1:
+        
+            step = STEP
+
+        for i in range(RANGE):
+
+            if i == 0:
+                Points[curr][0] += (step * WEIGHT[0])
+
+            else:
+
+                if curr + i < Points.shape[0]:
+                    Points[curr+i][0] += (step * WEIGHT[i])
+
+                if curr - i >= 0:
+                    Points[curr-i][0] += (step * WEIGHT[i])
+
+        fUpdate = True
+
+    return True
+
+def key_callback_y(vis, action, mods):
+
+    global fUpdate
+
+    if action == 0:
+
+        step = STEP * -1
+     
+        if mods == 1:
+        
+            step = STEP
+
+        for i in range(RANGE):
+
+            if i == 0:
+                Points[curr][1] += (step * WEIGHT[0])
+
+            else:
+
+                if curr + i < Points.shape[0]:
+                    Points[curr+i][1] += (step * WEIGHT[i])
+
+                if curr - i >= 0:
+                    Points[curr-i][1] += (step * WEIGHT[i])
+
+        fUpdate = True
+
+    return True
+
 def key_callback_z(vis, action, mods):
 
     global fUpdate
@@ -301,6 +359,8 @@ def main():
     vis.create_window(window_name='knot edit', width=width, height=height)
 
     vis.register_key_action_callback(ord('A'), key_callback_a)
+    vis.register_key_action_callback(ord('X'), key_callback_x)
+    vis.register_key_action_callback(ord('Y'), key_callback_y)
     vis.register_key_action_callback(ord('Z'), key_callback_z)
     vis.register_key_action_callback(ord('P'), key_callback_prev)
     vis.register_key_action_callback(ord('N'), key_callback_next)

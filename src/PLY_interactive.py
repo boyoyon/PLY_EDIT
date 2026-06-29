@@ -2320,6 +2320,10 @@ def main():
                                     print('Points are copied to P2[%d]:' % (len(P2) - 1))
 
                                 elif cmds[2] == 'section':
+                                    if len(Section) > 0:
+                                        _section = np.array(Section)
+                                        if _section.ndim != 3 or _section.shape[1] != len(Points):
+                                            Section.clear()
                                     Section.append(copy.deepcopy(Points))
                                     Points.clear()
                                     print('Points are copied to Section[]')
