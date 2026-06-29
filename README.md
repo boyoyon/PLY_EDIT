@@ -31,6 +31,12 @@
 </p>
 
 <h3>更新項目</h3>
+
+<p>
+<strong>　切り口×経路がねじれるのを改善してみた(不完全)</strong><br>
+　点列を間引くとねじれが多少目立たなくなる･･･
+</p>
+<img src="images/p_polyline2.svg"><br>
 <p>
 <strong>　結び目をつくる</strong><br>
 　(使い勝手悪いが、結び目をつくってみた)<br>
