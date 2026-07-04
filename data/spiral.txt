@@ -1,7 +1,6 @@
 d all
 p polygon 100 0.5
 p r 0 0 90
-p r 45 0 0
 p g t 0 0.034 0.5 r 0 360/30 0 t 0 0 -0.5 s 1.02 1.02 1.02 100
 p2 reverse p
 surface - 0 -1 2
