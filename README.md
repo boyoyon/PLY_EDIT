@@ -31,6 +31,22 @@
 </p>
 
 <h3>更新項目</h3>
+<p>
+</p>
+<strong>　p surface コマンドに step オプション追加</strong><br>
+　surface　(p/e/E/-)　(start)　(end)　<strong>(step)</strong><br>
+<br>
+　surface - 0 0<br>
+　surface - 2 2<br>
+　　：<br>
+　とするのが面倒だったので<br>
+　surface - 0　-1　2<br>
+　と指定できるようにした(だけ)<br>
+<br>
+　l　data/spiral.txt
+</p>
+
+<img src="images/spiral.png">
 
 <p>
 <strong>　切り口×経路がねじれるのを改善してみた(不完全)</strong><br>
