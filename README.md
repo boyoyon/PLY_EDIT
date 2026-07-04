@@ -33,7 +33,7 @@
 <h3>更新項目</h3>
 <p>
 </p>
-<strong>　p surface コマンドに step オプション追加</strong><br>
+<strong>　surface コマンドに step オプション追加</strong><br>
 　surface　(p/e/E/-)　(start)　(end)　<strong>(step)</strong><br>
 <br>
 　surface - 0 0<br>
