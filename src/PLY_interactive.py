@@ -3621,7 +3621,7 @@ def main():
                     if fResult:
                         start = int(value)
                     else:
-                        print('surface [pclose/eclose/Eclose/... start end]')
+                        print('surface [pclose/eclose/Eclose/... start end [step]]')
                         continue
 
                 if len(cmds) > 3:
@@ -3630,7 +3630,17 @@ def main():
                     if fResult:
                         end = int(value)
                     else:
-                        print('surface [pclose/eclose/Eclose/... start end]')
+                        print('surface [pclose/eclose/Eclose/... start end [step]] ')
+                        continue
+
+                step = 1
+                if len(cmds) > 4:
+                    fResult, value = Eval(cmds[4])
+
+                    if fResult:
+                        step = int(value)
+                    else:
+                        print('surface [pclose/eclose/Eclose/... start end [step]] ')
                         continue
 
                 side = 'both'
@@ -3656,7 +3666,7 @@ def main():
                             else:
                                 break
 
-                        _meshes, _ = surface(P2, i, j, fPathClose, _fNearestClose, start, end, LateralOuter, LateralInner, side)
+                        _meshes, _ = surface(P2, i, j, fPathClose, _fNearestClose, start, end, step, LateralOuter, LateralInner, side)
 
                         if len(_meshes) > 0:
                             if accum is None:

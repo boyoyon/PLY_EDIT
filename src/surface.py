@@ -1,7 +1,7 @@
 import numpy as np
 import open3d as o3d
 
-def surface(p2, layer1, layer2, fPathClose, fNearest, start, end, outer, inner, surface):
+def surface(p2, layer1, layer2, fPathClose, fNearest, start, end, step, outer, inner, surface):
 
     _meshes = []
     _names = []
@@ -28,7 +28,7 @@ def surface(p2, layer1, layer2, fPathClose, fNearest, start, end, outer, inner, 
     if not fNearest: # connect points with the same index
 
         #for i in range(nr1):
-        for i in range(start, end):
+        for i in range(start, end, step):
 
             j = (i + 1) % nr1
 
