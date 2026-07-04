@@ -1,0 +1,19 @@
+p curve np.linspace(0,np.pi*4,100) T-np.sin(T) 1-np.cos(T) [0]*len(T) # cycloid 
+p wrap
+p s 1 -0.5 1 2
+p2 reverse p
+surface
+p pop 0
+p reverse half
+p p2p 2
+p2 transpose
+surface
+p2 transpose
+p2 p2p
+p s 1 -0.5 1
+p p2p 2
+p2 transpose
+p2 reverse p
+surface
+
+

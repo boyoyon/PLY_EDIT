@@ -1,0 +1,20 @@
+p polygon 100 0.5
+p r 0 0 90
+p r 45 0 0
+p g t 0 0.034 0.5 r 0 360/30 0 t 0 0 -0.5 s 1.02 1.02 1.02 100
+p2 reverse p
+surface - 0 0
+surface - 2 2
+surface - 4 4
+#surface - 6 6
+#surface - 8 8
+#surface - 10 10
+#surface - 12 12
+#surface - 14 14
+#surface - 16 16
+#surface - 18 18
+#surface - 20 20
+#surface - 22 22
+#surface - 24 24
+#surface - 26 26
+#surface - 28 28
