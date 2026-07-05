@@ -31,8 +31,17 @@
 </p>
 
 <h3>更新項目</h3>
+
 <p>
+<strong>　surface コマンドに N オプション追加</strong><br>
+　surface　(p/e/E/<strong>N</strong>/-)　(start)　(end)　(step)<br>
+　※ N: 最初と最後の層以外でも、距離の近い点で面を張る(という小手先の対応)<br>
+　ゆっくりしたねじれでは効果は無い。点を間引くと効果が表れる(ことがある)。
 </p>
+
+<img src="images/optionN.svg">
+
+<p>
 <strong>　surface コマンドに step オプション追加</strong><br>
 　surface　(p/e/E/-)　(start)　(end)　<strong>(step)</strong><br>
 <br>
