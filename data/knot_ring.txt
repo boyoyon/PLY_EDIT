@@ -1,0 +1,8 @@
+d all
+l data\knot2.npy
+p t 1.65 0 0 10
+p2 p2p
+p wrap horz
+section polygon 30 0.1
+p polyline
+surface pE 0 -1 2
