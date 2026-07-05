@@ -15,6 +15,7 @@
 <h3>環境構築</h3>
 <p>
 　pip install Open3D<br>
+　pip intsall scipy ･･･ p polyline で使用<br>
 　pip install mapbox_earcut　･･･　img2mesh で使用<br>
 　pip install imageio　　　　･･･　img2gif.py で使用<br>
 　pip install mediapipe==0.10.14　･･･　img2facemesh.py, img2fingers.py, img2skeleton.pyで使用<br>
@@ -33,13 +34,19 @@
 <h3>更新項目</h3>
 
 <p>
-<strong>　surface コマンドに N オプション追加</strong><br>
-　surface　(p/e/E/<strong>N</strong>/-)　(start)　(end)　(step)<br>
-　※ N: 最初と最後の層以外でも、距離の近い点で面を張る(という小手先の対応)<br>
-　ゆっくりしたねじれでは効果は無い。点を間引くと効果が表れる(ことがある)。
+<strong>　p polyline コマンド:　ねじれ防止</strong><br>
+　切り口×起動のスィープがねじれるのを直す方法が判らなかったのでAIモードのお世話になった。<br>
+　・平行移動フレーム（Parallel Transport Frame / Bishop Frame）によるねじれ防止版<br>
+　・<strong>scipy を install する必要あり</strong><br>
+　　pip　install　scipy<br>
+　(例)<br>
+　　l　data\knot.npy<br>
+　　section　polygon　4　0.1<br>
+　　p　polyline<br>
+　　surface　p
 </p>
 
-<img src="images/optionN.svg">
+<img src="images/nejire_boushi.png">
 
 <p>
 <strong>　surface コマンドに step オプション追加</strong><br>
@@ -63,12 +70,6 @@
 
 <img src="images/knot_ring.png">
 
-<p>
-<strong>　切り口×経路がねじれるのを改善してみた(不完全)</strong><br>
-　点列を間引くとねじれが多少目立たなくなる･･･
-</p>
-<img src="images/p_polyline2.svg"><br>
-<p>
 <strong>　結び目をつくる</strong><br>
 　(使い勝手悪いが、結び目をつくってみた)<br>
 　[1] 結び目の絵を探す<br>
