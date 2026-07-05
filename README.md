@@ -58,6 +58,12 @@
 <img src="images/spiral.png">
 
 <p>
+　l　data/knot_ring.txt
+</p>
+
+<img src="images/knot_ring.png">
+
+<p>
 <strong>　切り口×経路がねじれるのを改善してみた(不完全)</strong><br>
 　点列を間引くとねじれが多少目立たなくなる･･･
 </p>
