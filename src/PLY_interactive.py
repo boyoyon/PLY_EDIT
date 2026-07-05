@@ -3601,6 +3601,7 @@ def main():
                 fPathClose = False
                 fExtClose = False
                 fNearestClose = False
+                fForceNearest = False
 
                 if len(cmds) > 1:
                     if cmds[1][0] == 'p' or (len(cmds[1]) > 1 and cmds[1][1] == 'p'):
@@ -3611,6 +3612,9 @@ def main():
 
                     if cmds[1][0] == 'E' or (len(cmds[1]) > 1 and cmds[1][1] == 'E'):
                         fNearestClose = True
+
+                    if cmds[1][0] == 'N' or (len(cmds[1]) > 1 and cmds[1][1] == 'N'):
+                        fForceNearest = True
 
                 start = 0
                 end = -1
@@ -3665,6 +3669,9 @@ def main():
                                 _fNearestClose = True
                             else:
                                 break
+
+                        if fForceNearest:
+                            _fNearestClose = True
 
                         _meshes, _ = surface(P2, i, j, fPathClose, _fNearestClose, start, end, step, LateralOuter, LateralInner, side)
 
