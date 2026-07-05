@@ -35,7 +35,7 @@
 
 <p>
 <strong>　p polyline コマンド:　ねじれ防止</strong><br>
-　切り口×起動のスィープがねじれるのを直す方法が判らなかったのでAIモードのお世話になった。<br>
+　切り口×軌道のスィープがねじれるのを直す方法が判らなかったのでAIモードのお世話になった。<br>
 　・平行移動フレーム（Parallel Transport Frame / Bishop Frame）によるねじれ防止版<br>
 　・<strong>scipy を install する必要あり</strong><br>
 　　pip　install　scipy<br>
