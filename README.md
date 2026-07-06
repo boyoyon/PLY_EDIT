@@ -49,6 +49,12 @@
 <img src="images/nejire_boushi.png">
 
 <p>
+　l　data/period7.txt
+</p>
+
+<img src="images/period7.png">
+
+<p>
 <strong>　surface コマンドに step オプション追加</strong><br>
 　surface　(p/e/E/-)　(start)　(end)　<strong>(step)</strong><br>
 <br>
