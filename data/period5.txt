@@ -1,0 +1,9 @@
+d all
+p curve np.linspace(0,np.pi*2*5,500) T np.sin(T) np.sin(T*2)*0.1
+p wrap horz
+p p2p 500
+p2 bend 0 0 -360/499
+p2 p2p
+section polygon 30 0.1
+p polyline
+surface pe
