@@ -1,0 +1,15 @@
+d all
+p clear
+p 1 0 0
+p g t 0 0.1 0 r 0 360/30 0 s 0.97 1 0.97 30*3
+p2 p2p
+section polygon 4 0.3
+p polyline
+surface p
+p pop -1
+p SUBDIV 0.1
+-lid 1 sphere
+p pop 0
+p SUBDIV 0.1
+lid 1 sphere
+
