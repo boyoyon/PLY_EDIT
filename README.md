@@ -34,6 +34,19 @@
 <h3>更新項目</h3>
 
 <p>
+<strong>　円弧と直線によるモデリング</strong><br>
+　・p　feed　fedd_x　feed_y　feed_z<br>
+　　点を押し出す方向と長さを指定する。デフォルトは(0.01, 0.0, 0.0)<br>
+　・p　feedrot　rot_x　rot_y　rot_z　[count]<br>
+　　点の押し出し、回転を count 回行う。count のデフォルトは 1<br>
+<br>
+　(例)<br>
+　　l　data\hanger.txt
+</p>
+
+<img src="images/hanger.png">
+
+<p>
 <strong>　p polyline コマンド:　ねじれ防止</strong><br>
 　切り口×軌道のスィープがねじれるのを直す方法が判らなかったのでAIモードのお世話になった。<br>
 　・平行移動フレーム（Parallel Transport Frame / Bishop Frame）によるねじれ防止版<br>
@@ -330,13 +343,6 @@
 </p>
 
 <img src="images/wrap3.svg">
-
-<p>
-　p　wrap　で作成した経路×切り口は、(今のところ)ねじれてうまくいかず。<br>
-　(手作り感はあるが･･･)
-</p>
-
-<img src="images/wrap.png">
 
 <p>
 　(例) 雷紋リング<br>
