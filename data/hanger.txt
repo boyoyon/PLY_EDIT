@@ -2,8 +2,8 @@ d all
 p clear
 p feedrot 0 1 0 250
 p feedrot 0 -100 0
-p feedrot 0 0 0 30
-p feedrot 0 50 0
+p feedrot 0 0 0 60
+p feedrot 0 60 0
 p feedrot 0 0 0 300
 p feedrot 0 -2 0 75
 p feedrot 0 0 0 550
