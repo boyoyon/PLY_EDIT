@@ -790,6 +790,8 @@ def main():
     connect_nr_divs = '25'
     connect_r = '0.01'
 
+    FEED = np.array([0.01, 0.0, 0.0])
+
     while True:
    
         try:
@@ -3242,6 +3244,93 @@ def main():
                         else:
                             print('p mirror x/-x/y/-y/z/-z')
 
+                    elif cmds[1] == 'append':
+
+                        start = 0
+                        end = 1
+                        step = 1
+ 
+                        if len(cmds) > 2:
+                            fResult, value = Eval(cmds[2])
+                            if fResult:
+                                start = int(value)
+                            else:
+                                print('p append <start> <end> <step>')
+                                continue
+
+                        if len(cmds) > 3:
+                            fResult, value = Eval(cmds[3])
+                            if fResult:
+                                end = int(value)
+                            else:
+                                print('p append <start> <end> <step>')
+                                continue
+
+                        if len(cmds) > 4:
+                            fResult, value = Eval(cmds[4])
+                            if fResult:
+                                step = int(value)
+                            else:
+                                print('p append <start> <end> <step>')
+                                continue
+
+                        for i in range(start, end, step):
+                            Points.append(Points[i])
+
+                        if end > 2:
+                            print('appended Points[%d]-Points[%d]' % (start, end - 1))
+                        else:
+                            print('appende Points[%d]' % start)
+
+                    elif cmds[1] == 'feed':
+
+                        if len(cmds) > 4:
+                            fResult, values = Evals(cmds[2:], 3)
+
+                            if fResult:
+                                FEED = np.array([values[0], values[1], values[2]])
+                                print('feed:', FEED)
+                            else:
+                                print('p feed feed_x feed_y feed_z')
+
+                        else:
+                            print('curret feed:', FEED)
+                            print('p feed feed_x feed_y feed_z')
+
+
+                    elif cmds[1] == 'feedrot':
+
+                        R = None
+                        if len(cmds) > 4:
+                            fResult, values = Evals(cmds[2:],3)
+                            R = o3d.geometry.get_rotation_matrix_from_xyz((np.deg2rad(values[0]),np.deg2rad(values[1]),np.deg2rad(values[2])))
+                        else:
+                            print('p feedrot rot_x rot_y rot_z [count]')
+                            continue
+
+                        count = 1
+                        if len(cmds) > 5:
+                            fResult, value = Eval(cmds[5])
+                            if fResult:
+                                count = int(value)
+                            else:
+                                print('p feddrot rot_x rogt_y rot_z [count]')
+                                continue
+
+                        if len(Points) > 0:
+                            points = np.array(Points)
+                            points -= points[-1]
+                        else:
+                            points = np.array([0.0, 0.0, 0.0])
+
+                        for i in range(count):
+                            points += FEED
+                            points = points @ R.T
+                            new_point = np.array([0.0, 0.0, 0.0])
+                            points = np.vstack([points, new_point])
+ 
+                        Points = points.tolist()
+                        
                     elif len(cmds)== 4: # direct input of 3D coordinates
 
                         fResult, values = Evals(cmds[1:], 3)
