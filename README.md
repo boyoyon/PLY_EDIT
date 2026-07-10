@@ -35,7 +35,7 @@
 
 <p>
 <strong>　円弧と直線によるモデリング</strong><br>
-　・p　feed　fedd_x　feed_y　feed_z<br>
+　・p　feed　feed_x　feed_y　feed_z<br>
 　　点を押し出す方向と長さを指定する。デフォルトは(0.01, 0.0, 0.0)<br>
 　・p　feedrot　rot_x　rot_y　rot_z　[count]<br>
 　　点の押し出し、回転を count 回行う。count のデフォルトは 1<br>
