@@ -1,0 +1,13 @@
+d all
+p curve np.linspace(-np.pi*10,np.pi*10,500) T np.sin(T) np.cos(T)
+p wrap horz
+p centering
+p s 0.5 0.5 0.5 2
+surface
+-lid 0.5 sphere
+section polygon 30 0.1
+p polyline
+surface peE 0 -1 2
+
+
+

@@ -1,0 +1,12 @@
+d all
+p clear
+p feed 0.01 0 0
+p feedrot 0 1 0 230
+p feedrot 0 -0.5 0 120
+p feedrot 0 -100 0
+p feedrot 0 0 0 120
+p decimate
+p decimate
+p decimate
+polyline 25 0.2 1 sphere -sphere
+normals
