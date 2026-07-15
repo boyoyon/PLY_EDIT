@@ -40,11 +40,10 @@
 　・p　feedrot　rot_x　rot_y　rot_z　[count]<br>
 　　点の押し出し、回転を count 回行う。count のデフォルトは 1<br>
 <br>
-　(例)<br>
-　　l　data\hanger.txt
+　(例)
 </p>
 
-<img src="images/hanger.png">
+<img src="images/feedrot.svg">
 
 <p>
 <strong>　p polyline コマンド:　ねじれ防止</strong><br>
