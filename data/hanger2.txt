@@ -1,0 +1,20 @@
+d all
+p clear
+p feedrot 0 1 0 270-90/5
+p feedrot 0 -5 0 90/5
+p feedrot 0 0 0 50
+p feedrot 0 5 0 70/5
+p feedrot 0 0 0 300
+p feedrot 0 -3 0 160/3
+p feedrot 0 0 0 600
+p feedrot 0 -3 0 160/3
+p feedrot 0 0 2
+p feedrot 0 0 0 350
+p feedrot 0 0 -5 180/5
+p feedrot 0 0 0 20
+p decimate
+p decimate
+p decimate
+polyline 20 0.1 1 sphere -sphere
+normals
+
