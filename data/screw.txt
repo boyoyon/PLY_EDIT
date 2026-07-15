@@ -1,0 +1,11 @@
+d all
+p curve np.linspace(-np.pi*5,np.pi*5,300) T*0.25-np.cos(T) np.sin(T) np.cos(T)
+p　p2p 300
+p2 bend 0 360/299 0
+p2 p2p
+section polygon 30 0.075
+#lid 0.5 sphere
+p polyline
+surface pE
+centering
+r 0 36 0 2

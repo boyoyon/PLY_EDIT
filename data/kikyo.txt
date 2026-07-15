@@ -1,0 +1,16 @@
+d all
+p clear
+p curve np.linspace(-np.pi*5,np.pi*5,1000) T*0.25-np.cos(T) np.sin(T)*2 np.cos(T/5)*0.5
+p wrap horz r 0.5
+
+section polygon 30 0.1
+p polyline
+surface p
+
+
+
+
+
+
+
+
