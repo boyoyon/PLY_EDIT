@@ -1,0 +1,10 @@
+d all
+p curve np.linspace(-np.pi,np.pi,700) T-np.sin(T*7) np.cos(T*7) np.sin(T)*0.5
+p p2p 700
+p2 bend 0 0 360/699
+p2 p2p
+section polygon 30 0.05
+p polyline
+surface p
+
+
