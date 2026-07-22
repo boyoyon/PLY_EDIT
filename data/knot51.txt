@@ -1,5 +1,5 @@
 d all
-p curve np.linspace(-np.pi,np.pi,500) T-np.sin(T*5) np.cos(T*5) np.sin(T*5)
+p curve np.linspace(-np.pi,np.pi,500) T-np.sin(T*5) np.cos(T*5) np.sin(T)*0.5
 p p2p 500
 p2 bend 0 0 360/499
 p2 p2p
