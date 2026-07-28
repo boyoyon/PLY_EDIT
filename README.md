@@ -51,7 +51,12 @@
 　　　　　python src\interpolate.py　(.npy)　･･･　点列を補間<br>
 　　　　　l interpolated.npy　　　　　　　　･･･　補間した点列をロード
 </p>
-
+<p>
+　(結び目の作成例)<br>
+　　python　PLY_interactive.py<br>
+　　l　data\mizuhiki.txt　
+</p>
+<img src="images/mizuhiki.svg">
 <p>
 <strong>　円弧と直線によるモデリング</strong><br>
 　・p　feed　feed_x　feed_y　feed_z<br>
