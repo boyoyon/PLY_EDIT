@@ -2,7 +2,7 @@ import open3d as o3d
 import numpy as np
 import threading
 import queue
-import sys, os, copy
+import subprocess, sys, os, copy
 
 TAB = 258
 
@@ -212,6 +212,7 @@ def displayMarker(vis, marker, Points, flag):
                     LS += ls
 
         Marker = copy.deepcopy(accum)
+        Marker.compute_vertex_normals()
 
         if Marker is not None:
             vis.add_geometry(Marker)
@@ -370,6 +371,7 @@ def main():
     vis.register_key_action_callback(KEY_RIGHT, key_callback_range_up)
     vis.register_key_action_callback(KEY_DOWN, key_callback_step_down)
     vis.register_key_action_callback(KEY_UP, key_callback_step_up)
+    vis.register_key_action_callback(ord('D'), key_callback_dummy)
 
     axis = o3d.io.read_triangle_mesh(os.path.join(os.path.dirname(__file__), 'axisXYZ.ply'))
     Pmarker = o3d.io.read_triangle_mesh(os.path.join(os.path.dirname(__file__), 'Pmarker.ply'))
@@ -386,6 +388,10 @@ def main():
     print('Hit ESC-key or q-key on visualizer or enter quit on console to terminate this program')
     
     mode = None
+
+    screenNo = 1
+
+    prevScale = -1
 
     while True:
    
@@ -463,6 +469,75 @@ def main():
                     np.save(dst_path, Points)
                     print('save %s' % dst_path)
 
+            elif cmds[0] == 'd':
+
+                if len(cmds) > 1:
+
+                    if cmds[1] == '+':
+                        Points = Points[0:curr+1] 
+                        fUpdate = True
+
+                    elif cmds[1] == '-':
+                        Points = Points[curr:]
+                        fUpdate = True
+
+                    elif cmds[1] == 'c':
+                        Points = np.delete(Points, curr, axis=0)
+                        fUpdate = True
+
+                    else:
+                        print('d +/-/c')
+
+                else:
+                    print('d +/-')
+
+            elif cmds[0] == 'decimate':
+
+                if Points is not None:
+
+                    middle = Points[0:-1:2]
+                    Points = np.concatenate(([Points[0]],middle[1:],[Points[-1]]))
+                    fUpdate = True
+
+                else:
+                    print('no points')
+
+            elif cmds[0] == 'cap':
+
+                dst_path = 'screen.png'
+
+                if len(cmds) < 2:
+                    dst_path = '%04d.png' % screenNo
+                else:
+                    filename, ext = os.path.splitext(cmds[1])
+
+                    if ext == '':
+                        ext = '.png'
+
+                    dst_path = '%s%s' % (filename, ext)
+                    no = 1
+
+                while os.path.exists(dst_path):
+
+                    if len(cmds) < 2:
+                        screenNo += 1
+                        dst_path = '%04d.png' % screenNo
+
+                    else:
+                        no += 1
+                        dst_path = '%s(%d)%s' % (filename, no, ext)
+
+                vis.capture_screen_image(dst_path)
+                print('save %s' % dst_path)
+
+            elif cmds[0] == 'python' or cmds[0] == 'dir' or cmds[0] == 'copy' or cmds[0] == 'move' or cmds[0] == 'ren' or cmds[0] == 'del' or cmds[0] == 'cd':
+
+                cmd = ''
+                for c in cmds:
+                    cmd += '%s ' % c
+
+                subprocess.run(cmd, shell=True)
+
             elif cmds[0] == 'quit':
                 break
    
@@ -480,6 +555,11 @@ def main():
         if fUpdate:
             fUpdate = False
             displayMarker(vis, Pmarker, Points, True)
+
+        if SCALE != prevScale:
+            if prevScale > 0:
+                print('r:', SCALE*0.25)
+            prevScale = SCALE
  
     vis.destroy_window()
 
