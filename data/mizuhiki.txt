@@ -1,0 +1,11 @@
+d all
+p polygon 30 0.005
+p t 0 0 0.01 5
+p2 p2p
+p centering
+p push section
+l data\mizuhiki.npy
+p s 1 1 0.3
+p polyline
+surface p
+p disp off
