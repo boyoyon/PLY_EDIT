@@ -34,6 +34,24 @@
 <h3>更新項目</h3>
 
 <p>
+<strong>　src\knot_edit.py</strong><br>
+　・前後関係を見やすくするため、マーカーの法線計算をするようにした。<br>
+</p>
+<img src="images/knot_edit.svg">
+<p>
+　・点の削除、間引きを追加。<br>
+　　　d　-　･･･　始点～選択された点(赤)までを削除<br>
+　　　d　+　･･･　選択された点(赤)～終点までを削除<br>
+　　　d　c　･･･　選択された点(赤)を削除<br>
+　　　decimate　　点列を間引く<br>
+　・コンソールから python スクリプト実行可能。<br>
+　　(例)　decimate　　　　　　　　　　　　　･･･ 点列を間引いて編集<br>
+　　　　　save　tmp.npy　　　　　　　　　　･･･　間引いた点列をセーブ<br>
+　　　　　python src\interpolate.py　(.npy)　･･･　点列を補間<br>
+　　　　　l interpolated.npy　　　　　　　　･･･　補間した点列をロード
+</p>
+
+<p>
 <strong>　円弧と直線によるモデリング</strong><br>
 　・p　feed　feed_x　feed_y　feed_z<br>
 　　点を押し出す方向と長さを指定する。デフォルトは(0.01, 0.0, 0.0)<br>
