@@ -3694,7 +3694,7 @@ def main():
                                 for i in range(_points.shape[0]):
                                     _points[i] = _points[i] + _t
                                 Section = _points.tolist()
-                                print('Section [] is scaled')    
+                                print('Section [] is translated')    
 
                             else:
                                 print('section t <offset_x> <offset_y> <offset_z>')
