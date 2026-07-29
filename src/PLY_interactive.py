@@ -3678,6 +3678,27 @@ def main():
                                 print('section s <scale_x> <scale_y> <scale_z>')
                                 continue 
 
+                    elif cmds[1] == 't':
+
+                        if len(Section) == 0:
+                            print('Section[] is empty')
+                            continue
+
+                        if len(cmds) > 4:
+                            fResult, values = Evals(cmds[2:],3)
+
+                            if fResult:
+                                _points = np.array(Section)
+                                _t = np.array([values[0], values[1], values[2]])
+
+                                for i in range(_points.shape[0]):
+                                    _points[i] = _points[i] + _t
+                                Section = _points.tolist()
+                                print('Section [] is scaled')    
+
+                            else:
+                                print('section t <offset_x> <offset_y> <offset_z>')
+                                continue 
                 else:
                     print('section polygon <nr_edges> <radius>')
                     print('section r <deg_x> <deg_y> <deg_z>')
