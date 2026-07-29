@@ -1,11 +1,29 @@
 d all
-p polygon 30 0.005
-p t 0 0 0.01 5
-p2 p2p
-p centering
-p push section
 l data\mizuhiki.npy
 p s 1 1 0.3
+section polygon 30 0.005
 p polyline
 surface p
+
+c pink
+section t 0 0 0.01
+p polyline
+surface p
+
+c orange
+section t 0 0 0.01
+p polyline
+surface p
+
+c yellow
+section t 0 0 0.01
+p polyline
+surface p
+
+c green
+section t 0 0 0.01
+p polyline
+surface p
+
 p disp off
+c default
