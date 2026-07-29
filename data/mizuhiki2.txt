@@ -1,6 +1,6 @@
 d all
 l data\mizuhiki2.npy
-p s 1 1 0.2
+p s 1 1 0.25
 
 section polygon 2 0.01
 section r 0 90 0
