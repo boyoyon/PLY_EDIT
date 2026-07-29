@@ -1,0 +1,25 @@
+d all
+l data\mizuhiki2.npy
+p s 1 1 0.2
+
+section polygon 2 0.01
+section r 0 90 0
+p polyline
+surface
+r 0 180 0 2
+c 255 64 64
+
+section t 0.02 0 0
+p polyline
+surface
+r 0 180 0 2
+c 240 240 240
+
+section t 0.02 0 0
+p polyline
+surface
+r 0 180 0 2
+c 64 64 255
+
+p disp off
+c default
