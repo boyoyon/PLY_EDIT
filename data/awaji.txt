@@ -1,27 +1,35 @@
 d all
 p disp off
+c default
 
 l data\awaji.npy
 
-LateralInner 255 64 64
-LateralOuter 230 230 230
-
-section polygon 2 0.01
-section r 0 90 0
+section polygon 30 0.003
 
 p polyline
-surface 
+surface p
 
-section t 0.025 0 0
+section t -0.015 0 0
 p polyline
-surface 
 
-section t 0.025 0 0
+surface p
+
+section t -0.015 0 0
 p polyline
-surface 
+
+surface　p 
 
 merge
-r 0 180 0 2
+c 255 64 64
+save tmp.ply
 
-c default
+l tmp.ply
+r 0 180 0
+c 230 230 230
+
+merge
+
+del tmp.ply
+
+
 
