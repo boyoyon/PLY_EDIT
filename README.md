@@ -35,6 +35,35 @@
 <h3>更新項目</h3>
 
 <p>
+<strong>　点列のシーケンス(P2)を点列(Points)で回転/スケーリング/平行移動する</strong>
+<br>
+　　p2　r　p　･･･　点列のシーケンス(P2)を点列(Points)で回転する<br>
+　　p2　s　p　･･･　点列のシーケンス(P2)を点列(Points)でスケーリングする<br>
+　　p2　t　p　･･･　点列のシーケンス(P2)を点列(Points)で平行移動する<br>
+　(例)<br>
+　　p　curve　np.linspace(0,np.pi,100)　1+np.sin(T)　[1]*len(T)　1+np.cos(T)<br>
+　　　　　　　　　　　　　スケーリング用のデータを作成する。<br>
+　　　　　　　　　　　　　x方向：(1+sin)倍、y方向：等倍、z方向：(1+cos)倍<br>
+　　p　SAVE　s.npy　･･･　大文字の SAVE は既存のファイルがあっても<br>
+　　　　　　　　　　　　　リネームせずセーブする(ようにした)<br>
+　　p　polygon　30　0.5　･･･　円盤状の点列を作成する<br>
+　　p　t　0　0.1　0　30　･･･　円盤を 30 枚、積み上げたものが P2 に格納される<br>
+　　l　s.npy　･･･　スケーリング用データを Points に読み込む<br>
+　　p2　s　p　･･･　Points で P2 をスケーリングする<br>
+　　　　　　　　　　※ P2 のシーケンス数と Points の点数は一致していなくても動作はする
+</p>
+
+<img src="images/p2_rst_p.svg">
+<p>
+<strong>　p　curve に append オプション追加</strong><br>
+　(例)<br>
+　　p　curve　np.linspace(0,1,100)　T　T**2　[0]*len(T)　･･･　点列を削除して生成する<br>
+　　p　curve　np.linspace(1,2,100)　T　[1]*len(T)　[0]*len(T)　append　･･･　点列を追加
+</p>
+
+<img src="images/p_curve_append.svg">
+
+<p>
 <strong>　src\knot_edit.py</strong><br>
 　・前後関係を見やすくするため、マーカーの法線計算をするようにした。<br>
 </p>
