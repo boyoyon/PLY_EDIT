@@ -171,15 +171,15 @@ def usageP():
 def usageC():
     print('c (red:0-255) (green:0-255) (blue:0-255): paint current mesh with the specified color')
     print('c default:  set Surface/Lateral/Padding color to the default color')
-    print('c red:      set Surface/Lateral/Radding color to red')
-    print('c green:    set Surface/Lateral/Radding color to green')
-    print('c blue:     set Surface/Lateral/Radding color to blue')
-    print('c pink:     set Surface/Lateral/Radding color to pink')
-    print('c orange:   set Surface/Lateral/Radding color to orange')
-    print('c cyan:     set Surface/Lateral/Radding color to cyan')
-    print('c white:    set Surface/Lateral/Radding color to white')
-    print('c gray:     set Surface/Lateral/Radding color to gray')
-    print('c black:    set Surface/Lateral/Radding color to black')
+    print('c red:      set Surface/Lateral/Padding color to red')
+    print('c green:    set Surface/Lateral/Padding color to green')
+    print('c blue:     set Surface/Lateral/Padding color to blue')
+    print('c pink:     set Surface/Lateral/Padding color to pink')
+    print('c orange:   set Surface/Lateral/Padding color to orange')
+    print('c cyan:     set Surface/Lateral/Padding color to cyan')
+    print('c white:    set Surface/Lateral/Padding color to white')
+    print('c gray:     set Surface/Lateral/Padding color to gray')
+    print('c black:    set Surface/Lateral/Padding color to black')
     print('c push:     push current Surface/Lateral/Padding color to ColorStack')
     print('c pop (idx):pop Surface/Lateral/Padding color from ColorStack')
 
@@ -2050,9 +2050,11 @@ def main():
                                 usageP()
                                 continue
 
-                            Points.clear()
-                            P2.clear()
-                            Points = list(zip(X,Y,Z))
+                            if len(cmds) <= 6 or cmds[6] != 'append':
+                                Points.clear()
+                                Points = list(zip(X,Y,Z))
+                            else:
+                                Points += list(zip(X,Y,Z))
 
                     elif cmds[1] == 'surface':
 
@@ -2286,7 +2288,7 @@ def main():
                         else:
                             print('Points[] is empty')
 
-                    elif cmds[1] == 'save':
+                    elif cmds[1] == 'save' or cmds[1] == 'SAVE':
 
                         if len(Points) > 0:
 
@@ -2297,11 +2299,12 @@ def main():
 
                             dst_path = '%s.npy' % filename
 
-                            no = 2
-                            while os.path.exists(dst_path):
+                            if cmds[1] == 'save':
+                                no = 2
+                                while os.path.exists(dst_path):
 
-                                dst_path = '%s_%d.npy' % (filename, no)
-                                no += 1 
+                                    dst_path = '%s_%d.npy' % (filename, no)
+                                    no += 1 
 
                             np.save(dst_path, np.array(Points))
                             print('save %s' % dst_path, np.array(Points).shape)
@@ -3352,7 +3355,7 @@ def main():
 
                 else:
 
-                    if cmds[1] == 'save':
+                    if cmds[1] == 'save' or cmds[1] == 'SAVE':
 
                         if len(P2) > 0:
 
@@ -3363,11 +3366,12 @@ def main():
 
                             dst_path = '%s.npy' % filename
 
-                            no = 2
-                            while os.path.exists(dst_path):
+                            if cmds[1] == 'save':
+                                no = 2
+                                while os.path.exists(dst_path):
 
-                                dst_path = '%s_%d.npy' % (filename, no)
-                                no += 1 
+                                    dst_path = '%s_%d.npy' % (filename, no)
+                                    no += 1 
 
                             np.save(dst_path, np.array(P2))
                             print('save %s' % dst_path)
@@ -3497,9 +3501,111 @@ def main():
                                 P2 = (_points @ R.T).tolist()
                             else:
                                 print('p2 r <deg_x> <deg_y> <deg_z>')
+                                print('p2 r p')
+
+                        elif len(cmds) == 3 and cmds[2] == 'p' and len(Points) > 0:
+
+                            nP2 = len(P2)
+                            nP = len(Points)
+
+                            for i in range(nP2):
+
+                                idx = int(i * nP / nP2)
+                                if idx >= nP:
+                                    idx = nP - 1
+
+                                rad_x = np.deg2rad(Points[idx][0])
+                                rad_y = np.deg2rad(Points[idx][1])
+                                rad_z = np.deg2rad(Points[idx][2])
+                                xyz = np.array([rad_x, rad_y, rad_z])
+                                R = o3d.geometry.get_rotation_matrix_from_xyz(xyz)
+
+                                _points = np.array(P2[i])
+                                center = np.mean(_points, axis=0)
+
+                                P2[i] = ((_points - center) @ R.T + center).tolist()
 
                         else:
                             print('p2 r <deg_x> <deg_y> <deg_z>')
+                            print('p2 r p')
+
+                    elif cmds[1] == 's':
+                        
+                        if len(P2) == 0:
+                            print('P2[] is empty')
+                            continue
+
+                        if len(cmds) > 4:
+                            fResult, values = Evals(cmds[2:],3)
+                            if fResult:
+                                _points = np.array(P2)
+                                S = np.eye(3)
+                                S[0][0] = values[0]
+                                S[1][1] = values[1]
+                                S[2][2] = values[2]
+                                P2 = (_points @ S.T).tolist()
+                            else:
+                                print('p2 s <scale_x> <scale_y> <scale_z>')
+                                print('p2 s p')
+
+                        elif len(cmds) == 3 and cmds[2] == 'p' and len(Points) > 0:
+
+                            nP2 = len(P2)
+                            nP = len(Points)
+
+                            for i in range(nP2):
+
+                                idx = int(i * nP / nP2)
+                                if idx >= nP:
+                                    idx = nP - 1
+
+                                S = np.eye(3)
+                                S[0][0] = Points[idx][0]
+                                S[1][1] = Points[idx][1]
+                                S[2][2] = Points[idx][2]
+                                
+                                _points = np.array(P2[i])
+                                center = np.mean(_points, axis=0)
+                                
+                                P2[i] = ((_points - center) @ S.T + center).tolist()
+
+                        else:
+                            print('p2 s <scale_x> <scale_y> <scale_z>')
+                            print('p2 s p')
+
+                    elif cmds[1] == 't':
+                        
+                        if len(P2) == 0:
+                            print('P2[] is empty')
+                            continue
+
+                        if len(cmds) > 4:
+                            fResult, values = Evals(cmds[2:],3)
+                            if fResult:
+                                T = np.array([values[0], values[1], values[2]])
+                                _points = np.array(P2)
+                                P2 = (_points + T).tolist()
+                            else:
+                                print('p2 t <offset_x> <offset_y> <offset_z>')
+                                print('p2 t p')
+
+                        elif len(cmds) == 3 and cmds[2] == 'p' and len(Points) > 0:
+
+                            nP2 = len(P2)
+                            nP = len(Points)
+
+                            for i in range(nP2):
+
+                                idx = int(i * nP / nP2)
+                                if idx >= nP:
+                                    idx = nP - 1
+
+                                _points = np.array(P2[i])
+                                P2[i] = (_points + np.array(Points[idx])).tolist()
+
+                        else:
+                            print('p2 t <offset_x> <offset_y> <offset_z>')
+                            print('p2 t p')
 
                     elif cmds[1] == 'wrap':
 
