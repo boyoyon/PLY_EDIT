@@ -55,6 +55,11 @@
 
 <img src="images/p2_rst_p.svg">
 <p>
+　(例) kupol：　ロシアの玉ねぎドーム<br>
+　　l　data/kupol.txt
+</p>
+<img src="images/kupol.png">
+<p>
 <strong>　p　curve に append オプション追加</strong><br>
 　(例)<br>
 　　p　curve　np.linspace(0,1,100)　T　T**2　[0]*len(T)　･･･　点列を削除して生成する<br>
