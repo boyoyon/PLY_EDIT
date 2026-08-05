@@ -4,12 +4,13 @@ p SAVE s.npy
 p curve np.linspace(-np.pi*10,np.pi*10,500) T np.abs(np.sin(T))*0.25 [0]*len(T)
 p wrap horz
 p r 90 0 0
-p t 0 0.15 0 100
+#p t 0 0.15 0 100
+p g t 0 0.15 0 r 0 -60/100 0 100
 l s.npy
 p2 s p
-p2 p2p
-p twist y 60
-p p2p 100
+#p2 p2p
+#p twist y 60
+#p p2p 100
 surface
 
 
