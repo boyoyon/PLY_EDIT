@@ -1,0 +1,17 @@
+d all
+p curve np.linspace(np.pi,-np.pi/4,100) np.cos(T)+1 np.cos(T)+1 np.cos(T)+1
+p SAVE s.npy
+p gear 1 0.1 20
+p g t 0 0.05 0 r 0 -180/100 0 100
+l s.npy
+p2 s p
+surface p
+
+
+
+
+
+
+
+ 
+
