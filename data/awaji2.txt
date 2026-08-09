@@ -1,0 +1,39 @@
+d all
+l data\awaji_l.npy
+c white
+section polygon 30 0.005
+p polyline
+surface p
+section t 0.01 0 0
+p polyline
+surface p
+section t 0.01 0 0
+p polyline
+surface p
+section t 0.01 0 0
+p polyline
+surface p
+section t 0.01 0 0
+p polyline
+surface p
+
+c red
+p r 0 180 0
+section polygon 30 0.005
+p polyline
+surface p
+section t 0.01 0 0
+p polyline
+surface p
+section t 0.01 0 0
+p polyline
+surface p
+section t 0.01 0 0
+p polyline
+surface p
+section t 0.01 0 0
+p polyline
+surface p
+
+p clear
+c default
