@@ -1,0 +1,8 @@
+d all
+p curve np.linspace(0,np.pi*18,500) T np.sin(T) [0]*len(T)
+p wrap
+p s 1 0.5 1
+p g t 0 0.1 0 s 0.85 0.5 0.85 20
+p curve np.linspace(0,0.9,20) [0]*len(T) (T**2)*5 [0]*len(T)
+p2 t p
+surface
