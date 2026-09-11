@@ -1,0 +1,21 @@
+d all
+
+p curve np.linspace(0,np.pi*2,100) [0]*len(T) np.sin(T) [0]*len(T)
+p SAVE t.npy
+
+p curve np.linspace(0,np.pi*2,100) np.sin(T/2)+1 [1]*len(T) np.sin(T/2)+1
+p SAVE s.npy
+
+p polygon 100 1
+p t 0 0 0 100
+
+l s.npy
+p2 s p
+
+l t.npy
+p2 t p
+
+p2 transpose
+p2 reverse p
+surface pe 0 -1 2
+ 

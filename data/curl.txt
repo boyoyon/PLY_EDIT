@@ -1,0 +1,36 @@
+d all
+p curve np.linspace(-np.pi,np.pi,72*6) np.cos(T)+2 [1]*len(T) np.cos(T)+2
+p SAVE s.npy
+
+p clear
+p 1 0 0
+p g t 0 0.1 0 r 0 5 0 72*6
+
+l s.npy
+p2 s p 0 0 0
+p2 p2p
+
+section polygon 30 0.2
+p polyline
+c default
+surface p
+
+section t 0.6 0 0
+p polyline
+c pink
+surface p
+
+section t 0.6 0 0
+p polyline
+c orange
+surface p
+
+section t -1.8 0 0
+p polyline
+c green
+surface p
+
+section t -0.6 0 0
+p polyline
+c yellow
+surface p
