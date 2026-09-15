@@ -17,3 +17,5 @@ surface - 3 3
 
 c green
 surface p 4 4
+
+c default
