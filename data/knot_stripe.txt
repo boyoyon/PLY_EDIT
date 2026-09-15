@@ -1,0 +1,19 @@
+d all
+l data\knot2.npy
+section polygon 5 0.075
+p polyline
+
+c defaul
+surface - 0 0
+
+c pink
+surface - 1 1
+
+ c orange
+surface - 2 2
+
+c yellow
+surface - 3 3
+
+c green
+surface p 4 4
