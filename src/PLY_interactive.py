@@ -2414,7 +2414,9 @@ def main():
                                 else:
                                     continue
 
-                            Points = (np.array(Points)[::step]).tolist()
+                            _middle = np.array(Points)[1:-1:step]
+                            _points = np.concatenate(([Points[0]],_middle[1:],[Points[-1]]))
+                            Points = _points.tolist()
 
                         else:
                             print('no points')
@@ -3535,7 +3537,7 @@ def main():
                             print('P2[] is empty')
                             continue
 
-                        if len(cmds) > 4:
+                        if len(cmds) == 5:
                             fResult, values = Evals(cmds[2:],3)
                             if fResult:
                                 _points = np.array(P2)
@@ -3569,9 +3571,38 @@ def main():
                                 
                                 P2[i] = ((_points - center) @ S.T + center).tolist()
 
+                        elif len(cmds) == 6 and cmds[2] == 'p' and len(Points) > 0:
+
+                            fResult, values = Evals(cmds[3:],3)
+
+                            if fResult:
+                                center = np.array([values[0],values[1],values[2]])
+                            else:
+                                print('p2 s p <center_x> <center_y> <center_z>')
+                                continue 
+
+                            nP2 = len(P2)
+                            nP = len(Points)
+
+                            for i in range(nP2):
+
+                                idx = int(i * nP / nP2)
+                                if idx >= nP:
+                                    idx = nP - 1
+
+                                S = np.eye(3)
+                                S[0][0] = Points[idx][0]
+                                S[1][1] = Points[idx][1]
+                                S[2][2] = Points[idx][2]
+                                
+                                _points = np.array(P2[i])
+                                
+                                P2[i] = ((_points - center) @ S.T + center).tolist()
+
                         else:
                             print('p2 s <scale_x> <scale_y> <scale_z>')
                             print('p2 s p')
+                            print('p2 s p <center_x> <center_y> <center_z>')
 
                     elif cmds[1] == 't':
                         
@@ -3683,6 +3714,29 @@ def main():
 
                         else:
                             print('p2 bend rotX rotY rotZ')
+
+                    elif cmds[1] == 'rnpy':
+
+                        _sourve = np.array([0.0, 1.0, 0.0])
+                        
+                        if len(cmds) > 4:
+                            fResult, values = Evals(cmds[2:],3)
+
+                            if fResult:
+                                _source = np.array([values[0], values[1], values[2]])
+
+                            else:
+                                print('p2 rnpy [<x> <y> <z>]')
+                                continue
+ 
+                        for p in P2:
+
+                            _p = np.array(p)
+                            centroid = np.mean(points, axis=0)
+                            centered_points = _p - centroid
+                            _, _, Vh = np.linalg.svd(centered_points)
+                            target = Vh[-1]
+
 
                     displayMarker(vis, Pmarker, Points, fPdisp)
 
