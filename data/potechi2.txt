@@ -1,0 +1,15 @@
+d all
+p polygon 100 1
+p t 0 1 0
+p p2p 100
+p curve np.linspace(0,np.pi,100) [1]*len(T) np.sin(T)**10 [1]*len(T)
+p2 s p 0 0 0
+p2 p2p
+p reverse half
+p p2p 2
+p2 transpose
+c yellow
+surface
+
+
+

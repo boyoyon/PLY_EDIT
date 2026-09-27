@@ -1,0 +1,7 @@
+d all
+p curve np.linspace(0,np.pi*2,100) np.cos(T) np.sin(T) np.sin(T*2)*0.25
+p reverse half
+p p2p 2
+c yellow 
+surface
+c default
