@@ -1,0 +1,22 @@
+d all
+p clear
+p curve np.linspace(-np.pi,np.pi,300) np.sin(T) np.cos(T) np.cos(T*2)
+p SAVE t.npy
+p clear
+p 0.3 0 0
+p r 0 0 360/30 30*10
+l t.npy
+p2 t p
+p2 p2p
+section polygon 30 0.05
+p polyline
+surface pe
+c pink
+section t 0.1 0 0
+p polyline
+surface pe
+c orange
+section t -0.2 0 0
+p polyline
+surface pe
+
