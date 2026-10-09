@@ -1,0 +1,16 @@
+d all
+p polygon 300 1
+section polygon 30 0.3
+p polyline
+p2 p2p 0 1
+section polygon 5 0.03
+p polyline
+surface e 0 0
+c pink
+surface e 1 1
+c orange
+surface e 2 2
+c yellow
+surface e 3 3
+c green
+surface pe 4 4
