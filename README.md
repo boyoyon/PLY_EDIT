@@ -45,7 +45,7 @@
 <img src="images/p2_p2p.svg">
 
 <p>
-　(使用例)<br>
+　(使用例１)<br>
 　　p　curve　np.linspace(-np.pi,np.pi,600)　np.sin(T)　np.cos(T)　np.cos(T*2)<br>
 　　section　polygon　30　0.5<br>
 　　p　polyline<br>
@@ -57,6 +57,13 @@
 </p>
 
 <img src="images/p2_p2p_2.svg">
+
+<p>
+　(使用例２)<br>
+　　l　data\hanger5.txt
+</p>
+
+<img src="images/hanger5.png">
 
 <p>
 　『<a href="https://arxiv.org/html/2609.06766v1">メッシュ埋め込みによる双曲面の図示</a>』 を見ていたら双曲円盤でわかめのような形状を表現できるようだったので、AIモードにコード作成を依頼したが、(しばらく考えた後)論文のトピック参照、と断られてしまった･･･
