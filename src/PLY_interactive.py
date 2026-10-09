@@ -3414,15 +3414,35 @@ def main():
                     elif cmds[1] == 'p2p':
 
                         if len(P2) > 0:
+
                             p2numpy = np.array(P2)
                             n = p2numpy.shape[0]
                             m = p2numpy.shape[1]
-                            _p = p2numpy.reshape((n*m, 3))
-                            Points = _p.tolist()
-                            P2.clear()
-                            print('P2-->Points')
-                            print('Points:', _p.shape)
-                            print('P2 is cleared')
+
+                            if len(cmds) < 3:
+                                _p = p2numpy.reshape((n*m, 3))
+                                Points = _p.tolist()
+                                P2.clear()
+                                print('P2-->Points')
+                                print('Points:', _p.shape)
+                                print('P2 is cleared')
+
+                            else:
+                                idx = int(cmds[2])
+                                step = 1
+                                if len(cmds) > 3:
+                                    step = int(cmds[3])
+
+                                Points.clear()
+                                for i in range(n):
+                                    Points.append(p2numpy[i][idx])
+                                    idx += step
+
+                                    while idx >= m:
+                                        idx -= m
+
+                                    while idx < 0:
+                                        idx += m
 
                         else:
                             print('P2[] is empty')
