@@ -35,6 +35,30 @@
 <h3>更新項目</h3>
 
 <p>
+　PLY_interactive.py<br>
+　p2　p2p コマンドにオプションを追加<br>
+　p2　p2p　(start index)　(step)<br>
+<br>
+　p2[i] から1点ずつサンプルして Point[ ] に格納する<br>
+</p>
+
+<img src="images/p2_p2p.svg">
+
+<p>
+　(使用例)<br>
+　　p　curve　np.linspace(-np.pi,np.pi,600)　np.sin(T)　np.cos(T)　np.cos(T*2)<br>
+　　section　polygon　30　0.5<br>
+　　p　polyline<br>
+　　p2　p2p　0　1<br>
+　　section　polygon　30　0.05<br>
+　　p　polyline<br>
+　　surface　pE
+
+</p>
+
+<img src="images/p2_p2p_2.svg">
+
+<p>
 　『<a href="https://arxiv.org/html/2609.06766v1">メッシュ埋め込みによる双曲面の図示</a>』 を見ていたら双曲円盤でわかめのような形状を表現できるようだったので、AIモードにコード作成を依頼したが、(しばらく考えた後)論文のトピック参照、と断られてしまった･･･
 </p>
 <img src="images/hyperbolic_disc.png">
