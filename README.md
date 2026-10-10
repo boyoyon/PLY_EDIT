@@ -38,6 +38,7 @@
 　PLY_interactive.py<br>
 　p2　p2p コマンドにオプションを追加<br>
 　p2　p2p　(start index)　(step)<br>
+　p2　p2p　(rand)　(scale)<br>
 <br>
 　p2[i] から1点ずつサンプルして Point[ ] に格納する<br>
 </p>
