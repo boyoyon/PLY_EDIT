@@ -16,6 +16,7 @@ from dragon1 import dragon1
 from p_polyline import p_polyline
 from wrap2cylinder import *
 from lid import lid
+import random
 
 LINES = []
 input_queue = None
@@ -3428,21 +3429,42 @@ def main():
                                 print('P2 is cleared')
 
                             else:
-                                idx = int(cmds[2])
-                                step = 1
-                                if len(cmds) > 3:
-                                    step = int(cmds[3])
-
                                 Points.clear()
-                                for i in range(n):
-                                    Points.append(p2numpy[i][idx])
-                                    idx += step
 
-                                    while idx >= m:
-                                        idx -= m
+                                if cmds[2].startswith('rand'):
+                                    scale = 1.0
+                                    prevIdx = 0
 
-                                    while idx < 0:
-                                        idx += m
+                                    if len(cmds) > 3:
+                                        scale = float(cmds[3])
+
+                                    for i in range(n):
+                                        idx = prevIdx + int(random.randrange(m) * scale - scale/2)
+
+                                        while idx >= m:
+                                            idx -= m
+    
+                                        while idx < 0:
+                                            idx += m
+
+                                        Points.append(p2numpy[i][idx])
+                                        prevIdx = idx
+
+                                else:
+                                    idx = int(cmds[2])
+                                    step = 1
+                                    if len(cmds) > 3:
+                                        step = int(cmds[3])
+    
+                                    for i in range(n):
+                                        Points.append(p2numpy[i][idx])
+                                        idx += step
+    
+                                        while idx >= m:
+                                            idx -= m
+    
+                                        while idx < 0:
+                                            idx += m
 
                         else:
                             print('P2[] is empty')
