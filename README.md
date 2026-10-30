@@ -33,7 +33,29 @@
 </p>
 
 <h3>更新項目</h3>
-
+<p>
+ユーチューブで点群が右回りか？左回りか？みたいな動画をよく目にするので作ってみた。    
+</p>
+<img src="images/pcd.gif">
+<p>
+・メッシュply → 点群ply<br>
+　src/mesh2pcd.py  (メッシュ ply ファイル)　[(最小三角形に何点生成するか)]<br>  
+　(例) src/mesh2pcd.py　data/face.ply　0.1
+</p>
+<p>
+・plyファイル表示<br>
+　src/o3d_display.py　(plyファイル)<br>
+　メッシュply/点群ply/LineSet plyを判別して表示する<br>
+　1/2/3　x軸周り/y軸周り/z軸周りの回転　+Shiftで逆方向回転　+Ctrlで高速回転量<br>
+　4/5/6　x軸方向/y軸方向/z軸方向に平行移動　+Shiftで逆方向移動<br>
+　7、Shift+7　回転stepを減らす/増やす<br>
+　8、Shift+8　平行移動stepを減らす/増やす<br>
+　B　背景の白/黒トグル<br>
+　ーーーーーーーーーーー<br>
+　-、^　点群表示の点の縮小/拡大<br>
+　@、[　画角を狭くする/広くする　
+</p>
+<br>
 <p>
 　PLY_interactive.py<br>
 　p2　p2p コマンドにオプションを追加<br>
