@@ -26,7 +26,7 @@ def get_areas(vertices, triangles):
    
         areas.append(area)
  
-    return np.array(areas)
+    return np.asarray(areas)
 
 def get_pcl_points_and_colors(vertices, triangles, colors, points_per_triangle = 1.0):
 
@@ -34,14 +34,14 @@ def get_pcl_points_and_colors(vertices, triangles, colors, points_per_triangle =
 
     areas = get_areas(vertices, triangles)
     min_area = np.min(areas)
-    N = areas / (min_area + 1e-06) * points_per_triangle 
+    N = (areas + 1e-06) / (min_area + 1e-06) * points_per_triangle 
 
     pcl_p = []
     pcl_c = []
 
     for i in range(nr_triangles):
 
-        if i % (nr_triangles//10) == 0:
+        if nr_triangles // 10 > 0 and i % (nr_triangles // 10) == 0:
             print('processing %d/%d' % (i+1, nr_triangles))
 
         n = int(N[i])
@@ -75,11 +75,21 @@ def get_pcl_points_and_colors(vertices, triangles, colors, points_per_triangle =
                 pcl_p.append(P)
 
                 if colors.shape[0] > 0:
-                    l0 = np.linalg.norm(P0 - P)
-                    l1 = np.linalg.norm(P1 - P)
-                    l2 = np.linalg.norm(P2 - P)
-                    l = l0 + l1 + l2
-                    C = l0/l * C0 + l1/l * C1 + l2/l * C2
+
+                    v0 = P1 - P0
+                    v1 = P2 - P0
+                    n = np.cross(v0, v1)
+                    area_total = np.linalg.norm(n)
+
+                    n0 = np.cross(P2 - P1, P - P1)
+                    n1 = np.cross(P0 - P2, P - P2)
+                    n2 = np.cross(P1 - P0, P - P0)
+
+                    lambda0 = np.dot(n0, n) / (area_total ** 2)
+                    lambda1 = np.dot(n1, n) / (area_total ** 2)
+                    lambda2 = np.dot(n2, n) / (area_total ** 2)
+
+                    C = lambda0 * C0 + lambda1 * C1 + lambda2 * C2
                     pcl_c.append(C)
 
     return np.array(pcl_p), np.array(pcl_c)
