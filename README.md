@@ -40,7 +40,9 @@
 <p>
 ・メッシュply → 点群ply<br>
 　src/mesh2pcd.py  (メッシュ ply ファイル)　[(最小三角形に何点生成するか)]<br>  
-　(例) src/mesh2pcd.py　data/face.ply　0.1
+　(例) src/mesh2pcd.py　data/face.ply　0.1<br>
+　色補間のバグ修正(処理時間が長くなってしまった･･･)<br>
+　(例) src/mesh2pcd.py　data/sample_rgb.ply　100
 </p>
 <p>
 ・plyファイル表示<br>
