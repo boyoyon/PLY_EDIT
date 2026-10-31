@@ -44,7 +44,7 @@
 　色補間のバグ修正(処理時間が長くなってしまった･･･)<br>
 　(例) src/mesh2pcd.py　data/sample_rgb.ply　100<br>
 　mesh2pcd_average_color.py、mesh2pcd_nearest.py、mesh2pcd_mono_tone.pyと色々試したが面数が増えると遅い･･･<br>
-　面数が多い場合は、メッシュの頂点、頂点色だけを点群に落とすことにした → simple_mesh2pcd.py
+　面数が多い場合向けに、メッシュの頂点、頂点色だけを点群に落とし込む → simple_mesh2pcd.py
 </p>
 <p>
 ・plyファイル表示<br>
