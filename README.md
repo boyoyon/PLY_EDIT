@@ -36,15 +36,27 @@
 <p>
 ユーチューブで点群が右回りか？左回りか？みたいな動画をよく目にするので作ってみた。    
 </p>
-<img src="images/pcd.gif">
 <p>
 ・メッシュply → 点群ply<br>
 　src/mesh2pcd.py  (メッシュ ply ファイル)　[(最小三角形に何点生成するか)]<br>  
 　(例) src/mesh2pcd.py　data/face.ply　0.1<br>
-　色補間のバグ修正(処理時間が長くなってしまった･･･)<br>
+　　　　(色情報のないメッシュを変換すると色情報の無い点群になり、Open3D Visualizerがz値などで色をつける)
+</p>
+    <img src="images/pcd.gif">
+<p>
+　(例)<br>
+　　src/PLY_interactive.py<br>
+　　l data\umbrella.txt<br>
+　　save umblrella.ply<br>
+　　quit<br>
+　　src/mesh2pcd_mono_tone.py　umbrella.ply　0.01<br>  
+</p>
+    <img src="images/umbrella.gif">
+<p>
+    色補間のバグ修正(処理時間が長くなってしまった･･･)<br>
 　(例) src/mesh2pcd.py　data/sample_rgb.ply　100<br>
-　mesh2pcd_average_color.py、mesh2pcd_nearest.py、mesh2pcd_mono_tone.pyと色々試したが面数が増えると遅い･･･<br>
-　面数が多い場合向けに、メッシュの頂点、頂点色だけを点群に落とし込む → simple_mesh2pcd.py
+　　mesh2pcd_average_color.py、mesh2pcd_nearest.py、mesh2pcd_mono_tone.pyと色々試したが面数が増えると遅い･･･<br>
+　　面数が多い場合向けに、メッシュの頂点、頂点色だけを点群に落とし込む → simple_mesh2pcd.py
 </p>
 <p>
 ・plyファイル表示<br>
