@@ -47,7 +47,7 @@
 　(例)<br>
 　　src/PLY_interactive.py<br>
 　　l data\umbrella.txt<br>
-　　save umblrella.ply<br>
+　　save umbrella.ply<br>
 　　quit<br>
 　　src/mesh2pcd_mono_tone.py　umbrella.ply　0.01<br>  
 </p>
