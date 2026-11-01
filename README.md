@@ -45,11 +45,11 @@
     <img src="images/pcd.gif">
 <p>
 　(例)<br>
-　　python src/PLY_interactive.py<br>
+　　python src\PLY_interactive.py<br>
 　　l data\umbrella.txt<br>
 　　save umbrella.ply<br>
 　　quit<br>
-　　python src/mesh2pcd_mono_tone.py　umbrella.ply　0.01<br>  
+　　python src\mesh2pcd_mono_tone.py　umbrella.ply　0.01<br>  
 </p>
     <img src="images/umbrella.gif">
 <p>
