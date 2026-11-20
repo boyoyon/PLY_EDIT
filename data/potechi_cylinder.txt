@@ -1,0 +1,21 @@
+d all
+p curve np.linspace(-np.pi*2,np.pi*2,100) T np.sin(T) [0]*len(T)
+p p2p 100
+p2 bend 0 360/99 0
+p2 p2p
+p centering
+p s 1 0.5 1
+p t 0 1 0
+p s 1 0 1 2
+p2 reverse p
+surface p
+-lid
+p pop 0
+p reverse half
+p p2p 2
+p2 transpose
+surface
+
+
+
+
