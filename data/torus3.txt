@@ -1,0 +1,11 @@
+d all
+p polygon 500 1
+section polygon 50 0.3
+p polyline
+p2 p2p 0
+section polygon 30 0.1
+p polyline
+surface pE
+
+
+
