@@ -1,7 +1,7 @@
-p polygon 30
-polyline 25 0.3
-sphere 0.3 25 0 180 -7 7
-t 0 0 1
-r 0 np.rad2deg(np.pi/15) 0 30
-merge
-save torus.ply
+d all
+p polygon 100 1
+section polygon 30 0.3
+p polyline
+surface pe 0 -1 2
+
+
