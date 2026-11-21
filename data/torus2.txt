@@ -1,0 +1,9 @@
+d all
+p polygon 100 1
+section polygon 30 0.3
+p polyline
+p2 transpose
+p2 reverse p
+surface pe 0 -1 2
+
+
