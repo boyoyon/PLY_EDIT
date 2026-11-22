@@ -1,0 +1,17 @@
+d all 
+p clear
+loop start
+p feedrot 0 1 0 270
+p feedrot 0 -1 0 270
+loop end 10
+
+# loop end を実行するとスクリプトが終わるので
+# 残り (part2) を手動でロード～実行する
+
+
+
+
+
+
+
+

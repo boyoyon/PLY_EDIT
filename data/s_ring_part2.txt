@@ -1,0 +1,8 @@
+p r 0 45 0
+p wrap
+p decimate
+p decimate
+p decimate
+section polygon 30 0.2
+p polyline
+surface pe 0 -1 2
