@@ -493,9 +493,18 @@ def main():
                         vis.remove_geometry(axis)          
                         ctrl.convert_from_pinhole_camera_parameters(_EyePos)
 
-            elif cmds[0] == 'l':
+            elif cmds[0] == 'l' or cmds[0] == 'L':
                 if len(cmds) > 1 and os.path.exists(cmds[1]):
                     pcd = o3d.io.read_point_cloud(cmds[1])
+
+                    if cmds[0] == 'L':
+                        points = np.asarray(pcd.points)
+                        size_x = np.max(points[:,0]) - np.min(points[:,0])
+                        size_y = np.max(points[:,1]) - np.min(points[:,1])
+                        size_z = np.max(points[:,2]) - np.min(points[:,2])
+                        size = max([size_x, size_y, size_z])
+                        points *= 2.0 / size
+
                     PCDS.append(pcd)
                     curr = len(PCDS) - 1
                     _EyePos = ctrl.convert_to_pinhole_camera_parameters() 
